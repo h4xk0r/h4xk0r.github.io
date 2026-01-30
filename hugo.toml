@@ -24,7 +24,7 @@ theme = "PaperMod"
     # 首页欢迎词
     [params.homeInfoParams]
         Title = "Security Documentation"
-        Content = "> System status: Online \n> Accessing encrypted logs..."
+        
 
     # 社交链接（必须放在 params 的最后）
     [[params.socialIcons]]
