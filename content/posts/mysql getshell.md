@@ -1,6 +1,6 @@
 ---
 title: "MySQL getshell"
-date: 2026-01-31
+date: 2026-01-30
 draft: false
 ---
 
