@@ -1,0 +1,52 @@
+baseURL = "https://h4xk0r.github.io/"
+languageCode = "zh-cn"
+title = "H4ck3r Station"
+theme = "PaperMod"
+
+# 1. 页面输出配置（搜索功能必需）
+[outputs]
+    home = ["HTML", "RSS", "JSON"]
+
+[params]
+    # 核心显示逻辑
+    mainSections = ["posts"]
+    defaultTheme = "dark"
+    
+    # 文章功能开关
+    ShowCodeCopyButtons = true
+    ShowReadingTime = true
+    ShowFullTextContent = false
+    displayFullPostContent = false
+    
+    # 开启搜索功能
+    ShowSearchButton = true
+
+    # 首页欢迎词
+    [params.homeInfoParams]
+        Title = "Security Documentation"
+        Content = "> System status: Online \n> Accessing encrypted logs..."
+
+    # 社交链接（必须放在 params 的最后）
+    [[params.socialIcons]]
+        name = "github"
+        url = "https://github.com/h4xk0r"
+
+[menu]
+    [[menu.main]]
+        identifier = "posts"
+        name = "档案"
+        url = "/posts/"
+        weight = 10
+    [[menu.main]]
+        identifier = "search"
+        name = "搜索"
+        url = "/search/" # 确保这里与 search.md 生成的路径一致
+        weight = 20
+
+[markup.goldmark.renderer]
+    unsafe = true
+
+[taxonomies]
+    category = "categories"
+    tag = "tags"
+    series = "series"
