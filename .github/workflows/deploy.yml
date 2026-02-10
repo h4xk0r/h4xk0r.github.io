@@ -3,7 +3,7 @@ name: Deploy Hugo Blog
 on:
   push:
     branches:
-      - main  # 如果你的主分支叫 master，这里记得改
+      - main  # 确认这是你的主分支名
 
 jobs:
   deploy:
@@ -32,4 +32,7 @@ jobs:
           SOURCE: "public/"
           REMOTE_HOST: ${{ secrets.SERVER_IP }}
           REMOTE_USER: ${{ secrets.SERVER_USER }}
-          TARGET: "/var/www/html" # 确保这个目录在服务器上已存在
+          TARGET: "/var/www/html"
+        with:
+          # --- 关键修改：在这里指定你的非标准端口 ---
+          REMOTE_PORT: "50022" # 将 1234 替换为你真实的 SSH 端口号
