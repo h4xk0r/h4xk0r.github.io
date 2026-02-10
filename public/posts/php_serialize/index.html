@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto" data-theme="dark">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="noindex, nofollow">
+<title>PHP反序列化 | H4ck3r Station</title>
+<meta name="keywords" content="">
+<meta name="description" content="距离第一次学习php反序列已经很长时间了，初次学习时就学的迷迷糊糊，有很多理解不到位的地方，正好最近有时间打算回过头重新开始学习一遍，理解不到位之处请各位大佬多多指正。
+为什么需要序列化和反序列化？
+
+
+网络传输只能处理位流(Bytes) , 当你在java,php,python中定义一个复杂的用户对象，但是路由器并不认识，只能通过序列化成字符串的方式以字节流的方式传输，传输流程大致如下：
+服务器对象&ndash;&gt; 序列化&ndash;&gt; 字节流&ndash;&gt; 网络传输&ndash;&gt; 反序列化&ndash;&gt; 客户端
+
+
+内存(RAM)易失，程序运行在内存中，一旦断电，关闭数据就会消失
+
+
+php中的序列化反序列化函数
+序列化：serialize()
+反序列化：unserialize()
+漏洞利用
+前提:  服务端(不论是当前代码还是所包含的代码中)必须要有对象(序列化形式)所对应的类, 否则无法反序列化
+例如: payload:O:1:&quot;**S**&quot;:1:{s:4:&quot;test&quot;;s:29:&quot;&lt;script&gt;alert(&#39;xss&#39;)&lt;/script&gt;&quot;;} 这时候如果服务端没有一个叫做S的类, 就会反序列化失败
+所以说, 想要发起反序列化攻击, 必要条件之一: 必须知道服务端有哪些类
+魔术方法
+注:加黑重点关注
+
+  
+      
+          魔术方法
+          描述
+      
+  
+  
+      
+          __construct()
+          构造方法，当对象被实例化（new）时自动调用。
+      
+      
+          __destruct()
+          析构方法，当对象被销毁时自动调用。反序列化攻击中最常见的入口。
+      
+      
+          __call()
+          在对象上下文中调用一个不可访问或不存在的方法时触发。常用的跳板。
+      
+      
+          __callStatic()
+          在静态上下文中调用一个不可访问或不存在的方法时触发。
+      
+      
+          __get()
+          读取对象中不可访问（未定义或私有）的属性时触发。常用的跳板。
+      
+      
+          __set()
+          写入对象中不可访问（未定义或私有）的属性时触发。
+      
+      
+          __isset()
+          使用 isset() 或 empty() 检查对象中不可访问的属性时触发。
+      
+      
+          __unset()
+          使用 unset() 删除对象中不可访问的属性时触发。
+      
+      
+          __sleep()
+          当对象被 serialize() 序列化前触发，通常用于返回需要被序列化的属性列表。
+      
+      
+          __wakeup()
+          当对象被 unserialize() 反序列化时触发，常用于初始化资源。反序列化的“点火开关”。
+      
+      
+          __toString()
+          当对象被转换成字符串（如 echo 或拼接）时自动调用。核心跳板。
+      
+      
+          __invoke()
+          当尝试以函数方式调用对象（如 $obj()）时触发。常用的跳板。
+      
+      
+          __clone()
+          当对象使用 clone 关键字被克隆时调用。
+      
+      
+          __serialize()
+          PHP 7.4&#43; 引入。序列化前触发，优先级高于 __sleep。返回一个包含对象数据的数组。
+      
+      
+          __unserialize()
+          PHP 7.4&#43; 引入。反序列化后触发，优先级高于 __wakeup。用于恢复对象状态。
+      
+      
+          __set_state()
+          当使用 var_export() 导出类时触发。必须是静态方法，返回类实例。
+      
+      
+          __debugInfo()
+          当使用 var_dump() 打印对象信息时触发，用于控制显示的属性。
+      
+  
+
+1、 __construct() 和 __destruct()">
+<meta name="author" content="">
+<link rel="canonical" href="http://localhost:1313/posts/php_serialize/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.a29c24210eb31d9ce56f669c66a35c9c51b17376b7764e336a49af7dec914cf0.css" integrity="sha256-opwkIQ6zHZzlb2acZqNcnFGxc3a3dk4zakmvfeyRTPA=" rel="preload stylesheet" as="style">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/posts/php_serialize/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+</noscript>
+<script>
+    if (localStorage.getItem("pref-theme") === "light") {
+        document.querySelector("html").dataset.theme = 'light';
+    }
+
+</script>
+</head>
+<body id="top">
+    <header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="http://localhost:1313/" accesskey="h" title="H4ck3r Station (Alt + H)">H4ck3r Station</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="http://localhost:1313/posts/" title="档案">
+                    <span>档案</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/search/" title="搜索 (Alt &#43; /)" accesskey=/>
+                    <span>搜索</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      PHP反序列化
+    </h1>
+    <div class="post-meta"><span title='2026-02-07 00:00:00 +0000 UTC'>February 7, 2026</span>&nbsp;·&nbsp;<span>5 min</span>
+
+</div>
+  </header> 
+  <div class="post-content"><p>距离第一次学习php反序列已经很长时间了，初次学习时就学的迷迷糊糊，有很多理解不到位的地方，正好最近有时间打算回过头重新开始学习一遍，理解不到位之处请各位大佬多多指正。</p>
+<h3 id="为什么需要序列化和反序列化">为什么需要序列化和反序列化？<a hidden class="anchor" aria-hidden="true" href="#为什么需要序列化和反序列化">#</a></h3>
+<ol>
+<li>
+<p><strong>网络传输只能处理位流(Bytes)</strong> , 当你在java,php,python中定义一个复杂的用户对象，但是路由器并不认识，只能通过序列化成字符串的方式以字节流的方式传输，传输流程大致如下：</p>
+<p>服务器对象&ndash;&gt; 序列化&ndash;&gt; 字节流&ndash;&gt; 网络传输&ndash;&gt; 反序列化&ndash;&gt; 客户端</p>
+</li>
+<li>
+<p><strong>内存(RAM)易失</strong>，程序运行在内存中，一旦断电，关闭数据就会消失</p>
+</li>
+</ol>
+<h3 id="php中的序列化反序列化函数">php中的序列化反序列化函数<a hidden class="anchor" aria-hidden="true" href="#php中的序列化反序列化函数">#</a></h3>
+<p>序列化：<code>serialize()</code></p>
+<p>反序列化：<code>unserialize()</code></p>
+<h3 id="漏洞利用">漏洞利用<a hidden class="anchor" aria-hidden="true" href="#漏洞利用">#</a></h3>
+<p>前提:  服务端(不论是当前代码还是所包含的代码中)必须要有对象(序列化形式)所对应的类, 否则无法反序列化</p>
+<p>例如: <code>payload:O:1:&quot;**S**&quot;:1:{s:4:&quot;test&quot;;s:29:&quot;&lt;script&gt;alert('xss')&lt;/script&gt;&quot;;} </code>这时候如果服务端没有一个叫做S的类, 就会反序列化失败</p>
+<p>所以说, 想要发起反序列化攻击, 必要条件之一: 必须知道服务端有哪些类</p>
+<h3 id="魔术方法">魔术方法<a hidden class="anchor" aria-hidden="true" href="#魔术方法">#</a></h3>
+<p>注:加黑重点关注</p>
+<table>
+  <thead>
+      <tr>
+          <th><strong>魔术方法</strong></th>
+          <th><strong>描述</strong></th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><strong><code>__construct()</code></strong></td>
+          <td><strong>构造方法</strong>，当对象被实例化（<code>new</code>）时自动调用。</td>
+      </tr>
+      <tr>
+          <td><strong><code>__destruct()</code></strong></td>
+          <td><strong>析构方法</strong>，当对象被销毁时自动调用。反序列化攻击中最常见的入口。</td>
+      </tr>
+      <tr>
+          <td><strong><code>__call()</code></strong></td>
+          <td>在对象上下文中调用一个<strong>不可访问或不存在的方法</strong>时触发。常用的跳板。</td>
+      </tr>
+      <tr>
+          <td><strong><code>__callStatic()</code></strong></td>
+          <td>在静态上下文中调用一个<strong>不可访问或不存在的方法</strong>时触发。</td>
+      </tr>
+      <tr>
+          <td><strong><code>__get()</code></strong></td>
+          <td>读取对象中<strong>不可访问（未定义或私有）的属性</strong>时触发。常用的跳板。</td>
+      </tr>
+      <tr>
+          <td><strong><code>__set()</code></strong></td>
+          <td>写入对象中<strong>不可访问（未定义或私有）的属性</strong>时触发。</td>
+      </tr>
+      <tr>
+          <td><strong><code>__isset()</code></strong></td>
+          <td>使用 <code>isset()</code> 或 <code>empty()</code> 检查对象中不可访问的属性时触发。</td>
+      </tr>
+      <tr>
+          <td><strong><code>__unset()</code></strong></td>
+          <td>使用 <code>unset()</code> 删除对象中不可访问的属性时触发。</td>
+      </tr>
+      <tr>
+          <td><strong><code>__sleep()</code></strong></td>
+          <td>当对象被 <code>serialize()</code> 序列化前触发，通常用于返回需要被序列化的属性列表。</td>
+      </tr>
+      <tr>
+          <td><strong><code>__wakeup()</code></strong></td>
+          <td>当对象被 <code>unserialize()</code> 反序列化时触发，常用于初始化资源。反序列化的“点火开关”。</td>
+      </tr>
+      <tr>
+          <td><strong><code>__toString()</code></strong></td>
+          <td>当对象被转换成<strong>字符串</strong>（如 <code>echo</code> 或拼接）时自动调用。核心跳板。</td>
+      </tr>
+      <tr>
+          <td><strong><code>__invoke()</code></strong></td>
+          <td>当尝试以<strong>函数方式调用对象</strong>（如 <code>$obj()</code>）时触发。常用的跳板。</td>
+      </tr>
+      <tr>
+          <td><strong><code>__clone()</code></strong></td>
+          <td>当对象使用 <code>clone</code> 关键字被克隆时调用。</td>
+      </tr>
+      <tr>
+          <td><strong><code>__serialize()</code></strong></td>
+          <td>PHP 7.4+ 引入。序列化前触发，优先级高于 <code>__sleep</code>。返回一个包含对象数据的数组。</td>
+      </tr>
+      <tr>
+          <td><strong><code>__unserialize()</code></strong></td>
+          <td>PHP 7.4+ 引入。反序列化后触发，优先级高于 <code>__wakeup</code>。用于恢复对象状态。</td>
+      </tr>
+      <tr>
+          <td><strong><code>__set_state()</code></strong></td>
+          <td>当使用 <code>var_export()</code> 导出类时触发。必须是静态方法，返回类实例。</td>
+      </tr>
+      <tr>
+          <td><strong><code>__debugInfo()</code></strong></td>
+          <td>当使用 <code>var_dump()</code> 打印对象信息时触发，用于控制显示的属性。</td>
+      </tr>
+  </tbody>
+</table>
+<p>1、 <code>__construct()</code> 和 <code>__destruct()</code></p>
+<p><code>__construct()</code> 是对象的构造方法，用于在对象实例化时进行初始化操作；</p>
+<p><code>__destruct()</code> 是析构方法，在对象销毁时自动调用</p>
+<pre tabindex="0"><code>&lt;?php
+  class Person {
+  public $name;
+
+  // 构造方法，当对象被实例化时自动调用。
+  public function __construct($name) {
+    echo &#34;__construct 初始化&#34;.&#34;&lt;br&gt;&#34;;
+    $this-&gt;name = $name;
+    echo &#34;Constructing Person: &#34; . $this-&gt;name . &#34;&lt;br&gt;&#34;;
+  }
+  
+  // 析构方法，当对象被销毁时自动调用。
+  public function __destruct() {
+    echo &#34;__destruct 类执行完毕&#34;.&#34;&lt;br&gt;&#34;;
+    echo &#34;Destructing Person: &#34; . $this-&gt;name . &#34;&lt;br&gt;&#34;;
+  }
+}
+
+$person = new Person(&#34;ZhangSan&#34;);
+unset($person); // 显式销毁对象，执行__destruct()
+echo &#34;执行完毕&#34;.&#34;&lt;br&gt;&#34;;
+
+// 如果不销毁对象，在代码执行结束时，也会执行__destruct()
+
+
+输出：
+__construct 初始化
+Constructing Person: ZhangSan
+__destruct 类执行完毕
+Destructing Person: ZhangSan执行完毕
+</code></pre><p>2、<code>__sleep()</code>和<code>__wakeup()</code></p>
+<p><code>__sleep() </code><strong>方法</strong>：当对象被序列化时自动调用，用于指定需要序列化的属性，并释放不必要的资源。</p>
+<p><code>__wakeup()</code> <strong>方法</strong>：当对象被反序列化时自动调用，用于重新初始化属性或资源（如恢复数据库连接）。</p>
+<pre tabindex="0"><code>&lt;?php
+class User {
+    public $name;
+    public $email;
+    private $dbConnection;
+
+    public function __construct($name, $email) {
+        $this-&gt;name = $name;
+        $this-&gt;email = $email;
+        $this-&gt;dbConnection = $this-&gt;connectToDatabase(); // 模拟数据库连接
+    }
+
+    // 模拟数据库连接
+    private function connectToDatabase() {
+        return &#34;Database connection established&#34;;
+    }
+
+    // 当对象被序列化时自动调用
+    public function __sleep() {
+        echo &#34;Serializing object...&lt;br&gt;&#34;;
+        // 关闭数据库连接（释放资源）
+        $this-&gt;dbConnection = null;
+        // 只序列化 name 和 email 属性
+        return [&#39;name&#39;, &#39;email&#39;];
+    }
+
+    // 当对象被反序列化时自动调用
+    public function __wakeup() {
+        echo &#34;Unserializing object...&lt;br&gt;&#34;;
+        // 恢复数据库连接
+        $this-&gt;dbConnection = $this-&gt;connectToDatabase();
+    }
+
+    // 打印对象状态
+    public function showInfo() {
+        echo &#34;Name: &#34; . $this-&gt;name . &#34;&lt;br&gt;&#34;;
+        echo &#34;Email: &#34; . $this-&gt;email . &#34;&lt;br&gt;&#34;;
+        echo &#34;DB Connection: &#34; . $this-&gt;dbConnection . &#34;&lt;br&gt;&#34;;
+    }
+}
+
+$user = new User(&#34;LiSi&#34;, &#34;lisi@example.com&#34;);
+
+// 序列化对象，__sleep() 会被自动调用
+$serializedUser = serialize($user);
+echo &#34;Serialized String: &#34; . $serializedUser . &#34;&lt;br&gt;&#34;;
+
+// 反序列化对象，__wakeup() 会被自动调用
+$unserializedUser = unserialize($serializedUser);
+$unserializedUser-&gt;showInfo();
+?&gt;
+</code></pre><p>解析：</p>
+<p>创建对象 <code>User</code>：</p>
+<ul>
+<li>使用 <code>User</code> 类创建一个包含 <code>name</code>、<code>email</code> 和 <code>dbConnection</code> 属性的对象。</li>
+<li><code>dbConnection</code> 属性模拟数据库连接。</li>
+</ul>
+<p>序列化时调用 <code>__sleep()</code>：</p>
+<ul>
+<li>当使用 <code>serialize($user)</code> 时，<code>__sleep()</code> 方法被自动调用。</li>
+<li>在 <code>__sleep()</code> 中，我们将 <code>dbConnection</code> 属性设置为 <code>null</code>（表示释放该资源）。</li>
+<li>只返回 <code>['name', 'email']</code>，表示只序列化 <code>name</code> 和 <code>email</code> 两个属性，<code>dbConnection</code> 被排除在外。</li>
+</ul>
+<p>生成的序列化字符串：</p>
+<ul>
+<li><code>Serialized String: O:4:&quot;User&quot;:2:{s:4:&quot;name&quot;;s:5:&quot;Alice&quot;;s:5:&quot;email&quot;;s:17:&quot;alice@example.com&quot;;}</code></li>
+<li>只包含 <code>name</code> 和 <code>email</code> 属性，没有 <code>dbConnection</code> 属性。</li>
+</ul>
+<p>反序列化时调用 <code>__wakeup()</code>：</p>
+<ul>
+<li>当使用 <code>unserialize($serializedUser)</code> 时，<code>__wakeup()</code> 方法被自动调用。</li>
+<li>在 <code>__wakeup()</code> 中，我们重新初始化 <code>dbConnection</code>，表示恢复数据库连接。</li>
+</ul>
+<p>输出对象状态：</p>
+<ul>
+<li>使用 <code>showInfo()</code> 方法打印对象的状态。</li>
+<li>可以看到 <code>dbConnection</code> 已恢复为 <code>&quot;Database connection established&quot;</code>，表示反序列化后连接被恢复。</li>
+</ul>
+<p>3、<code>__get()</code> 和 <code>__set()</code> 允许拦截对不可访问属性的读取和写入操作。</p>
+<pre tabindex="0"><code>&lt;?php
+class Student {
+    private $data = [];
+
+    // 写入对象中不可访问（未定义或私有）的属性时触发
+    // 该方法接收两个参数：
+    // $name：被设置的属性名（name）。
+    // $value：被设置的属性值（&#34;ZhangSan&#34;）。
+    public function __set($name, $value) {
+        echo &#34;Setting &#39;$name&#39; to &#39;$value&#39;\n&#34;;
+        $this-&gt;data[$name] = $value;
+    }
+ 
+    // 读取对象中不可访问（未定义或私有）的属性时触发
+    public function __get($name) {
+        echo &#34;Getting &#39;$name&#39;\n&#34;;
+        return isset($this-&gt;data[$name]) ? $this-&gt;data[$name] : null;
+    }
+}
+
+$student = new Student();
+$student-&gt;name = &#34;ZhangSan&#34;; // 调用 __set() 为__set($name, $value)赋值
+echo $student-&gt;name . PHP_EOL; // 调用 __get()
+</code></pre><p>4、<code>__call()</code>用于处理对象中不存在或不可访问的方法调用；<code>__callStatic()</code> 用于处理对象中不存在或不可访问的静态方法调用。</p>
+<pre tabindex="0"><code>&lt;?php
+class Test {
+  // 当调用对象中不存在或不可访问的非静态方法时触发
+  public function __call($name, $args) {
+    echo &#34;调用了非静态方法: $name\n&#34;;
+    echo &#34;参数: &#34; . implode(&#39;, &#39;, $args) . &#34;\n&#34;;
+  }
+
+  // 当调用对象中不存在或不可访问的静态方法时触发
+  public static function __callStatic($method, $args) {
+    echo &#34;调用了静态方法: $method\n&#34;;
+    echo &#34;参数: &#34; . implode(&#39;, &#39;, $args) . &#34;\n&#34;;
+  }
+}
+
+// 实例化对象
+$obj = new Test();
+
+// 触发 __call()
+$obj-&gt;undefinedMethod(&#39;hello&#39;, 123); 
+
+// 触发 __callStatic()
+Test::undefinedStaticMethod(&#39;world&#39;, 456);
+</code></pre><p>5、<code>__isset()</code> 和 <code>__unset()</code> 是 PHP 的两个魔术方法，分别用于拦截对对象中未定义或不可访问属性进行 <code>isset()</code> 检查和 <code>unset()</code> 删除操作时的行为</p>
+<pre tabindex="0"><code>&lt;?php
+class User {
+    private $data = [];
+    
+    public function __set($name, $value) {
+    $this-&gt;data[$name] = $value;
+}
+
+    // 当尝试用 isset()/empty() 检查属性时触发
+    public function __isset($name) {
+        echo &#34;__isset($name) 被调用\n&#34;;
+        return isset($this-&gt;data[$name]);
+    }
+
+    // 当尝试用 unset() 删除属性时触发
+    public function __unset($name) {
+        echo &#34;__unset($name) 被调用\n&#34;;
+        unset($this-&gt;data[$name]);
+    }
+}
+
+$user = new User();
+
+// 动态设置属性（实际存入 $data 数组）
+$user-&gt;name = &#34;WangWu&#34;;
+
+// 触发 __isset(&#39;name&#39;)
+var_dump(isset($user-&gt;name)); // 输出 true
+
+// 触发 __unset(&#39;name&#39;)
+unset($user-&gt;name);
+
+?&gt;
+</code></pre><p>6、<code>__toString()</code> 允许对象在被转换为字符串时的自定义输出。常用于调试或日志记录。</p>
+<pre tabindex="0"><code>&lt;?php
+class Book {
+    private $bookTitle;
+
+    public function __construct($name) {
+        $this-&gt;bookTitle = $name;
+    }
+
+    public function __toString() {
+        return &#34;Book title: &#34; . $this-&gt;bookTitle;
+    }
+}
+
+$book = new Book(&#34;PHP Magic Methods&#34;);
+echo $book; // 调用 __toString()
+?&gt;
+</code></pre><p>7、<code>__invoke()</code> 允许对象像函数一样被调用。</p>
+<pre tabindex="0"><code>&lt;?php
+class CallableClass {
+    public function __invoke($x) {
+        return $x * $x;
+    }
+}
+
+$obj = new CallableClass();
+echo $obj(5); // 调用 __invoke()
+?&gt;
+</code></pre><p>8、<code>__clone()</code> 方法在对象被克隆时调用，用于实现深拷贝或进行自定义操作。</p>
+<pre tabindex="0"><code>&lt;?php
+class Prototype {
+    public $name;
+
+    public function __construct($name1) {
+        $this-&gt;name = $name1;
+    }
+
+    public function __clone() {
+        echo &#34;Cloning object: &#34; . $this-&gt;name . PHP_EOL;
+    }
+}
+
+$original = new Prototype(&#34;Test&#34;);
+$cloned = clone $original; // 调用 __clone()
+?&gt;
+</code></pre><h3 id="学会看序列化后的数据">学会看序列化后的数据<a hidden class="anchor" aria-hidden="true" href="#学会看序列化后的数据">#</a></h3>
+<pre tabindex="0"><code>一个例子：
+
+&lt;?php
+  $data = array(&#39;name&#39; =&gt; &#39;John&#39;, &#39;age&#39; =&gt; 30, &#39;skills&#39; =&gt; array(&#39;PHP&#39;, &#39;Java&#39;));
+$serializedData = serialize($data);
+echo $serializedData;
+
+a:3:{s:4:&#34;name&#34;;s:4:&#34;John&#34;;s:3:&#34;age&#34;;i:30;s:6:&#34;skills&#34;;a:2:{i:0;s:3:&#34;PHP&#34;;i:1;s:4:&#34;Java&#34;;}}
+
+a - array 数组型
+b - boolean 布尔型
+d - double 浮点型
+i - integer 整数型
+o - common object 共同对象
+r - objec reference 对象引用
+s - non-escaped binary string 非转义的二进制字符串
+S - escaped binary string 转义的二进制字符串
+C - custom object 自定义对象
+O - class 对象
+N - null 空
+R - pointer reference 指针引用
+U - unicode string Unicode 编码的字符串
+</code></pre><h3 id="实战案例typecho-反序列化漏洞">实战案例(Typecho 反序列化漏洞)<a hidden class="anchor" aria-hidden="true" href="#实战案例typecho-反序列化漏洞">#</a></h3>
+<p>漏洞的入口在install.php文件中，而在执行<code>unserialize</code>之前还做了两个判断</p>
+<p><img loading="lazy" src="/posts/php_serialize/image-20260207212737868.png"></p>
+<p>第一个是判断有没有安装，另一个检查refer头必须是站内url</p>
+<p><img loading="lazy" src="/posts/php_serialize/image-20260207214109081.png"></p>
+<p>从Cookie中获取<code>__typecho_config</code>字段的值，进行base64解码，之后反序列化 找到入口后我们再找怎么利用，想要利用就要有相应的魔术方法配合</p>
+<pre tabindex="0"><code>__destruct()	对象销毁调用
+__wakeup()		反序列化调用
+__toString()	对象转换成字符串调用
+</code></pre><p>继续往下看<code>$config</code>我们是可控的，如果我们再<code>adapter</code>传入一个类，就可以触发<code>__toString</code>方法</p>
+<p>搜索<code>__toString()</code>,找到三个</p>
+<p><img loading="lazy" src="/posts/php_serialize/image-20260207221914581.png"></p>
+<p>一个一个看首先<code>config.php</code>,没有价值</p>
+<p><img loading="lazy" src="/posts/php_serialize/image-20260207223747847.png"></p>
+<p>看<code>Query.php</code></p>
+<p><img loading="lazy" src="/posts/php_serialize/image-20260207225236927.png"></p>
+<p><img loading="lazy" src="/posts/php_serialize/image-20260207225311815.png"></p>
+<p>都在拼接sql语句，跳不出去</p>
+<p>看<code>Feed.php</code></p>
+<p><img loading="lazy" src="/posts/php_serialize/image-20260207230915808.png"></p>
+<p>调用了<code>$item['author']-&gt;screenName</code>，这是一个当前类的私有变量.</p>
+<p>想要跳到另一个执行危险函数的地方,需要找一个类，满足两个条件之一：</p>
+<ol>
+<li>它内部有一个叫<code>screenName</code>的属性，且执行了危险的操作（少见）</li>
+<li>没有<code>screenName</code>属性，但是定义了<code>__get()</code>魔术方法，且最终会通向危险函数（常规思路）</li>
+</ol>
+<p>那下一步思路就很明确了，全局搜索<code>function __get</code>，再<code>request.php</code>中找到</p>
+<p><img loading="lazy" src="/posts/php_serialize/image-20260207234929891.png"></p>
+<p>继续跟进<code>get</code>方法</p>
+<p><img loading="lazy" src="/posts/php_serialize/image-20260208000328232.png"></p>
+<p>这里去<code>_params</code>去读取值</p>
+<p>那么只要通过反序列化提前给<code>_params</code>赋值，比如 <code>array('screenName' =&gt; 'phpinfo();')</code>。这样当 <code>$key</code> 为 <code>screenName</code> 时，<code>$value</code> 就变成了我们的恶意代码。</p>
+<p>再往下，检查值不能是数组，字符串长度大于零，然后直接丢进了<code>_applyFilter</code>方法，继续跟进</p>
+<p><img loading="lazy" src="/posts/php_serialize/image-20260208001009296.png"></p>
+<p>这里的<code>call_user_func</code>是可控的，这里的<code>$filter</code>我们可以控制成任何的函数(<code>system</code>,<code>exec</code>等),<code>$value</code>就是塞进去执行的内容</p>
+<p>回顾一下pop链</p>
+<ul>
+<li><strong>反序列化入口</strong> (<code>install.php</code>)</li>
+<li><strong>触发点</strong> (<code>__toString</code>)</li>
+<li><strong>跳板</strong> (<code>__get</code>)</li>
+<li><strong>终点</strong> (<code>call_user_func</code> + <code>assert</code>)</li>
+</ul>
+<h3 id="隐蔽的反序列化入口">隐蔽的反序列化入口<a hidden class="anchor" aria-hidden="true" href="#隐蔽的反序列化入口">#</a></h3>
+<p>常规反序列化必须依赖 <code>unserialize()</code> 函数，但以下两种技术可以绕过这个限制</p>
+<h4 id="phar反序列化">phar反序列化<a hidden class="anchor" aria-hidden="true" href="#phar反序列化">#</a></h4>
+<p><strong>核心原理：</strong> Phar (PHP Archive) 是 PHP 的一种归档文件格式（类似 Java 的 JAR）。PHP 在解析 Phar 文件中的元数据（Metadata）时，会自动进行反序列化。</p>
+<p><strong>攻击条件：</strong></p>
+<ol>
+<li><strong>文件上传：</strong> 攻击者能上传文件（哪怕只能上传 <code>.jpg</code>，只要内容符合 Phar 格式即可）。</li>
+<li><strong>文件操作：</strong> 代码中存在文件系统函数（如 <code>file_exists()</code>, <code>is_dir()</code>, <code>file_get_contents()</code>, <code>include()</code> 等）。</li>
+<li><strong>协议控制：</strong> 参数可控，可以使用 <code>phar://</code> 伪协议。</li>
+</ol>
+<p><strong>攻击流程：</strong></p>
+<ol>
+<li><strong>生成 Payload：</strong> 写一个 PHP 脚本，将恶意对象写入 Phar 文件的 Metadata 中。</li>
+<li><strong>伪装：</strong> 将生成的 <code>.phar</code> 文件改名为 <code>.jpg</code>（修改文件头绕过上传检测）。</li>
+<li><strong>触发：</strong> 利用 <code>phar://path/to/evil.jpg/test</code> 触发文件操作函数，PHP 会解析 Metadata，自动执行 <code>unserialize()</code>，触发 POP 链。</li>
+</ol>
+<h4 id="session反序列化">session反序列化<a hidden class="anchor" aria-hidden="true" href="#session反序列化">#</a></h4>
+<p><strong>核心原理：</strong> PHP 存储 Session 数据有不同的“处理器（Handler）”。如果<strong>写入 Session</strong> 和 <strong>读取 Session</strong> 使用了不同的处理器，数据格式就会被误读，从而产生反序列化漏洞。</p>
+<p><strong>常见处理器差异：</strong></p>
+<ul>
+<li><code>php</code> (默认)：格式为 <code>键名 | 序列化数据</code>。例如：<code>name|s:5:&quot;alice&quot;;</code></li>
+<li><code>php_serialize</code>：格式为 <code>经过 serialize() 的整个数组</code>。例如：<code>a:1:{s:4:&quot;name&quot;;s:5:&quot;alice&quot;;}</code></li>
+</ul>
+<p><strong>攻击逻辑（只有 php_serialize 写，php 读）：</strong></p>
+<ol>
+<li>攻击者传入数据：<code>|O:4:&quot;User&quot;:1:{...}</code>（注意开头的竖线）。</li>
+<li><strong>写入时</strong>（<code>php_serialize</code>）：PHP 把它当做普通字符串保存。</li>
+<li><strong>读取时</strong>（<code>php</code>）：PHP 看到竖线 <code>|</code>，认为竖线<strong>前面</strong>是键名（为空），<strong>后面</strong>是需要反序列化的值。</li>
+<li>结果：恶意的序列化字符串被还原成了对象。</li>
+</ol>
+<h3 id="原生类利用">原生类利用<a hidden class="anchor" aria-hidden="true" href="#原生类利用">#</a></h3>
+<h4 id="1-soapclient-ssrf--crlf-注入">1. SoapClient (SSRF + CRLF 注入)<a hidden class="anchor" aria-hidden="true" href="#1-soapclient-ssrf--crlf-注入">#</a></h4>
+<p><strong>场景：</strong> 目标服务器没有对外网的访问权限，但你想探测内网。 <strong>利用：</strong> <code>SoapClient</code> 的 <code>__call</code> 方法在调用不存在的方法时，会发起网络请求。通过构造 User-Agent 等参数，可以进行 SSRF 攻击，甚至利用 CRLF 注入攻击 Redis。</p>
+<h4 id="2-error--exception-xss">2. Error / Exception (XSS)<a hidden class="anchor" aria-hidden="true" href="#2-error--exception-xss">#</a></h4>
+<p><strong>场景：</strong> 想要执行 XSS，但找不到 <code>echo</code> 点。 <strong>利用：</strong> 这两个类都有 <code>__toString</code> 方法。当你反序列化一个 Error 对象并试图打印它时，它会输出报错信息（可能包含 HTML 标签），从而触发 XSS。</p>
+<h4 id="3-splfileobject-任意文件读取">3. SplFileObject (任意文件读取)<a hidden class="anchor" aria-hidden="true" href="#3-splfileobject-任意文件读取">#</a></h4>
+<p><strong>场景：</strong> 需要读取敏感文件。 <strong>利用：</strong> 该类在构造时可以直接打开文件，配合 <code>__toString</code> 或遍历操作可以读取文件内容。</p>
+<h3 id="绕过">绕过<a hidden class="anchor" aria-hidden="true" href="#绕过">#</a></h3>
+<h4 id="1-__wakeup-绕过-cve-2016-7124">1. __wakeup 绕过 (CVE-2016-7124)<a hidden class="anchor" aria-hidden="true" href="#1-__wakeup-绕过-cve-2016-7124">#</a></h4>
+<p><strong>原理：</strong> 在 PHP 5 &lt; 5.6.25 和 PHP 7 &lt; 7.0.10 版本中，如果序列化字符串中<strong>表示对象属性个数的值</strong>大于<strong>真实的属性个数</strong>，<code>__wakeup()</code> 方法将不会被执行。</p>
+<p><strong>实战用法：</strong> 很多安全代码会在 <code>__wakeup</code> 中清空恶意属性（如重置数据库连接）。</p>
+<ul>
+<li>正常：<code>O:4:&quot;User&quot;:1:{s:4:&quot;name&quot;;s:5:&quot;admin&quot;;}</code> (属性个数为 1)</li>
+<li>绕过：<code>O:4:&quot;User&quot;:2:{s:4:&quot;name&quot;;s:5:&quot;admin&quot;;}</code> (改为 2，绕过 <code>__wakeup</code>)</li>
+</ul>
+<h4 id="2-快速析构-fast-destruct">2. 快速析构 (Fast Destruct)<a hidden class="anchor" aria-hidden="true" href="#2-快速析构-fast-destruct">#</a></h4>
+<p><strong>原理：</strong> 正常情况下，对象在脚本执行结束时销毁。但如果我们在反序列化过程中让程序<strong>报错</strong>或<strong>结构异常</strong>，对象会被立即销毁，触发 <code>__destruct</code>。</p>
+<p><strong>场景：</strong> 如果后续代码会检测并清空你的恶意对象，或者 <code>throw Exception</code> 中断执行，你需要在这个检查之前就触发 <code>__destruct</code>。 <strong>做法：</strong> 修改序列化数组的下标，或者移除结尾的大括号，制造语法错误。</p>
+<h4 id="3-gc-垃圾回收-触发">3. GC (垃圾回收) 触发<a hidden class="anchor" aria-hidden="true" href="#3-gc-垃圾回收-触发">#</a></h4>
+<p><strong>原理：</strong> 利用数组的引用赋值（例如让数组的某个元素引用数组本身），在反序列化完成后，由于引用计数机制，对象会被判定为垃圾而提前销毁。这是一种极其隐蔽的触发 <code>__destruct</code> 的方式。</p>
+<h3 id="实战工具phpggc">实战工具：PHPGGC<a hidden class="anchor" aria-hidden="true" href="#实战工具phpggc">#</a></h3>
+<p><strong>PHPGGC (PHP Generic Gadget Chains)</strong> 是反序列化领域的“瑞士军刀”。它集成了 Laravel, Symfony, ThinkPHP, Yii 等主流框架的现成利用链。</p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2026 <a href="http://localhost:1313/">H4ck3r Station</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu');
+    if (menu) {
+        
+        const scrollPosition = localStorage.getItem("menu-scroll-position");
+        if (scrollPosition) {
+            menu.scrollLeft = parseInt(scrollPosition, 10);
+        }
+        
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        const html = document.querySelector("html");
+        if (html.dataset.theme === "dark") {
+            html.dataset.theme = 'light';
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            html.dataset.theme = 'dark';
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerHTML = 'copy';
+
+        function copyingDone() {
+            copybutton.innerHTML = 'copied!';
+            setTimeout(() => {
+                copybutton.innerHTML = 'copy';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+            
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script>
+</body>
+
+</html>

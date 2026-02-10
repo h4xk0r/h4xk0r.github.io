@@ -365,11 +365,11 @@ U - unicode string Unicode 编码的字符串
 
 漏洞的入口在install.php文件中，而在执行`unserialize`之前还做了两个判断
 
-![image-20260207212737868](C:\Users\huawei\AppData\Roaming\Typora\typora-user-images\image-20260207212737868.png)
+![](image-20260207212737868.png)
 
 第一个是判断有没有安装，另一个检查refer头必须是站内url
 
-![image-20260207214109081](C:\Users\huawei\AppData\Roaming\Typora\typora-user-images\image-20260207214109081.png)
+![](image-20260207214109081.png)
 
 从Cookie中获取`__typecho_config`字段的值，进行base64解码，之后反序列化 找到入口后我们再找怎么利用，想要利用就要有相应的魔术方法配合
 
@@ -383,23 +383,23 @@ __toString()	对象转换成字符串调用
 
 搜索`__toString()`,找到三个
 
-![image-20260207221914581](C:\Users\huawei\AppData\Roaming\Typora\typora-user-images\image-20260207221914581.png)
+![](image-20260207221914581.png)
 
 一个一个看首先`config.php`,没有价值
 
-![image-20260207223747847](C:\Users\huawei\AppData\Roaming\Typora\typora-user-images\image-20260207223747847.png)
+![](image-20260207223747847.png)
 
 看`Query.php`
 
-![image-20260207225236927](C:\Users\huawei\AppData\Roaming\Typora\typora-user-images\image-20260207225236927.png)
+![](image-20260207225236927.png)
 
-![image-20260207225311815](C:\Users\huawei\AppData\Roaming\Typora\typora-user-images\image-20260207225311815.png)
+![](image-20260207225311815.png)
 
 都在拼接sql语句，跳不出去
 
 看`Feed.php`
 
-![image-20260207230915808](C:\Users\huawei\AppData\Roaming\Typora\typora-user-images\image-20260207230915808.png)
+![](image-20260207230915808.png)
 
  调用了`$item['author']->screenName`，这是一个当前类的私有变量.
 
@@ -410,11 +410,11 @@ __toString()	对象转换成字符串调用
 
 那下一步思路就很明确了，全局搜索`function __get`，再`request.php`中找到
 
-![image-20260207234929891](C:\Users\huawei\AppData\Roaming\Typora\typora-user-images\image-20260207234929891.png)
+![](image-20260207234929891.png)
 
 继续跟进`get`方法
 
-![image-20260208000328232](C:\Users\huawei\AppData\Roaming\Typora\typora-user-images\image-20260208000328232.png)
+![](image-20260208000328232.png)
 
 这里去`_params`去读取值
 
@@ -422,7 +422,7 @@ __toString()	对象转换成字符串调用
 
 再往下，检查值不能是数组，字符串长度大于零，然后直接丢进了`_applyFilter`方法，继续跟进
 
-![image-20260208001009296](C:\Users\huawei\AppData\Roaming\Typora\typora-user-images\image-20260208001009296.png)
+![](image-20260208001009296.png)
 
 这里的`call_user_func`是可控的，这里的`$filter`我们可以控制成任何的函数(`system`,`exec`等),`$value`就是塞进去执行的内容
 

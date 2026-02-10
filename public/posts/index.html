@@ -87,6 +87,52 @@
 
 <article class="post-entry"> 
   <header class="entry-header">
+    <h2 class="entry-hint-parent">PHP反序列化
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>距离第一次学习php反序列已经很长时间了，初次学习时就学的迷迷糊糊，有很多理解不到位的地方，正好最近有时间打算回过头重新开始学习一遍，理解不到位之处请各位大佬多多指正。
+为什么需要序列化和反序列化？ 网络传输只能处理位流(Bytes) , 当你在java,php,python中定义一个复杂的用户对象，但是路由器并不认识，只能通过序列化成字符串的方式以字节流的方式传输，传输流程大致如下：
+服务器对象–&gt; 序列化–&gt; 字节流–&gt; 网络传输–&gt; 反序列化–&gt; 客户端
+内存(RAM)易失，程序运行在内存中，一旦断电，关闭数据就会消失
+php中的序列化反序列化函数 序列化：serialize()
+反序列化：unserialize()
+漏洞利用 前提: 服务端(不论是当前代码还是所包含的代码中)必须要有对象(序列化形式)所对应的类, 否则无法反序列化
+例如: payload:O:1:&#34;**S**&#34;:1:{s:4:&#34;test&#34;;s:29:&#34;&lt;script&gt;alert(&#39;xss&#39;)&lt;/script&gt;&#34;;} 这时候如果服务端没有一个叫做S的类, 就会反序列化失败
+所以说, 想要发起反序列化攻击, 必要条件之一: 必须知道服务端有哪些类
+魔术方法 注:加黑重点关注
+魔术方法 描述 __construct() 构造方法，当对象被实例化（new）时自动调用。 __destruct() 析构方法，当对象被销毁时自动调用。反序列化攻击中最常见的入口。 __call() 在对象上下文中调用一个不可访问或不存在的方法时触发。常用的跳板。 __callStatic() 在静态上下文中调用一个不可访问或不存在的方法时触发。 __get() 读取对象中不可访问（未定义或私有）的属性时触发。常用的跳板。 __set() 写入对象中不可访问（未定义或私有）的属性时触发。 __isset() 使用 isset() 或 empty() 检查对象中不可访问的属性时触发。 __unset() 使用 unset() 删除对象中不可访问的属性时触发。 __sleep() 当对象被 serialize() 序列化前触发，通常用于返回需要被序列化的属性列表。 __wakeup() 当对象被 unserialize() 反序列化时触发，常用于初始化资源。反序列化的“点火开关”。 __toString() 当对象被转换成字符串（如 echo 或拼接）时自动调用。核心跳板。 __invoke() 当尝试以函数方式调用对象（如 $obj()）时触发。常用的跳板。 __clone() 当对象使用 clone 关键字被克隆时调用。 __serialize() PHP 7.4&#43; 引入。序列化前触发，优先级高于 __sleep。返回一个包含对象数据的数组。 __unserialize() PHP 7.4&#43; 引入。反序列化后触发，优先级高于 __wakeup。用于恢复对象状态。 __set_state() 当使用 var_export() 导出类时触发。必须是静态方法，返回类实例。 __debugInfo() 当使用 var_dump() 打印对象信息时触发，用于控制显示的属性。 1、 __construct() 和 __destruct()
+...</p>
+  </div>
+  <footer class="entry-footer"><span title='2026-02-07 00:00:00 +0000 UTC'>February 7, 2026</span>&nbsp;·&nbsp;<span>5 min</span></footer>
+  <a class="entry-link" aria-label="post link to PHP反序列化" href="http://localhost:1313/posts/php_serialize/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">XML 漏洞详解
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>XML漏洞 理论： xml是一种用来传输和存储数据的格式，长得有些像HTML
+&lt;user&gt; &lt;username&gt;admin&lt;/username&gt; &lt;role&gt;manager&lt;/role&gt; &lt;/user&gt; 要学习XML就要先学习DTD
+什么是DTD？
+DTD（文档类型定义）使用来定义xml文档的合法结构。重点在于DTD允许定义实体也就是Entity，而他也就是漏洞的根源
+他有些像编程语言中的变量，举两个例子
+内部实体 &lt;!DOCTYPE root [ &lt;!ENTITY name &#34;h4xk0r&#34;&gt; ]&gt; &lt;root&gt;Hello &amp;name;&lt;/root&gt; 外部实体----这是漏洞的核心，xml允许从外部通过url或文件路径加载数据 语法关键字 SYSTEM 或 PUBLIC &lt;!DOCTYPE root[ &lt;!ENTITY xxe SYSTEM &#34;file:///etc/passwd&#34;&gt; ]&gt; &lt;root&gt;&amp;xxe;&lt;root&gt; 如果在实际过程中后端接收了你的XML，并且解析了&amp;xxe这个变量，那么就可以通过构造SYSTEM后面的路径，让服务器读取文件，探测内网 实战向： 怎么去寻找漏洞点： 显式的XML接口：
+如果请求头是 Content-Type: application/xml 或 text/xml，且数据包体是 XML，那么可以直接插入payload进行测试，但是感觉现在很少了
+隐式接口（content-Type欺骗）：
+假设一个api接口是这样的： POST /api/login HTTP/1.1 Content-Type: application/json {&#34;user&#34;: &#34;admin&#34;, &#34;pass&#34;: &#34;123&#34;} 很多框架为了兼容性，会根据Content-Type切换解析器，所以我们构造payload POST /api/login HTTP/1.1 Content-Type: application/xml &lt;-- 修改这里 &lt;?xml version=&#34;1.0&#34; ?&gt; &lt;user&gt;admin&lt;/user&gt; &lt;pass&gt;123&lt;/pass&gt; 如果这时候服务器没有报错说明支持xml格式，那么就可以构造payload测试xxe漏洞了 文件上传（SVG与office）–这个是比较容易被忽视的点
+svg： 是一种图片格式的矢量图。微信头像，网站logo上传处
+Execl/Word（.xlsx/.docx）: 本质是ZIP包，解压后是XML。 简历上传，报表导入处
+...</p>
+  </div>
+  <footer class="entry-footer"><span title='2026-02-04 00:00:00 +0000 UTC'>February 4, 2026</span>&nbsp;·&nbsp;<span>3 min</span></footer>
+  <a class="entry-link" aria-label="post link to XML 漏洞详解" href="http://localhost:1313/posts/xml/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
     <h2 class="entry-hint-parent">MySQL getshell
     </h2>
   </header>
