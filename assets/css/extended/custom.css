@@ -1,0 +1,126 @@
+/* [保留] 首页文章悬停滑动 */
+.post-entry {
+    background: transparent !important;
+    border: none !important;
+    border-bottom: 1px solid var(--border) !important;
+    padding: 30px 0 !important;
+    transition: transform 0.3s cubic-bezier(0.1, 0.7, 0.1, 1) !important;
+}
+.post-entry:hover { transform: translateX(10px) !important; }
+
+/* [核心修改] 方案一：大屏幕下正文居中布局 */
+@media screen and (min-width: 1280px) {
+    .main { 
+        /* 取消 18% 的左边距，改为自动外边距实现居中 */
+        margin-left: auto !important; 
+        margin-right: auto !important; 
+        max-width: 800px !important; 
+        float: none !important;
+    }
+
+    /* [保留] 目录容器布局：依然固定在右侧 */
+    .toc {
+        position: fixed !important;
+        /* 这里根据 800px 居中的正文重新微调位置，确保不重叠 */
+        left: calc(50% + 420px) !important; 
+        top: 100px !important;
+        width: 320px !important;
+        max-height: calc(100vh - 160px) !important;
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+        overscroll-behavior: contain !important;
+        z-index: 100 !important;
+        background: transparent !important;
+        border: none !important;
+    }
+
+    .toc .inner h4, .toc summary { display: none !important; }
+    .toc ul, .toc li { list-style: none !important; padding: 0 !important; margin: 0 !important; }
+
+    /* 子目录：默认隐藏 */
+    .toc ul ul {
+        display: none;
+        margin-left: 15px !important;
+        border-left: none !important;
+    }
+
+    /* [核心] 链接样式 */
+    .toc a {
+        display: block !important;
+        position: relative !important;
+        padding: 6px 10px 6px 50px !important; 
+        text-decoration: none !important;
+        white-space: normal !important;
+        word-break: break-all !important;
+        line-height: 1.6 !important;
+        color: var(--secondary) !important;
+        font-size: 0.9rem !important;
+        opacity: 0.8;
+        transition: all 0.2s ease;
+    }
+
+    /* [核心] 箭头样式 */
+    .toc li:has(ul) > a::before {
+        content: "›"; 
+        position: absolute !important;
+        left: 0 !important;
+        width: 45px !important;
+        height: 100% !important;
+        top: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        font-size: 24px !important;
+        font-weight: 300 !important;
+        opacity: 0.4;
+        transition: transform 0.2s ease;
+        pointer-events: none;
+    }
+
+    /* 旋转效果 */
+    .toc li.is-expanded > a::before {
+        transform: rotate(90deg) !important;
+        opacity: 1;
+        color: #2980b9;
+    }
+
+    /* 一级标题蓝线 */
+    .toc > .inner > ul > li > a {
+        border-left: 4px solid #2980b9 !important;
+    }
+
+    /* 子标题缩进 */
+    .toc ul ul li a {
+        border-left: none !important;
+        padding-left: 35px !important; 
+    }
+
+    .toc a:hover {
+        background: rgba(128, 128, 128, 0.08) !important;
+        color: var(--primary) !important;
+    }
+
+    .toc::-webkit-scrollbar { width: 4px; }
+    .toc::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+}
+
+/* ============================================================
+   响应式处理：窄屏幕下彻底隐藏目录
+   ============================================================ */
+@media screen and (max-width: 1279px) {
+    .toc {
+        display: none !important;
+        visibility: hidden !important;
+    }
+    /* 窄屏幕下保持正文合理的宽度 */
+    .main {
+        margin: 0 auto !important;
+        max-width: 95% !important;
+    }
+}
+
+@media screen and (min-width: 1280px) {
+    .toc {
+        display: block !important;
+    }
+}

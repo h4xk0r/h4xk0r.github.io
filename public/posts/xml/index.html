@@ -58,7 +58,7 @@ svg： 是一种图片格式的矢量图。微信头像，网站logo上传处
 Execl/Word（.xlsx/.docx）: 本质是ZIP包，解压后是XML。 简历上传，报表导入处">
 <meta name="author" content="">
 <link rel="canonical" href="http://localhost:1313/posts/xml/">
-<link crossorigin="anonymous" href="/assets/css/stylesheet.a29c24210eb31d9ce56f669c66a35c9c51b17376b7764e336a49af7dec914cf0.css" integrity="sha256-opwkIQ6zHZzlb2acZqNcnFGxc3a3dk4zakmvfeyRTPA=" rel="preload stylesheet" as="style">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.a72a21d173e6574a7d787ef864b8ff56506981bd547deea0fbd1766f099539cc.css" integrity="sha256-pyoh0XPmV0p9eH74ZLj/VlBpgb1Ufe6g&#43;9F2bwmVOcw=" rel="preload stylesheet" as="style">
 <link rel="icon" href="http://localhost:1313/favicon.ico">
 <link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
@@ -136,7 +136,55 @@ Execl/Word（.xlsx/.docx）: 本质是ZIP包，解压后是XML。 简历上传�
     <div class="post-meta"><span title='2026-02-04 00:00:00 +0000 UTC'>February 4, 2026</span>&nbsp;·&nbsp;<span>3 min</span>
 
 </div>
-  </header> 
+  </header> <div class="toc">
+    <details  open>
+        <summary accesskey="c" title="(Alt + C)">
+            <span class="details">Table of Contents</span>
+        </summary>
+
+        <div class="inner"><ul>
+                <li>
+                    <a href="#xml%e6%bc%8f%e6%b4%9e" aria-label="XML漏洞">XML漏洞</a><ul>
+                        
+                <li>
+                    <a href="#%e7%90%86%e8%ae%ba" aria-label="理论：">理论：</a></li>
+                <li>
+                    <a href="#%e5%ae%9e%e6%88%98%e5%90%91" aria-label="实战向：">实战向：</a><ul>
+                        
+                <li>
+                    <a href="#%e6%80%8e%e4%b9%88%e5%8e%bb%e5%af%bb%e6%89%be%e6%bc%8f%e6%b4%9e%e7%82%b9" aria-label="怎么去寻找漏洞点：">怎么去寻找漏洞点：</a></li>
+                <li>
+                    <a href="#%e5%ae%9e%e6%88%98payload" aria-label="实战payload">实战payload</a></li>
+                <li>
+                    <a href="#%e7%89%b9%e6%ae%8a%e6%8a%80%e5%b7%a7%e5%8f%8a%e7%bb%95%e8%bf%87" aria-label="特殊技巧及绕过">特殊技巧及绕过</a><ul>
+                        <ul>
+                        
+                <li>
+                    <a href="#%e6%8a%80%e5%b7%a7" aria-label="技巧：">技巧：</a></li>
+                <li>
+                    <a href="#%e7%bb%95%e8%bf%87" aria-label="绕过：">绕过：</a><ul>
+                        
+                <li>
+                    <a href="#%e6%8a%80%e5%b7%a7%e4%b8%80-php%e7%9a%84base64%e7%bc%96%e7%a0%81%e8%af%bb%e5%8f%96-%e4%b8%ba%e4%ba%86%e5%ba%94%e5%af%b9%e8%af%bb%e5%8f%96%e7%9a%84%e6%96%87%e4%bb%b6%e4%b8%ad%e5%8c%85%e5%90%ab%e7%89%b9%e6%ae%8a%e5%ad%97%e7%ac%a6" aria-label="技巧一： php的base64编码读取 ，为了应对读取的文件中包含特殊字符">技巧一： php的base64编码读取 ，为了应对读取的文件中包含特殊字符</a></li>
+                <li>
+                    <a href="#%e6%8a%80%e5%b7%a7%e4%ba%8c-cdata%e7%bb%95%e8%bf%87" aria-label="技巧二： CDATA绕过">技巧二： CDATA绕过</a></li>
+                <li>
+                    <a href="#%e6%8a%80%e5%b7%a7%e4%b8%89dtd%e6%96%87%e4%bb%b6%e9%87%8d%e5%86%99" aria-label="**技巧三：**DTD文件重写">**技巧三：**DTD文件重写</a>
+                </li>
+            </ul>
+            </li>
+            </ul>
+            </li>
+            </ul>
+            </ul>
+            </li>
+            </ul>
+            </li>
+            </ul>
+        </div>
+    </details>
+</div>
+
   <div class="post-content"><h1 id="xml漏洞">XML漏洞<a hidden class="anchor" aria-hidden="true" href="#xml漏洞">#</a></h1>
 <h2 id="理论">理论：<a hidden class="anchor" aria-hidden="true" href="#理论">#</a></h2>
 <p>xml是一种用来传输和存储数据的格式，长得有些像HTML</p>
@@ -422,38 +470,63 @@ end
 </a>
 
 <script>
+    
     let menu = document.getElementById('menu');
     if (menu) {
-        
         const scrollPosition = localStorage.getItem("menu-scroll-position");
         if (scrollPosition) {
             menu.scrollLeft = parseInt(scrollPosition, 10);
         }
-        
         menu.onscroll = function () {
             localStorage.setItem("menu-scroll-position", menu.scrollLeft);
         }
     }
 
+    
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener("click", function (e) {
-            e.preventDefault();
-            var id = this.getAttribute("href").substr(1);
-            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
-                    behavior: "smooth"
-                });
-            } else {
-                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            const id = this.getAttribute("href").substr(1);
+            if (!id) return;
+
+            
+            
+            const nextUl = this.nextElementSibling;
+            if (this.closest('.toc') && nextUl && nextUl.tagName === 'UL') {
+                const rect = this.getBoundingClientRect();
+                const offsetX = e.clientX - rect.left;
+
+                
+                if (offsetX < 45) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    const isVisible = window.getComputedStyle(nextUl).display !== 'none';
+                    nextUl.style.display = isVisible ? 'none' : 'block';
+                    this.parentElement.classList.toggle('is-expanded');
+                    
+                    return false; 
+                }
             }
-            if (id === "top") {
-                history.replaceState(null, null, " ");
-            } else {
-                history.pushState(null, null, `#${id}`);
+
+            
+            
+            e.preventDefault();
+            const targetElement = document.querySelector(`[id='${decodeURIComponent(id)}']`);
+            if (targetElement) {
+                if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                    targetElement.scrollIntoView({ behavior: "smooth" });
+                } else {
+                    targetElement.scrollIntoView();
+                }
+                
+                if (id === "top") {
+                    history.replaceState(null, null, " ");
+                } else {
+                    history.pushState(null, null, `#${id}`);
+                }
             }
         });
     });
-
 </script>
 <script>
     var mybutton = document.getElementById("top-link");
@@ -466,7 +539,6 @@ end
             mybutton.style.opacity = "0";
         }
     };
-
 </script>
 <script>
     document.getElementById("theme-toggle").addEventListener("click", () => {
@@ -479,12 +551,10 @@ end
             localStorage.setItem("pref-theme", 'dark');
         }
     })
-
 </script>
 <script>
     document.querySelectorAll('pre > code').forEach((codeblock) => {
         const container = codeblock.parentNode.parentNode;
-
         const copybutton = document.createElement('button');
         copybutton.classList.add('copy-code');
         copybutton.innerHTML = 'copy';
@@ -502,7 +572,6 @@ end
                 copyingDone();
                 return;
             }
-
             const range = document.createRange();
             range.selectNodeContents(codeblock);
             const selection = window.getSelection();
@@ -518,16 +587,12 @@ end
         if (container.classList.contains("highlight")) {
             container.appendChild(copybutton);
         } else if (container.parentNode.firstChild == container) {
-            
         } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
-            
             codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
         } else {
-            
             codeblock.parentNode.appendChild(copybutton);
         }
     });
-</script>
-</body>
+</script></body>
 
 </html>

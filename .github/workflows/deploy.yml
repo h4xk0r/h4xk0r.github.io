@@ -36,3 +36,4 @@ jobs:
         with:
           # --- 关键修改：在这里指定你的非标准端口 ---
           REMOTE_PORT: "50022" # 将 1234 替换为你真实的 SSH 端口号
+          SSH_CMD_ARGS: "-o StrictHostKeyChecking=no"

