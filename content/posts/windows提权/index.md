@@ -496,7 +496,7 @@ winpeas.exe quiet notcolor serviceinfo :: 自动检查提权点
 
 ## 二、提权方式选择流程图
 
-![提权](./images.png)
+![提权](images.png)
 
 ---
 
