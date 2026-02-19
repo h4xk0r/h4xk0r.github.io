@@ -3,26 +3,25 @@ languageCode = "zh-cn"
 title = "H4ck3r Station"
 theme = "PaperMod"
 
+# 新增：适配 Hugo 0.156+ 的作者信息
+[author]
+    name = "h4xk0r"
+
 [outputs]
     home = ["HTML", "RSS", "JSON"]
 
 [params]
-    # 1. 先放普通参数 (保证 ToC 能够被正确解析)
     mainSections = ["posts"]
     defaultTheme = "dark"
     ShowCodeCopyButtons = true
     ShowReadingTime = true
     ShowSearchButton = true
-    
-    # 目录配置放在这里最稳妥
     ShowToc = true          
     TocOpen = true          
 
-    # 2. 再放子层级参数
     [params.homeInfoParams]
         Title = "Security Documentation"
 
-    # 3. 最后放数组类参数 (socialIcons 必须放在 params 区块的最后)
     [[params.socialIcons]]
         name = "github"
         url = "https://github.com/h4xk0r"
@@ -39,9 +38,10 @@ theme = "PaperMod"
         url = "/search/"
         weight = 20
     [[menu.main]]
+        identifier = "categories"
         name = "分类"
-        url = "categories/"
-        weight = 10
+        url = "/categories/"
+        weight = 30
 
 [markup.goldmark.renderer]
     unsafe = true
