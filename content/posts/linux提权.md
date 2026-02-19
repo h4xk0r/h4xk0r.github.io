@@ -2,6 +2,7 @@
 date = '2026-02-15'
 draft = false
 title = 'Linux提权'
+categories = ["内网"]
 
 +++
 

@@ -6,8 +6,48 @@
     <description>Recent content in Posts on H4ck3r Station</description>
     <generator>Hugo -- 0.155.1</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Sun, 15 Feb 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 16 Feb 2026 00:00:00 +0000</lastBuildDate>
     <atom:link href="http://localhost:1313/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Java基础</title>
+      <link>http://localhost:1313/posts/java%E5%9F%BA%E7%A1%80/</link>
+      <pubDate>Mon, 16 Feb 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/java%E5%9F%BA%E7%A1%80/</guid>
+      <description>&lt;h3 id=&#34;java-反射&#34;&gt;JAVA 反射&lt;/h3&gt;
+&lt;h5 id=&#34;什么是java的反射&#34;&gt;什么是java的反射&lt;/h5&gt;
+&lt;p&gt;java反射就是在程序运行状态中，能够知道任何一个类的所有属性和方法，并且能够调用这些属性和方法的功能&lt;/p&gt;
+&lt;h5 id=&#34;正向-vs-反向&#34;&gt;正向 VS 反向&lt;/h5&gt;
+&lt;p&gt;&lt;strong&gt;正向流程：&lt;/strong&gt; 导入类 &amp;ndash;&amp;gt; &lt;code&gt;new&lt;/code&gt;对象 &amp;ndash;&amp;gt; 调用对象&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;User user = new User(); user.login();
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;如果类不存在就报错&lt;/p&gt;
+&lt;p&gt;**反向流程：**拿到字符串类名 &amp;ndash;&amp;gt; 让JVM去找这个类 &amp;ndash;&amp;gt; 强行拆解这个类 &amp;ndash;&amp;gt;  调用里面的东西&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;Class.forName(&amp;#34;com.User&amp;#34;).getMethod(&amp;#34;login&amp;#34;).invoke(obj);
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;动态加载类，即使编译时类还没有也能运行&lt;/p&gt;
+&lt;h3 id=&#34;类加载机制&#34;&gt;类加载机制&lt;/h3&gt;
+&lt;h5 id=&#34;什么是类加载&#34;&gt;什么是类加载&lt;/h5&gt;
+&lt;p&gt;java代码进行编译后就是&lt;code&gt;.class&lt;/code&gt;文件（字节码），类加载就是把这些二进制数据读进内存，解析并生成一个&lt;code&gt;java.lang.Class&lt;/code&gt;对象的过程&lt;/p&gt;
+&lt;h5 id=&#34;类加载的三个阶段&#34;&gt;类加载的三个阶段&lt;/h5&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;Loading（加载） 读取字节流，不执行代码
+Linking（链接） 分为验证，准备，解析。 一般不执行代码
+lnitialization(初始化) 执行静态代码块，静态变量的赋值动作
+&lt;/code&gt;&lt;/pre&gt;&lt;h6 id=&#34;两种攻击方式&#34;&gt;两种攻击方式：&lt;/h6&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;例子&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;：&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Evil&lt;/span&gt; {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#75715e&#34;&gt;// 1. 静态变量赋值&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;static&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;int&lt;/span&gt; a &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; runCommand(); 
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#75715e&#34;&gt;// 2. 静态代码块&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;static&lt;/span&gt; {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        System.&lt;span style=&#34;color:#a6e22e&#34;&gt;out&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;println&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;静态代码块被执行了&amp;#34;&lt;/span&gt;);
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    }
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;static&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;int&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;runCommand&lt;/span&gt;() {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        System.&lt;span style=&#34;color:#a6e22e&#34;&gt;out&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;println&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;静态变量赋值触发了恶意方法！&amp;#34;&lt;/span&gt;);
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; 1;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    }
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;会会先执行赋值，然后是静态代码块。因为初始化执行的顺序是 “静态变量赋值” 和 “静态代码块”&lt;/p&gt;</description>
+    </item>
     <item>
       <title>Linux提权</title>
       <link>http://localhost:1313/posts/linux%E6%8F%90%E6%9D%83/</link>

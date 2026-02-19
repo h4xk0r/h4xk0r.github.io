@@ -2,7 +2,7 @@
 date = '2026-02-15'
 draft = false
 title = 'Windows提权'
-
+categories = ["内网"]
 +++
 
 # Windows工作组环境和域环境提权方式详解

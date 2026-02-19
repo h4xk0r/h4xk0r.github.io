@@ -5,11 +5,11 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="robots" content="noindex, nofollow">
-<title>404 Page not found | H4ck3r Station</title>
+<title>Java | H4ck3r Station</title>
 <meta name="keywords" content="">
 <meta name="description" content="">
 <meta name="author" content="">
-<link rel="canonical" href="http://localhost:1313/404.html">
+<link rel="canonical" href="http://localhost:1313/categories/java/">
 <link crossorigin="anonymous" href="/assets/css/stylesheet.a72a21d173e6574a7d787ef864b8ff56506981bd547deea0fbd1766f099539cc.css" integrity="sha256-pyoh0XPmV0p9eH74ZLj/VlBpgb1Ufe6g&#43;9F2bwmVOcw=" rel="preload stylesheet" as="style">
 <link rel="icon" href="http://localhost:1313/favicon.ico">
 <link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
@@ -18,7 +18,8 @@
 <link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
 <meta name="theme-color" content="#2e2e33">
 <meta name="msapplication-TileColor" content="#2e2e33">
-<link rel="alternate" hreflang="en" href="http://localhost:1313/404.html">
+<link rel="alternate" type="application/rss+xml" href="http://localhost:1313/categories/java/index.xml" title="rss">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/categories/java/">
 <noscript>
     <style>
         #theme-toggle,
@@ -82,8 +83,31 @@
         </ul>
     </nav>
 </header>
-<main class="main">
-<div class="not-found">404</div>
+<main class="main"> 
+<header class="page-header">
+  <h1>
+    Java
+  </h1>
+</header>
+
+<article class="post-entry tag-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">Java基础
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>JAVA 反射 什么是java的反射 java反射就是在程序运行状态中，能够知道任何一个类的所有属性和方法，并且能够调用这些属性和方法的功能
+正向 VS 反向 正向流程： 导入类 –&gt; new对象 –&gt; 调用对象
+User user = new User(); user.login(); 如果类不存在就报错
+**反向流程：**拿到字符串类名 –&gt; 让JVM去找这个类 –&gt; 强行拆解这个类 –&gt; 调用里面的东西
+Class.forName(&#34;com.User&#34;).getMethod(&#34;login&#34;).invoke(obj); 动态加载类，即使编译时类还没有也能运行
+类加载机制 什么是类加载 java代码进行编译后就是.class文件（字节码），类加载就是把这些二进制数据读进内存，解析并生成一个java.lang.Class对象的过程
+类加载的三个阶段 Loading（加载） 读取字节流，不执行代码 Linking（链接） 分为验证，准备，解析。 一般不执行代码 lnitialization(初始化) 执行静态代码块，静态变量的赋值动作 两种攻击方式： 例子： class Evil { // 1. 静态变量赋值 public static int a = runCommand(); // 2. 静态代码块 static { System.out.println(&#34;静态代码块被执行了&#34;); } public static int runCommand() { System.out.println(&#34;静态变量赋值触发了恶意方法！&#34;); return 1; } } 会会先执行赋值，然后是静态代码块。因为初始化执行的顺序是 “静态变量赋值” 和 “静态代码块”
+...</p>
+  </div>
+  <footer class="entry-footer"><span title='2026-02-16 00:00:00 +0000 UTC'>February 16, 2026</span>&nbsp;·&nbsp;<span>5 min</span></footer>
+  <a class="entry-link" aria-label="post link to Java基础" href="http://localhost:1313/posts/java%E5%9F%BA%E7%A1%80/"></a>
+</article>
     </main>
     
 <footer class="footer">

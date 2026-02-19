@@ -38,6 +38,10 @@ theme = "PaperMod"
         name = "搜索"
         url = "/search/"
         weight = 20
+    [[menu.main]]
+        name = "分类"
+        url = "categories/"
+        weight = 10
 
 [markup.goldmark.renderer]
     unsafe = true

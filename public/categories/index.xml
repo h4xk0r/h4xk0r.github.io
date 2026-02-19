@@ -6,6 +6,21 @@
     <description>Recent content in Categories on H4ck3r Station</description>
     <generator>Hugo -- 0.155.1</generator>
     <language>zh-cn</language>
+    <lastBuildDate>Mon, 16 Feb 2026 00:00:00 +0000</lastBuildDate>
     <atom:link href="http://localhost:1313/categories/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Java</title>
+      <link>http://localhost:1313/categories/java/</link>
+      <pubDate>Mon, 16 Feb 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/categories/java/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>内网</title>
+      <link>http://localhost:1313/categories/%E5%86%85%E7%BD%91/</link>
+      <pubDate>Sun, 15 Feb 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/categories/%E5%86%85%E7%BD%91/</guid>
+      <description></description>
+    </item>
   </channel>
 </rss>
