@@ -3,20 +3,20 @@ name: Deploy Hugo Blog
 on:
   push:
     branches:
-      - main  # 确认这是你的主分支名
+      - main
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
-          submodules: true
+          submodules: recursive
           fetch-depth: 0
 
       - name: Setup Hugo
-        uses: peaceiris/actions-hugo@v2
+        uses: peaceiris/actions-hugo@v3
         with:
           hugo-version: '0.155.1'
           extended: true
@@ -33,7 +33,5 @@ jobs:
           REMOTE_HOST: ${{ secrets.SERVER_IP }}
           REMOTE_USER: ${{ secrets.SERVER_USER }}
           TARGET: "/var/www/html"
-        with:
-          # --- 关键修改：在这里指定你的非标准端口 ---
-          REMOTE_PORT: "50022" # 将 1234 替换为你真实的 SSH 端口号
+          REMOTE_PORT: "50022"
           SSH_CMD_ARGS: "-o StrictHostKeyChecking=no"

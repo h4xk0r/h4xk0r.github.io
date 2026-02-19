@@ -8,7 +8,7 @@
 <title>Java | H4ck3r Station</title>
 <meta name="keywords" content="">
 <meta name="description" content="">
-<meta name="author" content="">
+<meta name="author" content="h4xk0r">
 <link rel="canonical" href="http://localhost:1313/categories/java/">
 <link crossorigin="anonymous" href="/assets/css/stylesheet.a72a21d173e6574a7d787ef864b8ff56506981bd547deea0fbd1766f099539cc.css" integrity="sha256-pyoh0XPmV0p9eH74ZLj/VlBpgb1Ufe6g&#43;9F2bwmVOcw=" rel="preload stylesheet" as="style">
 <link rel="icon" href="http://localhost:1313/favicon.ico">
@@ -66,11 +66,6 @@
         </div>
         <ul id="menu">
             <li>
-                <a href="http://localhost:1313/categories/" title="分类">
-                    <span>分类</span>
-                </a>
-            </li>
-            <li>
                 <a href="http://localhost:1313/posts/" title="档案">
                     <span>档案</span>
                 </a>
@@ -78,6 +73,11 @@
             <li>
                 <a href="http://localhost:1313/search/" title="搜索 (Alt &#43; /)" accesskey=/>
                     <span>搜索</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/categories/" title="分类">
+                    <span>分类</span>
                 </a>
             </li>
         </ul>
@@ -105,7 +105,7 @@ Class.forName(&#34;com.User&#34;).getMethod(&#34;login&#34;).invoke(obj); 动态
 类加载的三个阶段 Loading（加载） 读取字节流，不执行代码 Linking（链接） 分为验证，准备，解析。 一般不执行代码 lnitialization(初始化) 执行静态代码块，静态变量的赋值动作 两种攻击方式： 例子： class Evil { // 1. 静态变量赋值 public static int a = runCommand(); // 2. 静态代码块 static { System.out.println(&#34;静态代码块被执行了&#34;); } public static int runCommand() { System.out.println(&#34;静态变量赋值触发了恶意方法！&#34;); return 1; } } 会会先执行赋值，然后是静态代码块。因为初始化执行的顺序是 “静态变量赋值” 和 “静态代码块”
 ...</p>
   </div>
-  <footer class="entry-footer"><span title='2026-02-16 00:00:00 +0000 UTC'>February 16, 2026</span>&nbsp;·&nbsp;<span>5 min</span></footer>
+  <footer class="entry-footer"><span title='2026-02-16 00:00:00 +0000 UTC'>February 16, 2026</span>&nbsp;·&nbsp;<span>5 min</span>&nbsp;·&nbsp;<span>h4xk0r</span></footer>
   <a class="entry-link" aria-label="post link to Java基础" href="http://localhost:1313/posts/java%E5%9F%BA%E7%A1%80/"></a>
 </article>
     </main>

@@ -8,7 +8,7 @@
 <title>内网 | H4ck3r Station</title>
 <meta name="keywords" content="">
 <meta name="description" content="">
-<meta name="author" content="">
+<meta name="author" content="h4xk0r">
 <link rel="canonical" href="http://localhost:1313/categories/%E5%86%85%E7%BD%91/">
 <link crossorigin="anonymous" href="/assets/css/stylesheet.a72a21d173e6574a7d787ef864b8ff56506981bd547deea0fbd1766f099539cc.css" integrity="sha256-pyoh0XPmV0p9eH74ZLj/VlBpgb1Ufe6g&#43;9F2bwmVOcw=" rel="preload stylesheet" as="style">
 <link rel="icon" href="http://localhost:1313/favicon.ico">
@@ -66,11 +66,6 @@
         </div>
         <ul id="menu">
             <li>
-                <a href="http://localhost:1313/categories/" title="分类">
-                    <span>分类</span>
-                </a>
-            </li>
-            <li>
                 <a href="http://localhost:1313/posts/" title="档案">
                     <span>档案</span>
                 </a>
@@ -78,6 +73,11 @@
             <li>
                 <a href="http://localhost:1313/search/" title="搜索 (Alt &#43; /)" accesskey=/>
                     <span>搜索</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/categories/" title="分类">
+                    <span>分类</span>
                 </a>
             </li>
         </ul>
@@ -113,7 +113,7 @@ find / -perm -u=s -type f 2&gt;/dev/null 利用/bin/mount提权：
 mkdir /tmp/mount touch /tmp/mount/malicious_file sudo /bin/mount -o bind /tmp/mount /tmp/mount sudo /bin/mount /tmp/mount /tmp/mount 通过此方式可获取root权限 利用/bin/ping提权：
 ...</p>
   </div>
-  <footer class="entry-footer"><span title='2026-02-15 00:00:00 +0000 UTC'>February 15, 2026</span>&nbsp;·&nbsp;<span>6 min</span></footer>
+  <footer class="entry-footer"><span title='2026-02-15 00:00:00 +0000 UTC'>February 15, 2026</span>&nbsp;·&nbsp;<span>6 min</span>&nbsp;·&nbsp;<span>h4xk0r</span></footer>
   <a class="entry-link" aria-label="post link to Linux提权" href="http://localhost:1313/posts/linux%E6%8F%90%E6%9D%83/"></a>
 </article>
 
@@ -139,7 +139,7 @@ sc qc Spooler 修改服务路径：
 reg add &#34;HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Spooler&#34; /t REG_EXPAND_SZ /v ImagePath /d &#34;C:\evil\shell.exe&#34; /f 重启服务：
 ...</p>
   </div>
-  <footer class="entry-footer"><span title='2026-02-15 00:00:00 +0000 UTC'>February 15, 2026</span>&nbsp;·&nbsp;<span>4 min</span></footer>
+  <footer class="entry-footer"><span title='2026-02-15 00:00:00 +0000 UTC'>February 15, 2026</span>&nbsp;·&nbsp;<span>4 min</span>&nbsp;·&nbsp;<span>h4xk0r</span></footer>
   <a class="entry-link" aria-label="post link to Windows提权" href="http://localhost:1313/posts/windows%E6%8F%90%E6%9D%83/"></a>
 </article>
     </main>

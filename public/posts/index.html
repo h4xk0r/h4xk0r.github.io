@@ -8,7 +8,7 @@
 <title>Posts | H4ck3r Station</title>
 <meta name="keywords" content="">
 <meta name="description" content="Posts - H4ck3r Station">
-<meta name="author" content="">
+<meta name="author" content="h4xk0r">
 <link rel="canonical" href="http://localhost:1313/posts/">
 <link crossorigin="anonymous" href="/assets/css/stylesheet.a72a21d173e6574a7d787ef864b8ff56506981bd547deea0fbd1766f099539cc.css" integrity="sha256-pyoh0XPmV0p9eH74ZLj/VlBpgb1Ufe6g&#43;9F2bwmVOcw=" rel="preload stylesheet" as="style">
 <link rel="icon" href="http://localhost:1313/favicon.ico">
@@ -66,11 +66,6 @@
         </div>
         <ul id="menu">
             <li>
-                <a href="http://localhost:1313/categories/" title="分类">
-                    <span>分类</span>
-                </a>
-            </li>
-            <li>
                 <a href="http://localhost:1313/posts/" title="档案">
                     <span class="active">档案</span>
                 </a>
@@ -78,6 +73,11 @@
             <li>
                 <a href="http://localhost:1313/search/" title="搜索 (Alt &#43; /)" accesskey=/>
                     <span>搜索</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/categories/" title="分类">
+                    <span>分类</span>
                 </a>
             </li>
         </ul>
@@ -105,7 +105,7 @@ Class.forName(&#34;com.User&#34;).getMethod(&#34;login&#34;).invoke(obj); 动态
 类加载的三个阶段 Loading（加载） 读取字节流，不执行代码 Linking（链接） 分为验证，准备，解析。 一般不执行代码 lnitialization(初始化) 执行静态代码块，静态变量的赋值动作 两种攻击方式： 例子： class Evil { // 1. 静态变量赋值 public static int a = runCommand(); // 2. 静态代码块 static { System.out.println(&#34;静态代码块被执行了&#34;); } public static int runCommand() { System.out.println(&#34;静态变量赋值触发了恶意方法！&#34;); return 1; } } 会会先执行赋值，然后是静态代码块。因为初始化执行的顺序是 “静态变量赋值” 和 “静态代码块”
 ...</p>
   </div>
-  <footer class="entry-footer"><span title='2026-02-16 00:00:00 +0000 UTC'>February 16, 2026</span>&nbsp;·&nbsp;<span>5 min</span></footer>
+  <footer class="entry-footer"><span title='2026-02-16 00:00:00 +0000 UTC'>February 16, 2026</span>&nbsp;·&nbsp;<span>5 min</span>&nbsp;·&nbsp;<span>h4xk0r</span></footer>
   <a class="entry-link" aria-label="post link to Java基础" href="http://localhost:1313/posts/java%E5%9F%BA%E7%A1%80/"></a>
 </article>
 
@@ -132,7 +132,7 @@ find / -perm -u=s -type f 2&gt;/dev/null 利用/bin/mount提权：
 mkdir /tmp/mount touch /tmp/mount/malicious_file sudo /bin/mount -o bind /tmp/mount /tmp/mount sudo /bin/mount /tmp/mount /tmp/mount 通过此方式可获取root权限 利用/bin/ping提权：
 ...</p>
   </div>
-  <footer class="entry-footer"><span title='2026-02-15 00:00:00 +0000 UTC'>February 15, 2026</span>&nbsp;·&nbsp;<span>6 min</span></footer>
+  <footer class="entry-footer"><span title='2026-02-15 00:00:00 +0000 UTC'>February 15, 2026</span>&nbsp;·&nbsp;<span>6 min</span>&nbsp;·&nbsp;<span>h4xk0r</span></footer>
   <a class="entry-link" aria-label="post link to Linux提权" href="http://localhost:1313/posts/linux%E6%8F%90%E6%9D%83/"></a>
 </article>
 
@@ -154,7 +154,7 @@ Payload: netdoc:///etc/passwd jar:// 协议	它允许你访问并提取 jar 包�
 进制转换： 浏览器和许多网络库支持非十进制的 IP。 八进制： 0177.0.0.1 十六进制： 0x7f.0x0.0x0.0x1 十进制整数（最隐蔽）： 将 IP 换算成一个超大数字。127.0.0.1 ----&gt; 2130706433 特殊省略写法： 127.0.0.1 可以写成 127.1 或 127.0.1。 0.0.0.0 在 Linux 下通常也会指向本地。 IPv6 绕过： 使用 [::1] 代表 127.0.0.1。 使用 IPv6 格式的内网地址。 利用DNS
 ...</p>
   </div>
-  <footer class="entry-footer"><span title='2026-02-15 00:00:00 +0000 UTC'>February 15, 2026</span>&nbsp;·&nbsp;<span>1 min</span></footer>
+  <footer class="entry-footer"><span title='2026-02-15 00:00:00 +0000 UTC'>February 15, 2026</span>&nbsp;·&nbsp;<span>1 min</span>&nbsp;·&nbsp;<span>h4xk0r</span></footer>
   <a class="entry-link" aria-label="post link to SSRF" href="http://localhost:1313/posts/ssrf/"></a>
 </article>
 
@@ -180,7 +180,7 @@ sc qc Spooler 修改服务路径：
 reg add &#34;HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Spooler&#34; /t REG_EXPAND_SZ /v ImagePath /d &#34;C:\evil\shell.exe&#34; /f 重启服务：
 ...</p>
   </div>
-  <footer class="entry-footer"><span title='2026-02-15 00:00:00 +0000 UTC'>February 15, 2026</span>&nbsp;·&nbsp;<span>4 min</span></footer>
+  <footer class="entry-footer"><span title='2026-02-15 00:00:00 +0000 UTC'>February 15, 2026</span>&nbsp;·&nbsp;<span>4 min</span>&nbsp;·&nbsp;<span>h4xk0r</span></footer>
   <a class="entry-link" aria-label="post link to Windows提权" href="http://localhost:1313/posts/windows%E6%8F%90%E6%9D%83/"></a>
 </article>
 
@@ -203,7 +203,7 @@ php中的序列化反序列化函数 序列化：serialize()
 魔术方法 描述 __construct() 构造方法，当对象被实例化（new）时自动调用。 __destruct() 析构方法，当对象被销毁时自动调用。反序列化攻击中最常见的入口。 __call() 在对象上下文中调用一个不可访问或不存在的方法时触发。常用的跳板。 __callStatic() 在静态上下文中调用一个不可访问或不存在的方法时触发。 __get() 读取对象中不可访问（未定义或私有）的属性时触发。常用的跳板。 __set() 写入对象中不可访问（未定义或私有）的属性时触发。 __isset() 使用 isset() 或 empty() 检查对象中不可访问的属性时触发。 __unset() 使用 unset() 删除对象中不可访问的属性时触发。 __sleep() 当对象被 serialize() 序列化前触发，通常用于返回需要被序列化的属性列表。 __wakeup() 当对象被 unserialize() 反序列化时触发，常用于初始化资源。反序列化的“点火开关”。 __toString() 当对象被转换成字符串（如 echo 或拼接）时自动调用。核心跳板。 __invoke() 当尝试以函数方式调用对象（如 $obj()）时触发。常用的跳板。 __clone() 当对象使用 clone 关键字被克隆时调用。 __serialize() PHP 7.4&#43; 引入。序列化前触发，优先级高于 __sleep。返回一个包含对象数据的数组。 __unserialize() PHP 7.4&#43; 引入。反序列化后触发，优先级高于 __wakeup。用于恢复对象状态。 __set_state() 当使用 var_export() 导出类时触发。必须是静态方法，返回类实例。 __debugInfo() 当使用 var_dump() 打印对象信息时触发，用于控制显示的属性。 1、 __construct() 和 __destruct()
 ...</p>
   </div>
-  <footer class="entry-footer"><span title='2026-02-07 00:00:00 +0000 UTC'>February 7, 2026</span>&nbsp;·&nbsp;<span>5 min</span></footer>
+  <footer class="entry-footer"><span title='2026-02-07 00:00:00 +0000 UTC'>February 7, 2026</span>&nbsp;·&nbsp;<span>5 min</span>&nbsp;·&nbsp;<span>h4xk0r</span></footer>
   <a class="entry-link" aria-label="post link to PHP反序列化" href="http://localhost:1313/posts/php_serialize/"></a>
 </article>
 
@@ -226,7 +226,7 @@ svg： 是一种图片格式的矢量图。微信头像，网站logo上传处
 Execl/Word（.xlsx/.docx）: 本质是ZIP包，解压后是XML。 简历上传，报表导入处
 ...</p>
   </div>
-  <footer class="entry-footer"><span title='2026-02-04 00:00:00 +0000 UTC'>February 4, 2026</span>&nbsp;·&nbsp;<span>3 min</span></footer>
+  <footer class="entry-footer"><span title='2026-02-04 00:00:00 +0000 UTC'>February 4, 2026</span>&nbsp;·&nbsp;<span>3 min</span>&nbsp;·&nbsp;<span>h4xk0r</span></footer>
   <a class="entry-link" aria-label="post link to XML 漏洞详解" href="http://localhost:1313/posts/xml/"></a>
 </article>
 
@@ -242,7 +242,7 @@ secure_file_priv没有具体值
 查找:1. 注入报错信息2. 利用内部函数和元数据:Apache (Ubuntu): UNION SELECT 1, load_file(&#39;/etc/apache2/sites-enabled/000-default.conf&#39;), 3Nginx: UNION SELECT 1, load_file(&#39;/etc/nginx/nginx.conf&#39;), 3Windows (IIS): C:\Windows\System32\inetsrv\config\applicationHost.config3.常见的默认路径:Linux (Apache)	/var/www/html/, /var/www/www.example.com/Linux (Nginx)	/usr/share/nginx/html/, /var/www/html/Windows (IIS)	C:\inetpub\wwwroot\Windows (XAMPP)	C:\xampp\htdocs\Windows (phpStudy)	D:\phpstudy_pro\WWW\, C:\phpStudy\WWW\ 漏洞复现 方法一: –os-shell
 ...</p>
   </div>
-  <footer class="entry-footer"><span title='2026-01-30 00:00:00 +0000 UTC'>January 30, 2026</span>&nbsp;·&nbsp;<span>3 min</span></footer>
+  <footer class="entry-footer"><span title='2026-01-30 00:00:00 +0000 UTC'>January 30, 2026</span>&nbsp;·&nbsp;<span>3 min</span>&nbsp;·&nbsp;<span>h4xk0r</span></footer>
   <a class="entry-link" aria-label="post link to MySQL getshell" href="http://localhost:1313/posts/mysql-getshell/"></a>
 </article>
     </main>

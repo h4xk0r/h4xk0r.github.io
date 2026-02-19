@@ -3,19 +3,21 @@ languageCode = "zh-cn"
 title = "H4ck3r Station"
 theme = "PaperMod"
 
-# 新增：适配 Hugo 0.156+ 的作者信息
-[author]
-    name = "h4xk0r"
-
+# 禁用 RSS 以彻底避开 PaperMod 旧模板变量报错
 [outputs]
-    home = ["HTML", "RSS", "JSON"]
+    home = ["HTML", "JSON"]
 
 [params]
+    # 新版 Hugo 要求的作者格式
+    author = "h4xk0r" 
+    
     mainSections = ["posts"]
     defaultTheme = "dark"
     ShowCodeCopyButtons = true
     ShowReadingTime = true
     ShowSearchButton = true
+    
+    # 目录配置
     ShowToc = true          
     TocOpen = true          
 
@@ -38,10 +40,13 @@ theme = "PaperMod"
         url = "/search/"
         weight = 20
     [[menu.main]]
-        identifier = "categories"
         name = "分类"
         url = "/categories/"
         weight = 30
+
+[taxonomies]
+    category = "categories"
+    tag = "tags"
 
 [markup.goldmark.renderer]
     unsafe = true

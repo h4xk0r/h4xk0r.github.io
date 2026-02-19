@@ -2,7 +2,7 @@ name: Deploy Hugo site to Pages
 
 on:
   push:
-    branches: ["main"] # 确保你的分支名叫 main，如果是 master 请修改
+    branches: ["main"]
 
 permissions:
   contents: read
@@ -20,14 +20,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          submodules: recursive # 自动拉取 PaperMod 主题
+          submodules: recursive
           fetch-depth: 0
 
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@v3
         with:
           hugo-version: '0.155.1'
-          extended: true # 支持 PaperMod 的一些高级特性
+          extended: true
 
       - name: Build with Hugo
         run: hugo --minify
