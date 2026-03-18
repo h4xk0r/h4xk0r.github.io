@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto" data-theme="dark">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="noindex, nofollow">
+<title>JS | H4ck3r Station</title>
+<meta name="keywords" content="">
+<meta name="description" content="本人代码能力不是很好，对很多网站框架和文件理解不是很深，所以看js文件的时候难免有些困难，所以有了这篇文章
+JS审计技巧
+遇到source.map(.map)可以直接还原源码
+首先是一些用来搜索的正则：
+
+api/| /v[0-9]|/admin|/internal|/private
+key:|secret:|token:|password:|apikey|sk_ |pk_ |AKIA（AWS）
+fetch|axios|XMLHttpRequest|$.post|$.ajax
+localStorage|sessionStorage|cookie
+if\s*\(\s*user\.role|isAdmin|level|permission
+innerHTML|eval|document\.write（XSS sink）
+
+看完上面这些，还要看什么？
+
+
+密钥
+如: const KEY = &quot;xxx&quot;、process.env.VITE_xxx（Vite 常见泄露）、client_secret。
+
+
+如config.chunk.js 里：
+const stripeConfig = {
+  publishableKey: &#34;pk_live_51Hb...xxxx&#34;,   // Stripe 真实密钥
+  clientSecret: &#34;sk_test_51Hb...xxxx&#34;
+};
+var fallbackSecret = &#34;supersecret2025!@#&#34;;  // 备用密钥
+
+API
+
+可以用上面的正则去搜
+
+逻辑/授权检查
+
+如:  if (user.isAdmin)、if (role === &#39;vip&#39;)、if (canEdit)。
+if (user.vipLevel &gt;= 3) {
+  showDownloadButton();   // 前端判断
+} else {
+  hideIt();
+}
+
+加密/签名
+
+如CryptoJS、encrypt、sign、md5、rsa 函数。
+password: CryptoJS.AES.encrypt(pwd, &#39;hardcoded_key_123&#39;).toString()
+逆向出密钥，就能批量撞库或伪造登录
+不用看的JS
+
+
+第三方库完整代码jquery-3.6.0.min.js、lodash.min.js、react.production.min.js 全文件。 → 只看最上面注释的版本号（查 CVE），其余不看。
+
+
+一些框架的打包，如React/Vue/Next.js 的
+_createElementVNode, useState, render() { ... }
+
+
+还有一些轮番图片等">
+<meta name="author" content="h4xk0r">
+<link rel="canonical" href="http://localhost:1313/posts/js%E5%AE%A1%E8%AE%A1%E6%8A%80%E5%B7%A7/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.a72a21d173e6574a7d787ef864b8ff56506981bd547deea0fbd1766f099539cc.css" integrity="sha256-pyoh0XPmV0p9eH74ZLj/VlBpgb1Ufe6g&#43;9F2bwmVOcw=" rel="preload stylesheet" as="style">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/posts/js%E5%AE%A1%E8%AE%A1%E6%8A%80%E5%B7%A7/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+</noscript>
+<script>
+    if (localStorage.getItem("pref-theme") === "light") {
+        document.querySelector("html").dataset.theme = 'light';
+    }
+
+</script>
+</head>
+<body id="top">
+    <header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="http://localhost:1313/" accesskey="h" title="H4ck3r Station (Alt + H)">H4ck3r Station</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="http://localhost:1313/posts/" title="档案">
+                    <span>档案</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/search/" title="搜索 (Alt &#43; /)" accesskey=/>
+                    <span>搜索</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/categories/" title="分类">
+                    <span>分类</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      JS
+    </h1>
+    <div class="post-meta"><span title='2026-02-28 22:41:23 +0800 CST'>February 28, 2026</span>&nbsp;·&nbsp;<span>1 min</span>&nbsp;·&nbsp;<span>h4xk0r</span>
+
+</div>
+  </header> <div class="toc">
+    <details  open>
+        <summary accesskey="c" title="(Alt + C)">
+            <span class="details">Table of Contents</span>
+        </summary>
+
+        <div class="inner"><ul>
+                <li>
+                    <a href="#js%e5%ae%a1%e8%ae%a1%e6%8a%80%e5%b7%a7" aria-label="JS审计技巧">JS审计技巧</a><ul>
+                        
+                <li>
+                    <a href="#%e7%9c%8b%e5%ae%8c%e4%b8%8a%e9%9d%a2%e8%bf%99%e4%ba%9b%e8%bf%98%e8%a6%81%e7%9c%8b%e4%bb%80%e4%b9%88" aria-label="看完上面这些，还要看什么？">看完上面这些，还要看什么？</a></li>
+                <li>
+                    <a href="#%e4%b8%8d%e7%94%a8%e7%9c%8b%e7%9a%84js" aria-label="不用看的JS">不用看的JS</a></li></ul>
+                </li>
+                <li>
+                    <a href="#%e6%ad%a5%e9%aa%a4" aria-label="步骤：">步骤：</a>
+                </li>
+            </ul>
+        </div>
+    </details>
+</div>
+
+  <div class="post-content"><p>本人代码能力不是很好，对很多网站框架和文件理解不是很深，所以看js文件的时候难免有些困难，所以有了这篇文章</p>
+<h3 id="js审计技巧">JS审计技巧<a hidden class="anchor" aria-hidden="true" href="#js审计技巧">#</a></h3>
+<p>遇到source.map(.map)可以直接还原源码</p>
+<p>首先是一些用来搜索的正则：</p>
+<ul>
+<li><code>api/| /v[0-9]|/admin|/internal|/private</code></li>
+<li><code>key:|secret:|token:|password:|apikey|sk_ |pk_ |AKIA</code>（AWS）</li>
+<li><code>fetch|axios|XMLHttpRequest|$.post|$.ajax</code></li>
+<li><code>localStorage|sessionStorage|cookie</code></li>
+<li><code>if\s*\(\s*user\.role|isAdmin|level|permission</code></li>
+<li><code>innerHTML|eval|document\.write</code>（XSS sink）</li>
+</ul>
+<h4 id="看完上面这些还要看什么">看完上面这些，还要看什么？<a hidden class="anchor" aria-hidden="true" href="#看完上面这些还要看什么">#</a></h4>
+<ol>
+<li>
+<p><strong>密钥</strong></p>
+<p>如: <code>const KEY = &quot;xxx&quot;</code>、<code>process.env.VITE_xxx</code>（Vite 常见泄露）、<code>client_secret</code>。</p>
+</li>
+</ol>
+<p>如config.chunk.js 里：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">stripeConfig</span> <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">publishableKey</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;pk_live_51Hb...xxxx&#34;</span>,   <span style="color:#75715e">// Stripe 真实密钥
+</span></span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">clientSecret</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;sk_test_51Hb...xxxx&#34;</span>
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">fallbackSecret</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;supersecret2025!@#&#34;</span>;  <span style="color:#75715e">// 备用密钥
+</span></span></span></code></pre></div><ol start="2">
+<li><strong>API</strong></li>
+</ol>
+<p>可以用上面的正则去搜</p>
+<ol start="3">
+<li><strong>逻辑/授权检查</strong></li>
+</ol>
+<p>如:  <code>if (user.isAdmin)</code>、<code>if (role === 'vip')</code>、<code>if (canEdit)</code>。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">user</span>.<span style="color:#a6e22e">vipLevel</span> <span style="color:#f92672">&gt;=</span> <span style="color:#ae81ff">3</span>) {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">showDownloadButton</span>();   <span style="color:#75715e">// 前端判断
+</span></span></span><span style="display:flex;"><span>} <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">hideIt</span>();
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><ol start="4">
+<li><strong>加密/签名</strong></li>
+</ol>
+<p>如<code>CryptoJS</code>、<code>encrypt</code>、<code>sign</code>、<code>md5</code>、<code>rsa</code> 函数。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#a6e22e">password</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">CryptoJS</span>.<span style="color:#a6e22e">AES</span>.<span style="color:#a6e22e">encrypt</span>(<span style="color:#a6e22e">pwd</span>, <span style="color:#e6db74">&#39;hardcoded_key_123&#39;</span>).<span style="color:#a6e22e">toString</span>()
+</span></span></code></pre></div><p>逆向出密钥，就能批量撞库或伪造登录</p>
+<h4 id="不用看的js">不用看的JS<a hidden class="anchor" aria-hidden="true" href="#不用看的js">#</a></h4>
+<ol>
+<li>
+<p>第三方库完整代码jquery-3.6.0.min.js、lodash.min.js、react.production.min.js 全文件。 → 只看最上面注释的版本号（查 CVE），其余不看。</p>
+</li>
+<li>
+<p>一些框架的打包，如React/Vue/Next.js 的</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#a6e22e">_createElementVNode</span>, <span style="color:#a6e22e">useState</span>, <span style="color:#a6e22e">render</span>() { ... }
+</span></span></code></pre></div></li>
+<li>
+<p>还有一些轮番图片等</p>
+</li>
+</ol>
+<h3 id="步骤">步骤：<a hidden class="anchor" aria-hidden="true" href="#步骤">#</a></h3>
+<ol>
+<li>
+<p>正则匹配的看完</p>
+</li>
+<li>
+<p>Network看加载</p>
+<pre tabindex="0"><code>F12 → Network → 过滤 js
+刷新页面 / 登录 / 点击关键功能（支付、查看用户列表）
+看哪个 JS 在你操作后才加载 → 那就是核心业务文件
+
+不看的：页面一打开就加载的 vendor.*.js（第三方库，如 React、lodash）
+</code></pre></li>
+<li>
+<p>可以把JS全部下载下来然后搜索：</p>
+<pre tabindex="0"><code>一个简单的搜索
+grep -l -E &#34;fetch|axios|api/|token|secret|isAdmin&#34; *.js
+</code></pre><p>按大小排序看大的文件，就有可能是业务逻辑</p>
+</li>
+</ol>
+<p>注： 先检查有没有source.map ,如果有可以直接还原</p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2026 <a href="http://localhost:1313/">H4ck3r Station</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    
+    let menu = document.getElementById('menu');
+    if (menu) {
+        const scrollPosition = localStorage.getItem("menu-scroll-position");
+        if (scrollPosition) {
+            menu.scrollLeft = parseInt(scrollPosition, 10);
+        }
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            const id = this.getAttribute("href").substr(1);
+            if (!id) return;
+
+            
+            
+            const nextUl = this.nextElementSibling;
+            if (this.closest('.toc') && nextUl && nextUl.tagName === 'UL') {
+                const rect = this.getBoundingClientRect();
+                const offsetX = e.clientX - rect.left;
+
+                
+                if (offsetX < 45) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    const isVisible = window.getComputedStyle(nextUl).display !== 'none';
+                    nextUl.style.display = isVisible ? 'none' : 'block';
+                    this.parentElement.classList.toggle('is-expanded');
+                    
+                    return false; 
+                }
+            }
+
+            
+            
+            e.preventDefault();
+            const targetElement = document.querySelector(`[id='${decodeURIComponent(id)}']`);
+            if (targetElement) {
+                if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                    targetElement.scrollIntoView({ behavior: "smooth" });
+                } else {
+                    targetElement.scrollIntoView();
+                }
+                
+                if (id === "top") {
+                    history.replaceState(null, null, " ");
+                } else {
+                    history.pushState(null, null, `#${id}`);
+                }
+            }
+        });
+    });
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        const html = document.querySelector("html");
+        if (html.dataset.theme === "dark") {
+            html.dataset.theme = 'light';
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            html.dataset.theme = 'dark';
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerHTML = 'copy';
+
+        function copyingDone() {
+            copybutton.innerHTML = 'copied!';
+            setTimeout(() => {
+                copybutton.innerHTML = 'copy';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script></body>
+
+</html>

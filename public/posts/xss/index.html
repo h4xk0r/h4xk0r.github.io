@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto" data-theme="dark">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="noindex, nofollow">
+<title>XSS | H4ck3r Station</title>
+<meta name="keywords" content="">
+<meta name="description" content="逃逸手法分类/选择:
+
+
+**HTML标签内部:**如在&lt;div&gt; xxx &lt;/div&gt;中
+逃逸: 直接闭合标签&lt;/div&gt;  &lt;script&gt;alert(1)&lt;/script&gt;
+
+
+HTML属性内部:&lt;input type=&quot;text&quot; value=&quot;xxxx&quot;&gt;
+逃逸:
+一. 闭合属性,添加事件或者闭合标签 &quot;  onmouseover=&quot;alert(1)或者
+&quot;&gt;  &lt;script&gt;alert(1)&lt;/script&gt;
+
+
+Javascript变量内: &lt;script&gt; var name = &#39;xxxx&#39;; &lt;/script&gt;
+逃逸: 闭合单引号或者标签,闭合或者注释掉后面的代码, &#39;; alert(1);      // 
+
+
+DOM渲染: 数据不回传服务器，直接被前端 JS（如 .innerHTML、eval()）接收并渲染。
+
+
+挖掘思路
+输入框测试: 先看源代码,输入的数据在什么里面,再测试能不能截断或者添加事件等方法,输入绕过的字符如: &#39; &quot; &lt; &gt; / ; \等,观察源代码哪一个被过滤了
+
+变成&amp;lt; 说明做了实体编码
+没有变化,说明有xss的可能
+
+其他测试点:
+
+
+json报错页面: 很多 API 报错时会原样回显你输入的非法 JSON 字段
+
+
+配合文件上传
+https://www.freebuf.com/vuls/418170.html 可以看这篇文章
+
+
+HTTP头(盲XSS) 在 Referer、User-Agent、X-Forwarded-For 中注入盲打 Payload，盲打后台
+
+
+绕过:
+
+
+使用不太常见的标签或者事件:
+这里推荐一个网站 https://portswigger.net/web-security/cross-site-scripting/cheat-sheet
+
+
+编码绕过:
+浏览器解析 HTML 时有特定的解码顺序（HTML 解码 -&gt; URL 解码 -&gt; JS 解码）">
+<meta name="author" content="h4xk0r">
+<link rel="canonical" href="http://localhost:1313/posts/xss/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.a72a21d173e6574a7d787ef864b8ff56506981bd547deea0fbd1766f099539cc.css" integrity="sha256-pyoh0XPmV0p9eH74ZLj/VlBpgb1Ufe6g&#43;9F2bwmVOcw=" rel="preload stylesheet" as="style">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/posts/xss/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+</noscript>
+<script>
+    if (localStorage.getItem("pref-theme") === "light") {
+        document.querySelector("html").dataset.theme = 'light';
+    }
+
+</script>
+</head>
+<body id="top">
+    <header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="http://localhost:1313/" accesskey="h" title="H4ck3r Station (Alt + H)">H4ck3r Station</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="http://localhost:1313/posts/" title="档案">
+                    <span>档案</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/search/" title="搜索 (Alt &#43; /)" accesskey=/>
+                    <span>搜索</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/categories/" title="分类">
+                    <span>分类</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      XSS
+    </h1>
+    <div class="post-meta"><span title='2026-03-19 00:33:54 +0800 CST'>March 19, 2026</span>&nbsp;·&nbsp;<span>1 min</span>&nbsp;·&nbsp;<span>h4xk0r</span>
+
+</div>
+  </header> <div class="toc">
+    <details  open>
+        <summary accesskey="c" title="(Alt + C)">
+            <span class="details">Table of Contents</span>
+        </summary>
+
+        <div class="inner"><ul>
+                <li>
+                    <a href="#%e9%80%83%e9%80%b8%e6%89%8b%e6%b3%95%e5%88%86%e7%b1%bb%e9%80%89%e6%8b%a9" aria-label="逃逸手法分类/选择:">逃逸手法分类/选择:</a></li>
+                <li>
+                    <a href="#%e6%8c%96%e6%8e%98%e6%80%9d%e8%b7%af" aria-label="挖掘思路">挖掘思路</a><ul>
+                        <ul>
+                        
+                <li>
+                    <a href="#%e7%bb%95%e8%bf%87" aria-label="绕过:">绕过:</a></li>
+                <li>
+                    <a href="#%e7%99%bd%e7%9b%92%e5%ae%a1%e8%ae%a1%e7%9a%84%e4%b8%80%e4%ba%9b%e6%90%9c%e7%b4%a2%e5%85%b3%e9%94%ae%e8%af%8d" aria-label="白盒审计的一些搜索关键词">白盒审计的一些搜索关键词</a></li></ul>
+                    
+                <li>
+                    <a href="#%e6%8e%a8%e8%8d%90%e6%96%87%e7%ab%a0" aria-label="推荐文章:">推荐文章:</a></li>
+                <li>
+                    <a href="#%e4%b8%80%e4%ba%9b%e6%8e%a8%e8%8d%90%e7%9a%84%e5%b7%a5%e5%85%b7" aria-label="一些推荐的工具:">一些推荐的工具:</a>
+                </li>
+            </ul>
+            </li>
+            </ul>
+        </div>
+    </details>
+</div>
+
+  <div class="post-content"><h2 id="逃逸手法分类选择">逃逸手法分类/选择:<a hidden class="anchor" aria-hidden="true" href="#逃逸手法分类选择">#</a></h2>
+<ol>
+<li>
+<p>**HTML标签内部:**如在<code>&lt;div&gt; xxx &lt;/div&gt;</code>中</p>
+<p><strong>逃逸:</strong> 直接闭合标签<code>&lt;/div&gt;  &lt;script&gt;alert(1)&lt;/script&gt;</code></p>
+</li>
+<li>
+<p><strong>HTML属性内部:</strong><code>&lt;input type=&quot;text&quot; value=&quot;xxxx&quot;&gt;</code></p>
+<p><strong>逃逸:</strong></p>
+<p>一. 闭合属性,添加事件或者闭合标签 <code>&quot;  onmouseover=&quot;alert(1)</code>或者</p>
+<p><code>&quot;&gt;  &lt;script&gt;alert(1)&lt;/script&gt;</code></p>
+</li>
+<li>
+<p><strong>Javascript变量内:</strong> <code>&lt;script&gt; var name = 'xxxx'; &lt;/script&gt;</code></p>
+<p><strong>逃逸:</strong> 闭合单引号或者标签,闭合或者注释掉后面的代码, <code>'; alert(1);      // </code></p>
+</li>
+<li>
+<p><strong>DOM渲染:</strong> 数据不回传服务器，直接被前端 JS（如 <code>.innerHTML</code>、<code>eval()</code>）接收并渲染。</p>
+</li>
+</ol>
+<h2 id="挖掘思路">挖掘思路<a hidden class="anchor" aria-hidden="true" href="#挖掘思路">#</a></h2>
+<p>输入框测试: 先看源代码,输入的数据在什么里面,再测试能不能截断或者添加事件等方法,输入绕过的字符如: <code>' &quot; &lt; &gt; / ; \</code>等,观察源代码哪一个被过滤了</p>
+<ul>
+<li>变成<code>&amp;lt;</code> 说明做了实体编码</li>
+<li>没有变化,说明有xss的可能</li>
+</ul>
+<p>其他测试点:</p>
+<ol>
+<li>
+<p><strong>json报错页面:</strong> 很多 API 报错时会原样回显你输入的非法 JSON 字段</p>
+</li>
+<li>
+<p><strong>配合文件上传</strong></p>
+<p><a href="https://www.freebuf.com/vuls/418170.html">https://www.freebuf.com/vuls/418170.html</a> 可以看这篇文章</p>
+</li>
+<li>
+<p><strong>HTTP头(盲XSS)</strong> 在 <code>Referer</code>、<code>User-Agent</code>、<code>X-Forwarded-For</code> 中注入盲打 Payload，盲打后台</p>
+</li>
+</ol>
+<h4 id="绕过">绕过:<a hidden class="anchor" aria-hidden="true" href="#绕过">#</a></h4>
+<ul>
+<li>
+<p>使用不太常见的标签或者事件:</p>
+<p>这里推荐一个网站 <a href="https://portswigger.net/web-security/cross-site-scripting/cheat-sheet">https://portswigger.net/web-security/cross-site-scripting/cheat-sheet</a></p>
+</li>
+<li>
+<p>编码绕过:</p>
+<p>浏览器解析 HTML 时有特定的解码顺序（HTML 解码 -&gt; URL 解码 -&gt; JS 解码）</p>
+<p>其他编码方式:</p>
+<ol>
+<li>
+<p>动态执行编码(利用 JS 内置函数对加密/编码后的内容进行动态解密执行)</p>
+</li>
+<li>
+<p>CSS编码: 在 <code>style</code> 属性或 CSS 文件中，可以使用反斜杠后跟十六进制</p>
+</li>
+<li>
+<p>JSFuck,AAEncode,JJEncode编码(要求不限制长度,绕waf有效)</p>
+</li>
+</ol>
+</li>
+</ul>
+<h4 id="白盒审计的一些搜索关键词">白盒审计的一些搜索关键词<a hidden class="anchor" aria-hidden="true" href="#白盒审计的一些搜索关键词">#</a></h4>
+<table>
+  <thead>
+      <tr>
+          <th><strong>语言/框架</strong></th>
+          <th><strong>搜索关键词 (高危标志)</strong></th>
+          <th><strong>漏洞原理</strong></th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><strong>Java (Thymeleaf)</strong></td>
+          <td><code>th:utext</code></td>
+          <td>Unescaped Text，直接渲染 HTML</td>
+      </tr>
+      <tr>
+          <td><strong>Java (JSP)</strong></td>
+          <td><code>&lt;%=</code> 或 <code>${...}</code></td>
+          <td>原生输出，默认不转义</td>
+      </tr>
+      <tr>
+          <td><strong>PHP (ThinkPHP/Smarty)</strong></td>
+          <td>`</td>
+          <td>raw`</td>
+      </tr>
+      <tr>
+          <td><strong>PHP (Laravel)</strong></td>
+          <td><code>{!! $var !!}</code></td>
+          <td>强制不转义输出</td>
+      </tr>
+      <tr>
+          <td><strong>Python (Django/Jinja2)</strong></td>
+          <td>`</td>
+          <td>safe`</td>
+      </tr>
+      <tr>
+          <td><strong>Vue.js / React</strong></td>
+          <td><code>v-html</code> / <code>dangerouslySet...</code></td>
+          <td>框架留给开发者的“执行后门”</td>
+      </tr>
+      <tr>
+          <td><strong>前端 JavaScript</strong></td>
+          <td><code>.innerHTML</code> / <code>document.write</code></td>
+          <td>原生 JS 最经典的 DOM XSS 入口</td>
+      </tr>
+  </tbody>
+</table>
+<h3 id="推荐文章">推荐文章:<a hidden class="anchor" aria-hidden="true" href="#推荐文章">#</a></h3>
+<p><code>https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/XSS%20Injection</code></p>
+<h3 id="一些推荐的工具">一些推荐的工具:<a hidden class="anchor" aria-hidden="true" href="#一些推荐的工具">#</a></h3>
+<pre tabindex="0"><code>https://github.com/mandatoryprogrammer/xsshunter-express
+https://github.com/ssl/ezXSS
+https://github.com/s0md3v/XSStrike
+</code></pre>
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2026 <a href="http://localhost:1313/">H4ck3r Station</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    
+    let menu = document.getElementById('menu');
+    if (menu) {
+        const scrollPosition = localStorage.getItem("menu-scroll-position");
+        if (scrollPosition) {
+            menu.scrollLeft = parseInt(scrollPosition, 10);
+        }
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            const id = this.getAttribute("href").substr(1);
+            if (!id) return;
+
+            
+            
+            const nextUl = this.nextElementSibling;
+            if (this.closest('.toc') && nextUl && nextUl.tagName === 'UL') {
+                const rect = this.getBoundingClientRect();
+                const offsetX = e.clientX - rect.left;
+
+                
+                if (offsetX < 45) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    const isVisible = window.getComputedStyle(nextUl).display !== 'none';
+                    nextUl.style.display = isVisible ? 'none' : 'block';
+                    this.parentElement.classList.toggle('is-expanded');
+                    
+                    return false; 
+                }
+            }
+
+            
+            
+            e.preventDefault();
+            const targetElement = document.querySelector(`[id='${decodeURIComponent(id)}']`);
+            if (targetElement) {
+                if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                    targetElement.scrollIntoView({ behavior: "smooth" });
+                } else {
+                    targetElement.scrollIntoView();
+                }
+                
+                if (id === "top") {
+                    history.replaceState(null, null, " ");
+                } else {
+                    history.pushState(null, null, `#${id}`);
+                }
+            }
+        });
+    });
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        const html = document.querySelector("html");
+        if (html.dataset.theme === "dark") {
+            html.dataset.theme = 'light';
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            html.dataset.theme = 'dark';
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerHTML = 'copy';
+
+        function copyingDone() {
+            copybutton.innerHTML = 'copied!';
+            setTimeout(() => {
+                copybutton.innerHTML = 'copy';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script></body>
+
+</html>

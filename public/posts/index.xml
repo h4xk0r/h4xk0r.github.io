@@ -6,8 +6,123 @@
     <description>Recent content in Posts on H4ck3r Station</description>
     <generator>Hugo -- 0.155.1</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Mon, 16 Feb 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 19 Mar 2026 00:33:54 +0800</lastBuildDate>
     <atom:link href="http://localhost:1313/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>XSS</title>
+      <link>http://localhost:1313/posts/xss/</link>
+      <pubDate>Thu, 19 Mar 2026 00:33:54 +0800</pubDate>
+      <guid>http://localhost:1313/posts/xss/</guid>
+      <description>&lt;h2 id=&#34;逃逸手法分类选择&#34;&gt;逃逸手法分类/选择:&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;**HTML标签内部:**如在&lt;code&gt;&amp;lt;div&amp;gt; xxx &amp;lt;/div&amp;gt;&lt;/code&gt;中&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;逃逸:&lt;/strong&gt; 直接闭合标签&lt;code&gt;&amp;lt;/div&amp;gt;  &amp;lt;script&amp;gt;alert(1)&amp;lt;/script&amp;gt;&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;HTML属性内部:&lt;/strong&gt;&lt;code&gt;&amp;lt;input type=&amp;quot;text&amp;quot; value=&amp;quot;xxxx&amp;quot;&amp;gt;&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;逃逸:&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;一. 闭合属性,添加事件或者闭合标签 &lt;code&gt;&amp;quot;  onmouseover=&amp;quot;alert(1)&lt;/code&gt;或者&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;&amp;quot;&amp;gt;  &amp;lt;script&amp;gt;alert(1)&amp;lt;/script&amp;gt;&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Javascript变量内:&lt;/strong&gt; &lt;code&gt;&amp;lt;script&amp;gt; var name = &#39;xxxx&#39;; &amp;lt;/script&amp;gt;&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;逃逸:&lt;/strong&gt; 闭合单引号或者标签,闭合或者注释掉后面的代码, &lt;code&gt;&#39;; alert(1);      // &lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;DOM渲染:&lt;/strong&gt; 数据不回传服务器，直接被前端 JS（如 &lt;code&gt;.innerHTML&lt;/code&gt;、&lt;code&gt;eval()&lt;/code&gt;）接收并渲染。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;挖掘思路&#34;&gt;挖掘思路&lt;/h2&gt;
+&lt;p&gt;输入框测试: 先看源代码,输入的数据在什么里面,再测试能不能截断或者添加事件等方法,输入绕过的字符如: &lt;code&gt;&#39; &amp;quot; &amp;lt; &amp;gt; / ; \&lt;/code&gt;等,观察源代码哪一个被过滤了&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;变成&lt;code&gt;&amp;amp;lt;&lt;/code&gt; 说明做了实体编码&lt;/li&gt;
+&lt;li&gt;没有变化,说明有xss的可能&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;其他测试点:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;json报错页面:&lt;/strong&gt; 很多 API 报错时会原样回显你输入的非法 JSON 字段&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;配合文件上传&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://www.freebuf.com/vuls/418170.html&#34;&gt;https://www.freebuf.com/vuls/418170.html&lt;/a&gt; 可以看这篇文章&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;HTTP头(盲XSS)&lt;/strong&gt; 在 &lt;code&gt;Referer&lt;/code&gt;、&lt;code&gt;User-Agent&lt;/code&gt;、&lt;code&gt;X-Forwarded-For&lt;/code&gt; 中注入盲打 Payload，盲打后台&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h4 id=&#34;绕过&#34;&gt;绕过:&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;使用不太常见的标签或者事件:&lt;/p&gt;
+&lt;p&gt;这里推荐一个网站 &lt;a href=&#34;https://portswigger.net/web-security/cross-site-scripting/cheat-sheet&#34;&gt;https://portswigger.net/web-security/cross-site-scripting/cheat-sheet&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;编码绕过:&lt;/p&gt;
+&lt;p&gt;浏览器解析 HTML 时有特定的解码顺序（HTML 解码 -&amp;gt; URL 解码 -&amp;gt; JS 解码）&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>JS</title>
+      <link>http://localhost:1313/posts/js%E5%AE%A1%E8%AE%A1%E6%8A%80%E5%B7%A7/</link>
+      <pubDate>Sat, 28 Feb 2026 22:41:23 +0800</pubDate>
+      <guid>http://localhost:1313/posts/js%E5%AE%A1%E8%AE%A1%E6%8A%80%E5%B7%A7/</guid>
+      <description>&lt;p&gt;本人代码能力不是很好，对很多网站框架和文件理解不是很深，所以看js文件的时候难免有些困难，所以有了这篇文章&lt;/p&gt;
+&lt;h3 id=&#34;js审计技巧&#34;&gt;JS审计技巧&lt;/h3&gt;
+&lt;p&gt;遇到source.map(.map)可以直接还原源码&lt;/p&gt;
+&lt;p&gt;首先是一些用来搜索的正则：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;api/| /v[0-9]|/admin|/internal|/private&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;key:|secret:|token:|password:|apikey|sk_ |pk_ |AKIA&lt;/code&gt;（AWS）&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;fetch|axios|XMLHttpRequest|$.post|$.ajax&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;localStorage|sessionStorage|cookie&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;if\s*\(\s*user\.role|isAdmin|level|permission&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;innerHTML|eval|document\.write&lt;/code&gt;（XSS sink）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;看完上面这些还要看什么&#34;&gt;看完上面这些，还要看什么？&lt;/h4&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;密钥&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;如: &lt;code&gt;const KEY = &amp;quot;xxx&amp;quot;&lt;/code&gt;、&lt;code&gt;process.env.VITE_xxx&lt;/code&gt;（Vite 常见泄露）、&lt;code&gt;client_secret&lt;/code&gt;。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;如config.chunk.js 里：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-javascript&#34; data-lang=&#34;javascript&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;stripeConfig&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#a6e22e&#34;&gt;publishableKey&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;pk_live_51Hb...xxxx&amp;#34;&lt;/span&gt;,   &lt;span style=&#34;color:#75715e&#34;&gt;// Stripe 真实密钥
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#a6e22e&#34;&gt;clientSecret&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;sk_test_51Hb...xxxx&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;};
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-javascript&#34; data-lang=&#34;javascript&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;var&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;fallbackSecret&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;supersecret2025!@#&amp;#34;&lt;/span&gt;;  &lt;span style=&#34;color:#75715e&#34;&gt;// 备用密钥
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ol start=&#34;2&#34;&gt;
+&lt;li&gt;&lt;strong&gt;API&lt;/strong&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;可以用上面的正则去搜&lt;/p&gt;
+&lt;ol start=&#34;3&#34;&gt;
+&lt;li&gt;&lt;strong&gt;逻辑/授权检查&lt;/strong&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;如:  &lt;code&gt;if (user.isAdmin)&lt;/code&gt;、&lt;code&gt;if (role === &#39;vip&#39;)&lt;/code&gt;、&lt;code&gt;if (canEdit)&lt;/code&gt;。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-javascript&#34; data-lang=&#34;javascript&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; (&lt;span style=&#34;color:#a6e22e&#34;&gt;user&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;vipLevel&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;=&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt;) {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#a6e22e&#34;&gt;showDownloadButton&lt;/span&gt;();   &lt;span style=&#34;color:#75715e&#34;&gt;// 前端判断
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;} &lt;span style=&#34;color:#66d9ef&#34;&gt;else&lt;/span&gt; {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#a6e22e&#34;&gt;hideIt&lt;/span&gt;();
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ol start=&#34;4&#34;&gt;
+&lt;li&gt;&lt;strong&gt;加密/签名&lt;/strong&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;如&lt;code&gt;CryptoJS&lt;/code&gt;、&lt;code&gt;encrypt&lt;/code&gt;、&lt;code&gt;sign&lt;/code&gt;、&lt;code&gt;md5&lt;/code&gt;、&lt;code&gt;rsa&lt;/code&gt; 函数。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-javascript&#34; data-lang=&#34;javascript&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;password&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;CryptoJS&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;AES&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;encrypt&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;pwd&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;hardcoded_key_123&amp;#39;&lt;/span&gt;).&lt;span style=&#34;color:#a6e22e&#34;&gt;toString&lt;/span&gt;()
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;逆向出密钥，就能批量撞库或伪造登录&lt;/p&gt;
+&lt;h4 id=&#34;不用看的js&#34;&gt;不用看的JS&lt;/h4&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;第三方库完整代码jquery-3.6.0.min.js、lodash.min.js、react.production.min.js 全文件。 → 只看最上面注释的版本号（查 CVE），其余不看。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;一些框架的打包，如React/Vue/Next.js 的&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-javascript&#34; data-lang=&#34;javascript&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;_createElementVNode&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;useState&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;render&lt;/span&gt;() { ... }
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;还有一些轮番图片等&lt;/p&gt;</description>
+    </item>
     <item>
       <title>Java基础</title>
       <link>http://localhost:1313/posts/java%E5%9F%BA%E7%A1%80/</link>

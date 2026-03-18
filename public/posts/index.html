@@ -92,6 +92,61 @@
 
 <article class="post-entry"> 
   <header class="entry-header">
+    <h2 class="entry-hint-parent">XSS
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>逃逸手法分类/选择: **HTML标签内部:**如在&lt;div&gt; xxx &lt;/div&gt;中
+逃逸: 直接闭合标签&lt;/div&gt; &lt;script&gt;alert(1)&lt;/script&gt;
+HTML属性内部:&lt;input type=&#34;text&#34; value=&#34;xxxx&#34;&gt;
+逃逸:
+一. 闭合属性,添加事件或者闭合标签 &#34; onmouseover=&#34;alert(1)或者
+&#34;&gt; &lt;script&gt;alert(1)&lt;/script&gt;
+Javascript变量内: &lt;script&gt; var name = &#39;xxxx&#39;; &lt;/script&gt;
+逃逸: 闭合单引号或者标签,闭合或者注释掉后面的代码, &#39;; alert(1); // DOM渲染: 数据不回传服务器，直接被前端 JS（如 .innerHTML、eval()）接收并渲染。
+挖掘思路 输入框测试: 先看源代码,输入的数据在什么里面,再测试能不能截断或者添加事件等方法,输入绕过的字符如: &#39; &#34; &lt; &gt; / ; \等,观察源代码哪一个被过滤了
+变成&amp;lt; 说明做了实体编码 没有变化,说明有xss的可能 其他测试点:
+json报错页面: 很多 API 报错时会原样回显你输入的非法 JSON 字段
+配合文件上传
+https://www.freebuf.com/vuls/418170.html 可以看这篇文章
+HTTP头(盲XSS) 在 Referer、User-Agent、X-Forwarded-For 中注入盲打 Payload，盲打后台
+绕过: 使用不太常见的标签或者事件:
+这里推荐一个网站 https://portswigger.net/web-security/cross-site-scripting/cheat-sheet
+编码绕过:
+浏览器解析 HTML 时有特定的解码顺序（HTML 解码 -&gt; URL 解码 -&gt; JS 解码）
+...</p>
+  </div>
+  <footer class="entry-footer"><span title='2026-03-19 00:33:54 +0800 CST'>March 19, 2026</span>&nbsp;·&nbsp;<span>1 min</span>&nbsp;·&nbsp;<span>h4xk0r</span></footer>
+  <a class="entry-link" aria-label="post link to XSS" href="http://localhost:1313/posts/xss/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">JS
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>本人代码能力不是很好，对很多网站框架和文件理解不是很深，所以看js文件的时候难免有些困难，所以有了这篇文章
+JS审计技巧 遇到source.map(.map)可以直接还原源码
+首先是一些用来搜索的正则：
+api/| /v[0-9]|/admin|/internal|/private key:|secret:|token:|password:|apikey|sk_ |pk_ |AKIA（AWS） fetch|axios|XMLHttpRequest|$.post|$.ajax localStorage|sessionStorage|cookie if\s*\(\s*user\.role|isAdmin|level|permission innerHTML|eval|document\.write（XSS sink） 看完上面这些，还要看什么？ 密钥
+如: const KEY = &#34;xxx&#34;、process.env.VITE_xxx（Vite 常见泄露）、client_secret。
+如config.chunk.js 里：
+const stripeConfig = { publishableKey: &#34;pk_live_51Hb...xxxx&#34;, // Stripe 真实密钥 clientSecret: &#34;sk_test_51Hb...xxxx&#34; }; var fallbackSecret = &#34;supersecret2025!@#&#34;; // 备用密钥 API 可以用上面的正则去搜
+逻辑/授权检查 如: if (user.isAdmin)、if (role === &#39;vip&#39;)、if (canEdit)。
+if (user.vipLevel &gt;= 3) { showDownloadButton(); // 前端判断 } else { hideIt(); } 加密/签名 如CryptoJS、encrypt、sign、md5、rsa 函数。
+password: CryptoJS.AES.encrypt(pwd, &#39;hardcoded_key_123&#39;).toString() 逆向出密钥，就能批量撞库或伪造登录
+不用看的JS 第三方库完整代码jquery-3.6.0.min.js、lodash.min.js、react.production.min.js 全文件。 → 只看最上面注释的版本号（查 CVE），其余不看。
+一些框架的打包，如React/Vue/Next.js 的
+_createElementVNode, useState, render() { ... } 还有一些轮番图片等
+...</p>
+  </div>
+  <footer class="entry-footer"><span title='2026-02-28 22:41:23 +0800 CST'>February 28, 2026</span>&nbsp;·&nbsp;<span>1 min</span>&nbsp;·&nbsp;<span>h4xk0r</span></footer>
+  <a class="entry-link" aria-label="post link to JS" href="http://localhost:1313/posts/js%E5%AE%A1%E8%AE%A1%E6%8A%80%E5%B7%A7/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
     <h2 class="entry-hint-parent">Java基础
     </h2>
   </header>
