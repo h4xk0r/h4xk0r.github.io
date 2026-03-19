@@ -1,6 +1,6 @@
 baseURL = "https://h4xk0r.github.io/"
 languageCode = "zh-cn"
-title = "H4ck3r Station"
+title = "H4xk0r Station"
 theme = "PaperMod"
 
 # 禁用 RSS 以彻底避开 PaperMod 旧模板变量报错
