@@ -1,0 +1,13 @@
+X-Forwarded-For: 127.0.0.1
+X-Client-Ip: 127.0.0.1
+X-Real-Ip: 127.0.0.1
+True-Client-Ip: 127.0.0.1
+Client-Ip: 127.0.0.1
+X-Originating-IP: 127.0.0.1
+X-Remote-IP: 127.0.0.1
+X-Remote-Addr: 127.0.0.1
+Forwarded: for=127.0.0.1;by=127.0.0.1;host=localhost;proto=http
+X-ProxyUser-Ip: 127.0.0.1
+Cluster-Client-IP: 127.0.0.1
+X-Forwarded: 127.0.0.1
+Forwarded-For: 127.0.0.1

