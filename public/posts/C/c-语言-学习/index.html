@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en" dir="auto" data-theme="dark">
 
-<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+<head><meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="robots" content="noindex, nofollow">
-<title>Cybersecurity learning</title>
+<meta name="robots" content="index, follow">
+<title>h4xk0r blog</title>
 <meta name="keywords" content="">
 <meta name="description" content="C 语言 学习
 学习c语言是为了后面学习免杀,记录一下学习过程方便温习
@@ -74,16 +74,16 @@
 
 一个demo:">
 <meta name="author" content="h4xk0r">
-<link rel="canonical" href="http://localhost:1313/posts/c/c-%E8%AF%AD%E8%A8%80-%E5%AD%A6%E4%B9%A0/">
+<link rel="canonical" href="https://b1ckdoor.com/posts/c/c-%E8%AF%AD%E8%A8%80-%E5%AD%A6%E4%B9%A0/">
 <link crossorigin="anonymous" href="/assets/css/stylesheet.a72a21d173e6574a7d787ef864b8ff56506981bd547deea0fbd1766f099539cc.css" integrity="sha256-pyoh0XPmV0p9eH74ZLj/VlBpgb1Ufe6g&#43;9F2bwmVOcw=" rel="preload stylesheet" as="style">
-<link rel="icon" href="http://localhost:1313/favicon.ico">
-<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
-<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
-<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
+<link rel="icon" href="https://b1ckdoor.com/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://b1ckdoor.com/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://b1ckdoor.com/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://b1ckdoor.com/apple-touch-icon.png">
+<link rel="mask-icon" href="https://b1ckdoor.com/safari-pinned-tab.svg">
 <meta name="theme-color" content="#2e2e33">
 <meta name="msapplication-TileColor" content="#2e2e33">
-<link rel="alternate" hreflang="en" href="http://localhost:1313/posts/c/c-%E8%AF%AD%E8%A8%80-%E5%AD%A6%E4%B9%A0/">
+<link rel="alternate" hreflang="en" href="https://b1ckdoor.com/posts/c/c-%E8%AF%AD%E8%A8%80-%E5%AD%A6%E4%B9%A0/">
 <noscript>
     <style>
         #theme-toggle,
@@ -98,13 +98,143 @@
         document.querySelector("html").dataset.theme = 'light';
     }
 
+</script><meta property="og:url" content="https://b1ckdoor.com/posts/c/c-%E8%AF%AD%E8%A8%80-%E5%AD%A6%E4%B9%A0/">
+  <meta property="og:site_name" content="h4xk0r blog">
+  <meta property="og:title" content="h4xk0r blog">
+  <meta property="og:description" content="C 语言 学习 学习c语言是为了后面学习免杀,记录一下学习过程方便温习
+基础知识 程序执行的两种方式: 解释: 借助一个程序,读懂你写的程序去执行 编译: 借助一个程序,把你的程序翻译成计算机懂得语言–机器语言–写的程序,然后执行(整体转换为机器码后，由系统直接调度执行) 整数类型 类型 存储大小 值范围 char 1 字节 -128 到 127 或 0 到 255 unsigned char 1 字节 0 到 255 signed char 1 字节 -128 到 127 int 2 或 4 字节 -32,768 到 32,767 或 -2,147,483,648 到 2,147,483,647 unsigned int 2 或 4 字节 0 到 65,535 或 0 到 4,294,967,295 short 2 字节 -32,768 到 32,767 unsigned short 2 字节 0 到 65,535 long 4 字节 -2,147,483,648 到 2,147,483,647 unsigned long 4 字节 0 到 4,294,967,295 一个demo:">
+  <meta property="og:locale" content="zh-cn">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="">
+<meta name="twitter:description" content="C 语言 学习
+学习c语言是为了后面学习免杀,记录一下学习过程方便温习
+基础知识
+程序执行的两种方式:
+
+解释: 借助一个程序,读懂你写的程序去执行
+编译: 借助一个程序,把你的程序翻译成计算机懂得语言&ndash;机器语言&ndash;写的程序,然后执行(整体转换为机器码后，由系统直接调度执行)
+
+整数类型
+
+  
+      
+          类型
+          存储大小
+          值范围
+      
+  
+  
+      
+          char
+          1 字节
+          -128 到 127 或 0 到 255
+      
+      
+          unsigned char
+          1 字节
+          0 到 255
+      
+      
+          signed char
+          1 字节
+          -128 到 127
+      
+      
+          int
+          2 或 4 字节
+          -32,768 到 32,767 或 -2,147,483,648 到 2,147,483,647
+      
+      
+          unsigned int
+          2 或 4 字节
+          0 到 65,535 或 0 到 4,294,967,295
+      
+      
+          short
+          2 字节
+          -32,768 到 32,767
+      
+      
+          unsigned short
+          2 字节
+          0 到 65,535
+      
+      
+          long
+          4 字节
+          -2,147,483,648 到 2,147,483,647
+      
+      
+          unsigned long
+          4 字节
+          0 到 4,294,967,295
+      
+  
+
+一个demo:">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://b1ckdoor.com/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "",
+      "item": "https://b1ckdoor.com/posts/c/c-%E8%AF%AD%E8%A8%80-%E5%AD%A6%E4%B9%A0/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "",
+  "name": "",
+  "description": "C 语言 学习 学习c语言是为了后面学习免杀,记录一下学习过程方便温习\n基础知识 程序执行的两种方式: 解释: 借助一个程序,读懂你写的程序去执行 编译: 借助一个程序,把你的程序翻译成计算机懂得语言\u0026ndash;机器语言\u0026ndash;写的程序,然后执行(整体转换为机器码后，由系统直接调度执行) 整数类型 类型 存储大小 值范围 char 1 字节 -128 到 127 或 0 到 255 unsigned char 1 字节 0 到 255 signed char 1 字节 -128 到 127 int 2 或 4 字节 -32,768 到 32,767 或 -2,147,483,648 到 2,147,483,647 unsigned int 2 或 4 字节 0 到 65,535 或 0 到 4,294,967,295 short 2 字节 -32,768 到 32,767 unsigned short 2 字节 0 到 65,535 long 4 字节 -2,147,483,648 到 2,147,483,647 unsigned long 4 字节 0 到 4,294,967,295 一个demo:\n",
+  "keywords": [
+    
+  ],
+  "articleBody": "C 语言 学习 学习c语言是为了后面学习免杀,记录一下学习过程方便温习\n基础知识 程序执行的两种方式: 解释: 借助一个程序,读懂你写的程序去执行 编译: 借助一个程序,把你的程序翻译成计算机懂得语言–机器语言–写的程序,然后执行(整体转换为机器码后，由系统直接调度执行) 整数类型 类型 存储大小 值范围 char 1 字节 -128 到 127 或 0 到 255 unsigned char 1 字节 0 到 255 signed char 1 字节 -128 到 127 int 2 或 4 字节 -32,768 到 32,767 或 -2,147,483,648 到 2,147,483,647 unsigned int 2 或 4 字节 0 到 65,535 或 0 到 4,294,967,295 short 2 字节 -32,768 到 32,767 unsigned short 2 字节 0 到 65,535 long 4 字节 -2,147,483,648 到 2,147,483,647 unsigned long 4 字节 0 到 4,294,967,295 一个demo:\n#define _CRT_SECURE_NO_WARNINGS\t//因为scanf容易导致溢出为避免报错加一个宏 #include int main() { int price = 0; const int AMOUNT = 100;\t//定义常量 printf(\"Enter you cash: \"); scanf(\"%d\",\u0026price);\t//\u0026price是取price的地址的意思 int change = AMOUNT - price; printf(\"找您%d元\\n\",change); return 0; } scanf的注意点,如: scanf(\"%d %d\",\u0026a,\u0026b) //那么输入的格式必须为`1空格1`,scanf里面是什么样,就必须输什么样,否则就会报错或者卡住 scanf(\"price%d %d\",\u0026a,\u0026b) //必须输入price1 1 float_demo\nint main() { double foot; double inch; scanf(\"%lf %lf\", \u0026foot,\u0026inch); printf(\"身高是%f米,\\n\", (foot + inch / 12) * 0.3048); return 0; } 变量类型 描述 scanf (输入) printf (输出) 占用内存 int 整数 %d %d 4 字节 float 单精度小数 %f %f 4 字节 double 双精度小数 %lf %f 或 %lf 8 字节 char 单个字符 %c %c 1 字节 char[] 字符串 %s %s 视长度而定 long long 超大整数 %lld %lld 8 字节 Calculate the time difference demo\nint main() { int hours, minutes; int hours1, minutes1; scanf(\"%d:%d\", \u0026hours, \u0026minutes); scanf(\"%d:%d\", \u0026hours1, \u0026minutes1); int t1 = hours * 60 + minutes; int t2 = hours1 * 60 + minutes1; int diff = t2 - t1; printf(\"时间差是%d小时%d分钟\", diff/60,diff%60); } 运算符优先级 if判断 int main() { int hours, minutes; int hours1, minutes1; scanf(\"%d:%d\", \u0026hours, \u0026minutes); scanf(\"%d:%d\", \u0026hours1, \u0026minutes1); int t1 = hours * 60 + minutes; int t2 = hours1 * 60 + minutes1; int ih = hours1 - hours; int im = minutes1 - minutes; if (im \u003c 0) { im = 60 + im; ih --; } printf(\"时间差是%d小时%d分钟\",ih,im ); return 0; } 三个数最大值\nint main() { int num1, num2, num3; int max; scanf(\"%d %d %d\", \u0026num1, \u0026num2, \u0026num3); if (num1 \u003e num2) { if (num1 \u003e num3) { max = num1; }else{ max = num3; } } else { if (num2 \u003e num3 ) { max = num2; }else { max = num3; } } printf(\"最大数是%d\", max); } switch-case int main() { int type; scanf(\"%d\", \u0026type); switch (type) {\t// switch类型只能是int case 1: printf(\"早上好\\n\"); break;\t//switch是一种基于运算的跳转,如果没有break他会继续运行下一个case case 2: printf(\"中午好\\n\"); break; case 3: printf(\"晚上好\\n\"); break; default: printf(\"重新输入\\n\"); break; } return 0; } 成绩转换\nint main() { int grade; scanf(\"%d\",\u0026grade); grade /= 10; switch (grade) { case 10: case 9: printf(\"A\\n\"); break; case 8: printf(\"B\\n\"); break; case 7: printf(\"C\\n\"); break; case 6: printf(\"D\\n\"); break; default: printf(\"不及格\\n\"); break; } return 0; } while 数位数\nint main() { int x; int n = 0; scanf(\"%d\", \u0026x); n++; x /= 10; while (x \u003e 0) { n++; x /= 10; } printf(\"%d\", n); return 0; } do while int main() { int x; scanf(\"%d\", \u0026x); int n = 0; do { x /= 10; n++; } while (x \u003e 0); printf(\"%d\", n); return 0; } //do while 先循环一次再判断条件 数据类型 类型名称: int, long, double 输入输出的格式化: %d, %ld, %lf 所表达的数的范围: char \u003c short \u003c int \u003c float \u003c double 内存中所占据的大小: 一字节到16字节 内存中的表达形式: 整形的数是二进制(补码),浮点数是编码 整数类型/内部表达 看内存中大小的demo\nint main() { printf(\"char的大小是=%ld字节\\n\",sizeof(char)); printf(\"short的大小是=%ld字节\\n\", sizeof(short)); printf(\"int的大小是=%ld字节\\n\", sizeof(int)); printf(\"long的大小是=%ld字节\\n\", sizeof(long)); printf(\"long long的大小是=%ld字节\\n\", sizeof(long long)); } char的大小是=1字节 short的大小是=2字节 int的大小是=4字节 long的大小是=4字节 long long的大小是=8字节 补码/原码 原码和补码在有符号的表示中最高位都代表着正负(0代表正数,1负数)\n原码的作用: 计算机在内部运行时候都是用的补码,但是为了方便我们观看所有有了原码\n补码的作用: 节省成本,如在计算5-3时CPU必须有一个\"减法器\"的电路,但是写成5+(-3)结果也是一样的只需要做加法 消除正负零的问题: 在原码中存在+0,-0,在进行逻辑运算时需要进行两次判断. 但是在补码中0只有一种表示0000 0000这样也空出了一个位置,这也是为什么8比特表示的范围时-128~127 补码/原码的转换 转换方向 符号位 数值位操作 正数 (原 \u003c–\u003e 补) 不变 (0) 不变 负数 (原 – \u003e 补) 不变 (1) 取反 + 1 负数 (补 \u003c – 原) 不变 (1) 取反 + 1 (或 减 1 取反) 注意:\n-128 的补码是1000 0000 它没有对应的 8 位原码（因为 8 位原码最大只能表示到 -127）。它是补码系统通过数学逻辑强行定义的\n指针 ",
+  "wordCount" : "600",
+  "inLanguage": "en",
+  "datePublished": "0001-01-01T00:00:00Z",
+  "dateModified": "0001-01-01T00:00:00Z",
+  "author":{
+    "@type": "Person",
+    "name": "h4xk0r"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://b1ckdoor.com/posts/c/c-%E8%AF%AD%E8%A8%80-%E5%AD%A6%E4%B9%A0/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "h4xk0r blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://b1ckdoor.com/favicon.ico"
+    }
+  }
+}
 </script>
 </head>
 <body id="top">
     <header class="header">
     <nav class="nav">
         <div class="logo">
-            <a href="http://localhost:1313/" accesskey="h" title="Cybersecurity learning (Alt + H)">Cybersecurity learning</a>
+            <a href="https://b1ckdoor.com/" accesskey="h" title="h4xk0r blog (Alt + H)">h4xk0r blog</a>
             <div class="logo-switches">
                 <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
                     <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
@@ -130,22 +260,22 @@
         </div>
         <ul id="menu">
             <li>
-                <a href="http://localhost:1313/posts/" title="档案">
+                <a href="https://b1ckdoor.com/posts/" title="档案">
                     <span>档案</span>
                 </a>
             </li>
             <li>
-                <a href="http://localhost:1313/search/" title="搜索 (Alt &#43; /)" accesskey=/>
+                <a href="https://b1ckdoor.com/search/" title="搜索 (Alt &#43; /)" accesskey=/>
                     <span>搜索</span>
                 </a>
             </li>
             <li>
-                <a href="http://localhost:1313/categories/" title="分类">
+                <a href="https://b1ckdoor.com/categories/" title="分类">
                     <span>分类</span>
                 </a>
             </li>
             <li>
-                <a href="http://localhost:1313/fuzzlist/" title="Fuzzlist">
+                <a href="https://b1ckdoor.com/fuzzlist/" title="Fuzzlist">
                     <span>Fuzzlist</span>
                 </a>
             </li>
@@ -598,12 +728,26 @@
   <footer class="post-footer">
     <ul class="post-tags">
     </ul>
-  </footer>
+  </footer><script src="https://giscus.app/client.js"
+        data-repo="h4xk0r/h4xk0r.github.io"
+        data-repo-id="R_kgDORE9_Hw"
+        data-category="Announcements"
+        data-category-id="DIC_kwDORE9_H84C9ILE"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="top"
+        data-theme="preferred_color_scheme"
+        data-lang="zh-CN"
+        crossorigin="anonymous"
+        async>
+</script>
 </article>
     </main>
     
 <footer class="footer">
-        <span>&copy; 2026 <a href="http://localhost:1313/">Cybersecurity learning</a></span> · 
+        <span>&copy; 2026 <a href="https://b1ckdoor.com/">h4xk0r blog</a></span> · 
 
     <span>
         Powered by

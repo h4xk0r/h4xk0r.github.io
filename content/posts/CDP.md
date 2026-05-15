@@ -19,7 +19,7 @@ cdp是浏览器的底层,简单来说可以控制浏览器做任何事情
 
 以下以chrome浏览器做演示,但是实际上只要使用了Chromium内核的浏览器都原生支持CDP如 `chrome,edge`Gecko(firefox) 部分支持,而WebKit(Safari)对CDP却不支持
 
-注:  因浏览器默认都是单实例模式,指令会传递给已有进程.所以开启远程端口前需要先关闭原有进程,命令:
+注:  因浏览器默认都是**单实例模式**,**指令会传递给已有进程但并不执行**.所以开启远程端口前需要先关闭原有进程,命令:
 
 ```
 taskkill /F /IM chrome.exe
@@ -39,7 +39,9 @@ chrome.exe --remote-debugging-port=9226 --remote-debugging-address=0.0.0.0 --rem
 --headless=new					无头模式(109引入)
 ```
 
-`--user-data-dir`: 默认目录为`%LOCALAPPDATA%\Google\Chrome\User Data`如果手动指定目录必须确保这个目录有写入权限. 当指定一个目录的时候浏览器会打开一个新的浏览器两个浏览器互不干扰.如果想要默认目录里面的设置等不想重新开一个新的浏览器,我们可以提前复制一份`User Data\Default`目录,然后指定复制的目录即可,命令:
+`--user-data-dir`: 默认目录为`%LOCALAPPDATA%\Google\Chrome\User Data` 当指定一个目录的时候浏览器会打开一个新的浏览器页面相当与两个用户数据互不干扰.
+
+这里在测试时发现本地复制`user Data`目录启动浏览器依然不可以获取凭证,按理来说不同机器复制才会出现这种情况,希望有大佬解惑.复制命令如下
 
 ```
 powershell:
@@ -70,5 +72,3 @@ remote_port = 19226        # 映射到 frps 服务器上的端口
 ```
 
 
-
-### 

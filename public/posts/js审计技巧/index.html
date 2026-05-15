@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en" dir="auto" data-theme="dark">
 
-<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+<head><meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="robots" content="noindex, nofollow">
-<title>JS | Cybersecurity learning</title>
+<meta name="robots" content="index, follow">
+<title>JS | h4xk0r blog</title>
 <meta name="keywords" content="">
 <meta name="description" content="本人代码能力不是很好，对很多网站框架和文件理解不是很深，所以看js文件的时候难免有些困难，所以有了这篇文章
 JS审计技巧
@@ -63,16 +63,16 @@ _createElementVNode, useState, render() { ... }
 
 还有一些轮番图片等">
 <meta name="author" content="h4xk0r">
-<link rel="canonical" href="http://localhost:1313/posts/js%E5%AE%A1%E8%AE%A1%E6%8A%80%E5%B7%A7/">
+<link rel="canonical" href="https://b1ckdoor.com/posts/js%E5%AE%A1%E8%AE%A1%E6%8A%80%E5%B7%A7/">
 <link crossorigin="anonymous" href="/assets/css/stylesheet.a72a21d173e6574a7d787ef864b8ff56506981bd547deea0fbd1766f099539cc.css" integrity="sha256-pyoh0XPmV0p9eH74ZLj/VlBpgb1Ufe6g&#43;9F2bwmVOcw=" rel="preload stylesheet" as="style">
-<link rel="icon" href="http://localhost:1313/favicon.ico">
-<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
-<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
-<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
+<link rel="icon" href="https://b1ckdoor.com/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://b1ckdoor.com/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://b1ckdoor.com/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://b1ckdoor.com/apple-touch-icon.png">
+<link rel="mask-icon" href="https://b1ckdoor.com/safari-pinned-tab.svg">
 <meta name="theme-color" content="#2e2e33">
 <meta name="msapplication-TileColor" content="#2e2e33">
-<link rel="alternate" hreflang="en" href="http://localhost:1313/posts/js%E5%AE%A1%E8%AE%A1%E6%8A%80%E5%B7%A7/">
+<link rel="alternate" hreflang="en" href="https://b1ckdoor.com/posts/js%E5%AE%A1%E8%AE%A1%E6%8A%80%E5%B7%A7/">
 <noscript>
     <style>
         #theme-toggle,
@@ -87,13 +87,145 @@ _createElementVNode, useState, render() { ... }
         document.querySelector("html").dataset.theme = 'light';
     }
 
+</script><meta property="og:url" content="https://b1ckdoor.com/posts/js%E5%AE%A1%E8%AE%A1%E6%8A%80%E5%B7%A7/">
+  <meta property="og:site_name" content="h4xk0r blog">
+  <meta property="og:title" content="JS">
+  <meta property="og:description" content="本人代码能力不是很好，对很多网站框架和文件理解不是很深，所以看js文件的时候难免有些困难，所以有了这篇文章
+JS审计技巧 遇到source.map(.map)可以直接还原源码
+首先是一些用来搜索的正则：
+api/| /v[0-9]|/admin|/internal|/private key:|secret:|token:|password:|apikey|sk_ |pk_ |AKIA（AWS） fetch|axios|XMLHttpRequest|$.post|$.ajax localStorage|sessionStorage|cookie if\s*\(\s*user\.role|isAdmin|level|permission innerHTML|eval|document\.write（XSS sink） 看完上面这些，还要看什么？ 密钥
+如: const KEY = &#34;xxx&#34;、process.env.VITE_xxx（Vite 常见泄露）、client_secret。
+如config.chunk.js 里：
+const stripeConfig = { publishableKey: &#34;pk_live_51Hb...xxxx&#34;, // Stripe 真实密钥 clientSecret: &#34;sk_test_51Hb...xxxx&#34; }; var fallbackSecret = &#34;supersecret2025!@#&#34;; // 备用密钥 API 可以用上面的正则去搜
+逻辑/授权检查 如: if (user.isAdmin)、if (role === &#39;vip&#39;)、if (canEdit)。
+if (user.vipLevel &gt;= 3) { showDownloadButton(); // 前端判断 } else { hideIt(); } 加密/签名 如CryptoJS、encrypt、sign、md5、rsa 函数。
+password: CryptoJS.AES.encrypt(pwd, &#39;hardcoded_key_123&#39;).toString() 逆向出密钥，就能批量撞库或伪造登录
+不用看的JS 第三方库完整代码jquery-3.6.0.min.js、lodash.min.js、react.production.min.js 全文件。 → 只看最上面注释的版本号（查 CVE），其余不看。
+一些框架的打包，如React/Vue/Next.js 的
+_createElementVNode, useState, render() { ... } 还有一些轮番图片等">
+  <meta property="og:locale" content="zh-cn">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2026-02-28T22:41:23+08:00">
+    <meta property="article:modified_time" content="2026-02-28T22:41:23+08:00">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="JS">
+<meta name="twitter:description" content="本人代码能力不是很好，对很多网站框架和文件理解不是很深，所以看js文件的时候难免有些困难，所以有了这篇文章
+JS审计技巧
+遇到source.map(.map)可以直接还原源码
+首先是一些用来搜索的正则：
+
+api/| /v[0-9]|/admin|/internal|/private
+key:|secret:|token:|password:|apikey|sk_ |pk_ |AKIA（AWS）
+fetch|axios|XMLHttpRequest|$.post|$.ajax
+localStorage|sessionStorage|cookie
+if\s*\(\s*user\.role|isAdmin|level|permission
+innerHTML|eval|document\.write（XSS sink）
+
+看完上面这些，还要看什么？
+
+
+密钥
+如: const KEY = &quot;xxx&quot;、process.env.VITE_xxx（Vite 常见泄露）、client_secret。
+
+
+如config.chunk.js 里：
+const stripeConfig = {
+  publishableKey: &#34;pk_live_51Hb...xxxx&#34;,   // Stripe 真实密钥
+  clientSecret: &#34;sk_test_51Hb...xxxx&#34;
+};
+var fallbackSecret = &#34;supersecret2025!@#&#34;;  // 备用密钥
+
+API
+
+可以用上面的正则去搜
+
+逻辑/授权检查
+
+如:  if (user.isAdmin)、if (role === &#39;vip&#39;)、if (canEdit)。
+if (user.vipLevel &gt;= 3) {
+  showDownloadButton();   // 前端判断
+} else {
+  hideIt();
+}
+
+加密/签名
+
+如CryptoJS、encrypt、sign、md5、rsa 函数。
+password: CryptoJS.AES.encrypt(pwd, &#39;hardcoded_key_123&#39;).toString()
+逆向出密钥，就能批量撞库或伪造登录
+不用看的JS
+
+
+第三方库完整代码jquery-3.6.0.min.js、lodash.min.js、react.production.min.js 全文件。 → 只看最上面注释的版本号（查 CVE），其余不看。
+
+
+一些框架的打包，如React/Vue/Next.js 的
+_createElementVNode, useState, render() { ... }
+
+
+还有一些轮番图片等">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://b1ckdoor.com/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "JS",
+      "item": "https://b1ckdoor.com/posts/js%E5%AE%A1%E8%AE%A1%E6%8A%80%E5%B7%A7/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "JS",
+  "name": "JS",
+  "description": "本人代码能力不是很好，对很多网站框架和文件理解不是很深，所以看js文件的时候难免有些困难，所以有了这篇文章\nJS审计技巧 遇到source.map(.map)可以直接还原源码\n首先是一些用来搜索的正则：\napi/| /v[0-9]|/admin|/internal|/private key:|secret:|token:|password:|apikey|sk_ |pk_ |AKIA（AWS） fetch|axios|XMLHttpRequest|$.post|$.ajax localStorage|sessionStorage|cookie if\\s*\\(\\s*user\\.role|isAdmin|level|permission innerHTML|eval|document\\.write（XSS sink） 看完上面这些，还要看什么？ 密钥\n如: const KEY = \u0026quot;xxx\u0026quot;、process.env.VITE_xxx（Vite 常见泄露）、client_secret。\n如config.chunk.js 里：\nconst stripeConfig = { publishableKey: \u0026#34;pk_live_51Hb...xxxx\u0026#34;, // Stripe 真实密钥 clientSecret: \u0026#34;sk_test_51Hb...xxxx\u0026#34; }; var fallbackSecret = \u0026#34;supersecret2025!@#\u0026#34;; // 备用密钥 API 可以用上面的正则去搜\n逻辑/授权检查 如: if (user.isAdmin)、if (role === 'vip')、if (canEdit)。\nif (user.vipLevel \u0026gt;= 3) { showDownloadButton(); // 前端判断 } else { hideIt(); } 加密/签名 如CryptoJS、encrypt、sign、md5、rsa 函数。\npassword: CryptoJS.AES.encrypt(pwd, \u0026#39;hardcoded_key_123\u0026#39;).toString() 逆向出密钥，就能批量撞库或伪造登录\n不用看的JS 第三方库完整代码jquery-3.6.0.min.js、lodash.min.js、react.production.min.js 全文件。 → 只看最上面注释的版本号（查 CVE），其余不看。\n一些框架的打包，如React/Vue/Next.js 的\n_createElementVNode, useState, render() { ... } 还有一些轮番图片等\n",
+  "keywords": [
+    
+  ],
+  "articleBody": "本人代码能力不是很好，对很多网站框架和文件理解不是很深，所以看js文件的时候难免有些困难，所以有了这篇文章\nJS审计技巧 遇到source.map(.map)可以直接还原源码\n首先是一些用来搜索的正则：\napi/| /v[0-9]|/admin|/internal|/private key:|secret:|token:|password:|apikey|sk_ |pk_ |AKIA（AWS） fetch|axios|XMLHttpRequest|$.post|$.ajax localStorage|sessionStorage|cookie if\\s*\\(\\s*user\\.role|isAdmin|level|permission innerHTML|eval|document\\.write（XSS sink） 看完上面这些，还要看什么？ 密钥\n如: const KEY = \"xxx\"、process.env.VITE_xxx（Vite 常见泄露）、client_secret。\n如config.chunk.js 里：\nconst stripeConfig = { publishableKey: \"pk_live_51Hb...xxxx\", // Stripe 真实密钥 clientSecret: \"sk_test_51Hb...xxxx\" }; var fallbackSecret = \"supersecret2025!@#\"; // 备用密钥 API 可以用上面的正则去搜\n逻辑/授权检查 如: if (user.isAdmin)、if (role === 'vip')、if (canEdit)。\nif (user.vipLevel \u003e= 3) { showDownloadButton(); // 前端判断 } else { hideIt(); } 加密/签名 如CryptoJS、encrypt、sign、md5、rsa 函数。\npassword: CryptoJS.AES.encrypt(pwd, 'hardcoded_key_123').toString() 逆向出密钥，就能批量撞库或伪造登录\n不用看的JS 第三方库完整代码jquery-3.6.0.min.js、lodash.min.js、react.production.min.js 全文件。 → 只看最上面注释的版本号（查 CVE），其余不看。\n一些框架的打包，如React/Vue/Next.js 的\n_createElementVNode, useState, render() { ... } 还有一些轮番图片等\n步骤： 正则匹配的看完\nNetwork看加载\nF12 → Network → 过滤 js 刷新页面 / 登录 / 点击关键功能（支付、查看用户列表） 看哪个 JS 在你操作后才加载 → 那就是核心业务文件 不看的：页面一打开就加载的 vendor.*.js（第三方库，如 React、lodash） 可以把JS全部下载下来然后搜索：\n一个简单的搜索 grep -l -E \"fetch|axios|api/|token|secret|isAdmin\" *.js 按大小排序看大的文件，就有可能是业务逻辑\n注： 先检查有没有source.map ,如果有可以直接还原\n",
+  "wordCount" : "120",
+  "inLanguage": "en",
+  "datePublished": "2026-02-28T22:41:23+08:00",
+  "dateModified": "2026-02-28T22:41:23+08:00",
+  "author":{
+    "@type": "Person",
+    "name": "h4xk0r"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://b1ckdoor.com/posts/js%E5%AE%A1%E8%AE%A1%E6%8A%80%E5%B7%A7/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "h4xk0r blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://b1ckdoor.com/favicon.ico"
+    }
+  }
+}
 </script>
 </head>
 <body id="top">
     <header class="header">
     <nav class="nav">
         <div class="logo">
-            <a href="http://localhost:1313/" accesskey="h" title="Cybersecurity learning (Alt + H)">Cybersecurity learning</a>
+            <a href="https://b1ckdoor.com/" accesskey="h" title="h4xk0r blog (Alt + H)">h4xk0r blog</a>
             <div class="logo-switches">
                 <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
                     <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
@@ -119,22 +251,22 @@ _createElementVNode, useState, render() { ... }
         </div>
         <ul id="menu">
             <li>
-                <a href="http://localhost:1313/posts/" title="档案">
+                <a href="https://b1ckdoor.com/posts/" title="档案">
                     <span>档案</span>
                 </a>
             </li>
             <li>
-                <a href="http://localhost:1313/search/" title="搜索 (Alt &#43; /)" accesskey=/>
+                <a href="https://b1ckdoor.com/search/" title="搜索 (Alt &#43; /)" accesskey=/>
                     <span>搜索</span>
                 </a>
             </li>
             <li>
-                <a href="http://localhost:1313/categories/" title="分类">
+                <a href="https://b1ckdoor.com/categories/" title="分类">
                     <span>分类</span>
                 </a>
             </li>
             <li>
-                <a href="http://localhost:1313/fuzzlist/" title="Fuzzlist">
+                <a href="https://b1ckdoor.com/fuzzlist/" title="Fuzzlist">
                     <span>Fuzzlist</span>
                 </a>
             </li>
@@ -260,12 +392,26 @@ grep -l -E &#34;fetch|axios|api/|token|secret|isAdmin&#34; *.js
   <footer class="post-footer">
     <ul class="post-tags">
     </ul>
-  </footer>
+  </footer><script src="https://giscus.app/client.js"
+        data-repo="h4xk0r/h4xk0r.github.io"
+        data-repo-id="R_kgDORE9_Hw"
+        data-category="Announcements"
+        data-category-id="DIC_kwDORE9_H84C9ILE"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="top"
+        data-theme="preferred_color_scheme"
+        data-lang="zh-CN"
+        crossorigin="anonymous"
+        async>
+</script>
 </article>
     </main>
     
 <footer class="footer">
-        <span>&copy; 2026 <a href="http://localhost:1313/">Cybersecurity learning</a></span> · 
+        <span>&copy; 2026 <a href="https://b1ckdoor.com/">h4xk0r blog</a></span> · 
 
     <span>
         Powered by

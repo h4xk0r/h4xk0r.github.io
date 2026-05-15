@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto" data-theme="dark">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>云原生攻防技术 | h4xk0r blog</title>
+<meta name="keywords" content="">
+<meta name="description" content="Docker
+docker是一种轻量级容器技术,可将应用及其依赖打包成标准化单元
+Docker的优势
+
+启动快速
+跨平台
+高效运维
+环境一致性 (避免只有我的机器能跑)
+
+K8s的作用和架构
+为什么需要k8s?
+假设现在又10个容器让你管理,管理的过来,那随着业务发展增加到1000台呢,这些容器又部署在不同的服务器上,每一个环境都不相同.那有什么办法解决这个问题?  于是k8s应运而生
+k8s的优势
+
+
+资源自动调度
+k8s会根据容器所需的资源扫描服务器集群,把空闲的机器部署容器,实现资源最大化
+
+
+负载均衡
+k8s提供一个统一的入口,不管后端容器的IP变化,都会转发到对应的容器中
+
+
+自动修复
+k8s会不断检查运行状态,如果容器挂了会自动拉起一个新的,如果机器坏了,会自动迁移到其他机器上
+
+
+K8s核心组件
+graph TD
+    %% 定义 Master 节点结构
+    subgraph MasterGroup[Master节点]
+        direction TB
+        Master[Master节点] --&gt; API[API Server]
+        Master --&gt; CM[Controller Manager]
+        Master --&gt; Sched[Scheduler]
+    end
+
+    %% 定义 Node 节点结构
+    subgraph NodeGroup[Node节点]
+        direction TB
+        Node[Node节点] --&gt; KL[Kubelet]
+        Node --&gt; KP[Kube-Proxy]
+        Node --&gt; P[Pod]
+    end
+Pod
+
+pod是最小的可部署对象
+它可以封装一个或者多个容器,POD中的网络和存储,凭据共享
+k8s不直接运行容器而是运行pod,pod中的容器一般同时运行在一台node中
+
+API Server: 集群的唯一入口,所有指令优先发送到它
+node: 实际运行容器的机器
+**scheduler:**调度器,监视API Server看有没有没有分配node的POD
+Service: 服务的固定访问入口
+Deployment: 声明式定义应用版本与副本数
+Horizontal Autoscaler: 根据CPU/内存自动扩缩容">
+<meta name="author" content="h4xk0r">
+<link rel="canonical" href="https://b1ckdoor.com/posts/%E4%BA%91%E5%8E%9F%E7%94%9F%E6%94%BB%E9%98%B2/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.a72a21d173e6574a7d787ef864b8ff56506981bd547deea0fbd1766f099539cc.css" integrity="sha256-pyoh0XPmV0p9eH74ZLj/VlBpgb1Ufe6g&#43;9F2bwmVOcw=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://b1ckdoor.com/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://b1ckdoor.com/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://b1ckdoor.com/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://b1ckdoor.com/apple-touch-icon.png">
+<link rel="mask-icon" href="https://b1ckdoor.com/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="https://b1ckdoor.com/posts/%E4%BA%91%E5%8E%9F%E7%94%9F%E6%94%BB%E9%98%B2/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+</noscript>
+<script>
+    if (localStorage.getItem("pref-theme") === "light") {
+        document.querySelector("html").dataset.theme = 'light';
+    }
+
+</script><meta property="og:url" content="https://b1ckdoor.com/posts/%E4%BA%91%E5%8E%9F%E7%94%9F%E6%94%BB%E9%98%B2/">
+  <meta property="og:site_name" content="h4xk0r blog">
+  <meta property="og:title" content="云原生攻防技术">
+  <meta property="og:description" content="Docker docker是一种轻量级容器技术,可将应用及其依赖打包成标准化单元
+Docker的优势 启动快速 跨平台 高效运维 环境一致性 (避免只有我的机器能跑) K8s的作用和架构 为什么需要k8s? 假设现在又10个容器让你管理,管理的过来,那随着业务发展增加到1000台呢,这些容器又部署在不同的服务器上,每一个环境都不相同.那有什么办法解决这个问题? 于是k8s应运而生
+k8s的优势 资源自动调度
+k8s会根据容器所需的资源扫描服务器集群,把空闲的机器部署容器,实现资源最大化 负载均衡
+k8s提供一个统一的入口,不管后端容器的IP变化,都会转发到对应的容器中 自动修复
+k8s会不断检查运行状态,如果容器挂了会自动拉起一个新的,如果机器坏了,会自动迁移到其他机器上 K8s核心组件 graph TD%% 定义 Master 节点结构subgraph MasterGroup[Master节点]direction TBMaster[Master节点] --&gt; API[API Server]Master --&gt; CM[Controller Manager]Master --&gt; Sched[Scheduler]end%% 定义 Node 节点结构subgraph NodeGroup[Node节点]direction TBNode[Node节点] --&gt; KL[Kubelet]Node --&gt; KP[Kube-Proxy]Node --&gt; P[Pod]end Pod
+pod是最小的可部署对象 它可以封装一个或者多个容器,POD中的网络和存储,凭据共享 k8s不直接运行容器而是运行pod,pod中的容器一般同时运行在一台node中 API Server: 集群的唯一入口,所有指令优先发送到它 node: 实际运行容器的机器 **scheduler:**调度器,监视API Server看有没有没有分配node的POD Service: 服务的固定访问入口 Deployment: 声明式定义应用版本与副本数 Horizontal Autoscaler: 根据CPU/内存自动扩缩容">
+  <meta property="og:locale" content="zh-cn">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2026-03-30T21:28:24+08:00">
+    <meta property="article:modified_time" content="2026-03-30T21:28:24+08:00">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="云原生攻防技术">
+<meta name="twitter:description" content="Docker
+docker是一种轻量级容器技术,可将应用及其依赖打包成标准化单元
+Docker的优势
+
+启动快速
+跨平台
+高效运维
+环境一致性 (避免只有我的机器能跑)
+
+K8s的作用和架构
+为什么需要k8s?
+假设现在又10个容器让你管理,管理的过来,那随着业务发展增加到1000台呢,这些容器又部署在不同的服务器上,每一个环境都不相同.那有什么办法解决这个问题?  于是k8s应运而生
+k8s的优势
+
+
+资源自动调度
+k8s会根据容器所需的资源扫描服务器集群,把空闲的机器部署容器,实现资源最大化
+
+
+负载均衡
+k8s提供一个统一的入口,不管后端容器的IP变化,都会转发到对应的容器中
+
+
+自动修复
+k8s会不断检查运行状态,如果容器挂了会自动拉起一个新的,如果机器坏了,会自动迁移到其他机器上
+
+
+K8s核心组件
+graph TD
+    %% 定义 Master 节点结构
+    subgraph MasterGroup[Master节点]
+        direction TB
+        Master[Master节点] --&gt; API[API Server]
+        Master --&gt; CM[Controller Manager]
+        Master --&gt; Sched[Scheduler]
+    end
+
+    %% 定义 Node 节点结构
+    subgraph NodeGroup[Node节点]
+        direction TB
+        Node[Node节点] --&gt; KL[Kubelet]
+        Node --&gt; KP[Kube-Proxy]
+        Node --&gt; P[Pod]
+    end
+Pod
+
+pod是最小的可部署对象
+它可以封装一个或者多个容器,POD中的网络和存储,凭据共享
+k8s不直接运行容器而是运行pod,pod中的容器一般同时运行在一台node中
+
+API Server: 集群的唯一入口,所有指令优先发送到它
+node: 实际运行容器的机器
+**scheduler:**调度器,监视API Server看有没有没有分配node的POD
+Service: 服务的固定访问入口
+Deployment: 声明式定义应用版本与副本数
+Horizontal Autoscaler: 根据CPU/内存自动扩缩容">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://b1ckdoor.com/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "云原生攻防技术",
+      "item": "https://b1ckdoor.com/posts/%E4%BA%91%E5%8E%9F%E7%94%9F%E6%94%BB%E9%98%B2/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "云原生攻防技术",
+  "name": "云原生攻防技术",
+  "description": "Docker docker是一种轻量级容器技术,可将应用及其依赖打包成标准化单元\nDocker的优势 启动快速 跨平台 高效运维 环境一致性 (避免只有我的机器能跑) K8s的作用和架构 为什么需要k8s? 假设现在又10个容器让你管理,管理的过来,那随着业务发展增加到1000台呢,这些容器又部署在不同的服务器上,每一个环境都不相同.那有什么办法解决这个问题? 于是k8s应运而生\nk8s的优势 资源自动调度\nk8s会根据容器所需的资源扫描服务器集群,把空闲的机器部署容器,实现资源最大化 负载均衡\nk8s提供一个统一的入口,不管后端容器的IP变化,都会转发到对应的容器中 自动修复\nk8s会不断检查运行状态,如果容器挂了会自动拉起一个新的,如果机器坏了,会自动迁移到其他机器上 K8s核心组件 graph TD\r%% 定义 Master 节点结构\rsubgraph MasterGroup[Master节点]\rdirection TB\rMaster[Master节点] --\u0026gt; API[API Server]\rMaster --\u0026gt; CM[Controller Manager]\rMaster --\u0026gt; Sched[Scheduler]\rend\r%% 定义 Node 节点结构\rsubgraph NodeGroup[Node节点]\rdirection TB\rNode[Node节点] --\u0026gt; KL[Kubelet]\rNode --\u0026gt; KP[Kube-Proxy]\rNode --\u0026gt; P[Pod]\rend Pod\npod是最小的可部署对象 它可以封装一个或者多个容器,POD中的网络和存储,凭据共享 k8s不直接运行容器而是运行pod,pod中的容器一般同时运行在一台node中 API Server: 集群的唯一入口,所有指令优先发送到它 node: 实际运行容器的机器 **scheduler:**调度器,监视API Server看有没有没有分配node的POD Service: 服务的固定访问入口 Deployment: 声明式定义应用版本与副本数 Horizontal Autoscaler: 根据CPU/内存自动扩缩容\n",
+  "keywords": [
+    
+  ],
+  "articleBody": "Docker docker是一种轻量级容器技术,可将应用及其依赖打包成标准化单元\nDocker的优势 启动快速 跨平台 高效运维 环境一致性 (避免只有我的机器能跑) K8s的作用和架构 为什么需要k8s? 假设现在又10个容器让你管理,管理的过来,那随着业务发展增加到1000台呢,这些容器又部署在不同的服务器上,每一个环境都不相同.那有什么办法解决这个问题? 于是k8s应运而生\nk8s的优势 资源自动调度\nk8s会根据容器所需的资源扫描服务器集群,把空闲的机器部署容器,实现资源最大化 负载均衡\nk8s提供一个统一的入口,不管后端容器的IP变化,都会转发到对应的容器中 自动修复\nk8s会不断检查运行状态,如果容器挂了会自动拉起一个新的,如果机器坏了,会自动迁移到其他机器上 K8s核心组件 graph TD\r%% 定义 Master 节点结构\rsubgraph MasterGroup[Master节点]\rdirection TB\rMaster[Master节点] --\u003e API[API Server]\rMaster --\u003e CM[Controller Manager]\rMaster --\u003e Sched[Scheduler]\rend\r%% 定义 Node 节点结构\rsubgraph NodeGroup[Node节点]\rdirection TB\rNode[Node节点] --\u003e KL[Kubelet]\rNode --\u003e KP[Kube-Proxy]\rNode --\u003e P[Pod]\rend Pod\npod是最小的可部署对象 它可以封装一个或者多个容器,POD中的网络和存储,凭据共享 k8s不直接运行容器而是运行pod,pod中的容器一般同时运行在一台node中 API Server: 集群的唯一入口,所有指令优先发送到它 node: 实际运行容器的机器 **scheduler:**调度器,监视API Server看有没有没有分配node的POD Service: 服务的固定访问入口 Deployment: 声明式定义应用版本与副本数 Horizontal Autoscaler: 根据CPU/内存自动扩缩容\nK8s POD生命周期 pod的生命周期是临时的,一旦出错就会销毁,并新建一个pod代替,所以不可存储重要数据\n阶段一: 用户提交请求 sequenceDiagram\rautonumber\rparticipant User as User\rparticipant K as kubectl\rparticipant AS as API_Server\rUser-\u003e\u003eK: kubectl apply -f pod.yaml\rK-\u003e\u003eAS: HTTP POST /api/v1/namespaces/default/pods\rNote right of AS: 接收请求 (JSON/YAML格式) 用户: 用户通过定义kubectl或直接调用API提交Pod定义文件(YAML/JSON)\n入口组件: API Server 是唯一入口(端口6443)\n阶段二: API Server 鉴权流程 graph TD\rA[API Server] --\u003e B{认证}\rB -- Token/证书 --\u003e C[Authentication]\rC --\u003e D{授权}\rD -- RBAC检查 --\u003e E[Authorization]\rE --\u003e F{准入控制}\rF -- 校验资源规范 --\u003e G[Admission Control] RBAC 的全称是 Role-Based Access Control（基于角色的访问控制）可以理解为ACL\n认证步骤:\n认证\nTLS双向认证(证书),Bearer Token\n授权\n检查用户是否有创建pod的权限\n准入控制\n阶段三: 调度器选择节点 sequenceDiagram\rparticipant A as API_Server\rparticipant S as Scheduler\rparticipant N as Nodes\rA-\u003e\u003eS: 未调度Pod事件\rS-\u003e\u003eN: 筛选节点 (Filter)\rS-\u003e\u003eN: 评分节点 (Score)\rS-\u003e\u003eA: 绑定到最优节点 调度策略详解:\n预选\n检查节点资源是否满足(CPU/Memory)\n匹配节点标签(如 disk=ssd)\n优选\n计算节点剩余资源量(BeatEFFort策略)\n检查亲和性和反亲和性规则\n绑定\n阶段四: 节点创建POD graph LR\rA[API Server] -- Watch事件 --\u003e B[kubelet]\rB --\u003e C[容器运行时]\rC --\u003e D[创建容器]\rD --\u003e E[CNI插件]\rE --\u003e F[分配Pod IP] 节点操作流程:\nkubelet 监听事件\n持续监听API Server 的pod变更事件\n容器创建 调用容器运行时拉取镜像\n创建容器命名空间和Cgroups限制\n网络配置 CNI插件分配IP\n配置iptables/ipvs规则\n状态上报\n阶段五: 服务暴露与访问 graph TD\rUser[用户访问] --\u003e Ingress[Ingress]\rIngress --\u003e Service[Service]\rService --\u003e Endpoint[Endpoint]\rEndpoint --\u003e Pod[Pod] 流量解析流程:\n用户访问 用户访问域名 Ingress 根据域名或者路径将流量分发到不同的Service Service pod的IP是变动的,但是Service提供了一个固定的虚拟IP,它将请求发给后端的POD Endpoint 记录了后端所有的真实IP地址和端口,Service通过它连接pod.如果pod挂了,就会从名单中删除 pod 到达容器内的web应用 基于k8s上线主节点 节点污染机制\n",
+  "wordCount" : "261",
+  "inLanguage": "en",
+  "datePublished": "2026-03-30T21:28:24+08:00",
+  "dateModified": "2026-03-30T21:28:24+08:00",
+  "author":{
+    "@type": "Person",
+    "name": "h4xk0r"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://b1ckdoor.com/posts/%E4%BA%91%E5%8E%9F%E7%94%9F%E6%94%BB%E9%98%B2/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "h4xk0r blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://b1ckdoor.com/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+<body id="top">
+    <header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://b1ckdoor.com/" accesskey="h" title="h4xk0r blog (Alt + H)">h4xk0r blog</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://b1ckdoor.com/posts/" title="档案">
+                    <span>档案</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://b1ckdoor.com/search/" title="搜索 (Alt &#43; /)" accesskey=/>
+                    <span>搜索</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://b1ckdoor.com/categories/" title="分类">
+                    <span>分类</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://b1ckdoor.com/fuzzlist/" title="Fuzzlist">
+                    <span>Fuzzlist</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      云原生攻防技术
+    </h1>
+    <div class="post-meta"><span title='2026-03-30 21:28:24 +0800 CST'>March 30, 2026</span>&nbsp;·&nbsp;<span>2 min</span>&nbsp;·&nbsp;<span>h4xk0r</span>
+
+</div>
+  </header> <div class="toc">
+    <details  open>
+        <summary accesskey="c" title="(Alt + C)">
+            <span class="details">Table of Contents</span>
+        </summary>
+
+        <div class="inner"><ul>
+                <li>
+                    <a href="#docker" aria-label="Docker">Docker</a></li>
+                <li>
+                    <a href="#docker%e7%9a%84%e4%bc%98%e5%8a%bf" aria-label="Docker的优势">Docker的优势</a></li>
+                <li>
+                    <a href="#k8s%e7%9a%84%e4%bd%9c%e7%94%a8%e5%92%8c%e6%9e%b6%e6%9e%84" aria-label="K8s的作用和架构">K8s的作用和架构</a><ul>
+                        
+                <li>
+                    <a href="#%e4%b8%ba%e4%bb%80%e4%b9%88%e9%9c%80%e8%a6%81k8s" aria-label="为什么需要k8s?">为什么需要k8s?</a></li>
+                <li>
+                    <a href="#k8s%e7%9a%84%e4%bc%98%e5%8a%bf" aria-label="k8s的优势">k8s的优势</a></li>
+                <li>
+                    <a href="#k8s%e6%a0%b8%e5%bf%83%e7%bb%84%e4%bb%b6" aria-label="K8s核心组件">K8s核心组件</a></li></ul>
+                </li>
+                <li>
+                    <a href="#k8s-pod%e7%94%9f%e5%91%bd%e5%91%a8%e6%9c%9f" aria-label="K8s POD生命周期">K8s POD生命周期</a><ul>
+                        
+                <li>
+                    <a href="#%e9%98%b6%e6%ae%b5%e4%b8%80-%e7%94%a8%e6%88%b7%e6%8f%90%e4%ba%a4%e8%af%b7%e6%b1%82" aria-label="阶段一: 用户提交请求">阶段一: 用户提交请求</a></li>
+                <li>
+                    <a href="#%e9%98%b6%e6%ae%b5%e4%ba%8c-api-server-%e9%89%b4%e6%9d%83%e6%b5%81%e7%a8%8b" aria-label="阶段二: API Server 鉴权流程">阶段二: API Server 鉴权流程</a></li>
+                <li>
+                    <a href="#%e9%98%b6%e6%ae%b5%e4%b8%89-%e8%b0%83%e5%ba%a6%e5%99%a8%e9%80%89%e6%8b%a9%e8%8a%82%e7%82%b9" aria-label="阶段三: 调度器选择节点">阶段三: 调度器选择节点</a></li>
+                <li>
+                    <a href="#%e9%98%b6%e6%ae%b5%e5%9b%9b-%e8%8a%82%e7%82%b9%e5%88%9b%e5%bb%bapod" aria-label="阶段四: 节点创建POD">阶段四: 节点创建POD</a></li>
+                <li>
+                    <a href="#%e9%98%b6%e6%ae%b5%e4%ba%94-%e6%9c%8d%e5%8a%a1%e6%9a%b4%e9%9c%b2%e4%b8%8e%e8%ae%bf%e9%97%ae" aria-label="阶段五: 服务暴露与访问">阶段五: 服务暴露与访问</a></li>
+                <li>
+                    <a href="#%e5%9f%ba%e4%ba%8ek8s%e4%b8%8a%e7%ba%bf%e4%b8%bb%e8%8a%82%e7%82%b9" aria-label="基于k8s上线主节点">基于k8s上线主节点</a>
+                </li>
+            </ul>
+            </li>
+            </ul>
+        </div>
+    </details>
+</div>
+
+  <div class="post-content"><h2 id="docker">Docker<a hidden class="anchor" aria-hidden="true" href="#docker">#</a></h2>
+<p>docker是一种轻量级容器技术,可将应用及其依赖打包成标准化单元</p>
+<h2 id="docker的优势">Docker的优势<a hidden class="anchor" aria-hidden="true" href="#docker的优势">#</a></h2>
+<ol>
+<li>启动快速</li>
+<li>跨平台</li>
+<li>高效运维</li>
+<li>环境一致性 (避免只有我的机器能跑)</li>
+</ol>
+<h2 id="k8s的作用和架构">K8s的作用和架构<a hidden class="anchor" aria-hidden="true" href="#k8s的作用和架构">#</a></h2>
+<h3 id="为什么需要k8s">为什么需要k8s?<a hidden class="anchor" aria-hidden="true" href="#为什么需要k8s">#</a></h3>
+<p>假设现在又10个容器让你管理,管理的过来,那随着业务发展增加到1000台呢,这些容器又部署在不同的服务器上,每一个环境都不相同.那有什么办法解决这个问题?  于是k8s应运而生</p>
+<h3 id="k8s的优势">k8s的优势<a hidden class="anchor" aria-hidden="true" href="#k8s的优势">#</a></h3>
+<ol>
+<li>
+<p>资源自动调度</p>
+<pre tabindex="0"><code>k8s会根据容器所需的资源扫描服务器集群,把空闲的机器部署容器,实现资源最大化
+</code></pre></li>
+<li>
+<p>负载均衡</p>
+<pre tabindex="0"><code>k8s提供一个统一的入口,不管后端容器的IP变化,都会转发到对应的容器中
+</code></pre></li>
+<li>
+<p>自动修复</p>
+<pre tabindex="0"><code>k8s会不断检查运行状态,如果容器挂了会自动拉起一个新的,如果机器坏了,会自动迁移到其他机器上
+</code></pre></li>
+</ol>
+<h3 id="k8s核心组件">K8s核心组件<a hidden class="anchor" aria-hidden="true" href="#k8s核心组件">#</a></h3>
+<pre tabindex="0"><code class="language-mermaid" data-lang="mermaid">graph TD
+    %% 定义 Master 节点结构
+    subgraph MasterGroup[Master节点]
+        direction TB
+        Master[Master节点] --&gt; API[API Server]
+        Master --&gt; CM[Controller Manager]
+        Master --&gt; Sched[Scheduler]
+    end
+
+    %% 定义 Node 节点结构
+    subgraph NodeGroup[Node节点]
+        direction TB
+        Node[Node节点] --&gt; KL[Kubelet]
+        Node --&gt; KP[Kube-Proxy]
+        Node --&gt; P[Pod]
+    end
+</code></pre><p><strong>Pod</strong></p>
+<ul>
+<li>pod是最小的可部署对象</li>
+<li>它可以封装一个或者多个容器,<strong>POD中的网络和存储,凭据共享</strong></li>
+<li>k8s不直接运行容器而是运行pod,pod中的容器一般同时运行在一台node中</li>
+</ul>
+<p><strong>API Server:</strong> 集群的唯一入口,所有指令优先发送到它
+<strong>node:</strong> 实际运行容器的机器
+**scheduler:**调度器,监视API Server看有没有没有分配node的POD
+<strong>Service:</strong> 服务的固定访问入口
+<strong>Deployment:</strong> 声明式定义应用版本与副本数
+<strong>Horizontal Autoscaler:</strong> 根据CPU/内存自动扩缩容</p>
+<h2 id="k8s-pod生命周期">K8s POD生命周期<a hidden class="anchor" aria-hidden="true" href="#k8s-pod生命周期">#</a></h2>
+<p>pod的生命周期是临时的,一旦出错就会销毁,并新建一个pod代替,所以<strong>不可存储重要数据</strong></p>
+<h3 id="阶段一-用户提交请求">阶段一: 用户提交请求<a hidden class="anchor" aria-hidden="true" href="#阶段一-用户提交请求">#</a></h3>
+<pre tabindex="0"><code class="language-mermaid" data-lang="mermaid">sequenceDiagram
+    autonumber
+    participant User as User
+    participant K as kubectl
+    participant AS as API_Server
+
+    User-&gt;&gt;K: kubectl apply -f pod.yaml
+    K-&gt;&gt;AS: HTTP POST /api/v1/namespaces/default/pods
+    Note right of AS: 接收请求 (JSON/YAML格式)
+</code></pre><p>用户: 用户通过定义kubectl或直接调用API提交Pod定义文件(YAML/JSON)</p>
+<p>入口组件: API Server 是唯一入口(端口6443)</p>
+<h3 id="阶段二-api-server-鉴权流程">阶段二: API Server 鉴权流程<a hidden class="anchor" aria-hidden="true" href="#阶段二-api-server-鉴权流程">#</a></h3>
+<pre tabindex="0"><code class="language-mermaid" data-lang="mermaid">graph TD
+    A[API Server] --&gt; B{认证}
+    B -- Token/证书 --&gt; C[Authentication]
+    C --&gt; D{授权}
+    D -- RBAC检查 --&gt; E[Authorization]
+    E --&gt; F{准入控制}
+    F -- 校验资源规范 --&gt; G[Admission Control]
+</code></pre><p><strong>RBAC</strong> 的全称是 <strong>Role-Based Access Control</strong>（基于角色的访问控制）可以理解为ACL</p>
+<p>认证步骤:</p>
+<ol>
+<li>
+<p>认证</p>
+<p>TLS双向认证(证书),Bearer Token</p>
+</li>
+<li>
+<p>授权</p>
+<p>检查用户是否有创建pod的权限</p>
+</li>
+<li>
+<p>准入控制</p>
+</li>
+</ol>
+<h3 id="阶段三-调度器选择节点">阶段三: 调度器选择节点<a hidden class="anchor" aria-hidden="true" href="#阶段三-调度器选择节点">#</a></h3>
+<pre tabindex="0"><code class="language-mermaid" data-lang="mermaid">sequenceDiagram
+    participant A as API_Server
+    participant S as Scheduler
+    participant N as Nodes
+
+    A-&gt;&gt;S: 未调度Pod事件
+    S-&gt;&gt;N: 筛选节点 (Filter)
+    S-&gt;&gt;N: 评分节点 (Score)
+    S-&gt;&gt;A: 绑定到最优节点
+</code></pre><p>调度策略详解:</p>
+<ol>
+<li>
+<p>预选</p>
+<p>检查节点资源是否满足(CPU/Memory)</p>
+<p>匹配节点标签(如 disk=ssd)</p>
+</li>
+<li>
+<p>优选</p>
+<p>计算节点剩余资源量(BeatEFFort策略)</p>
+<p>检查亲和性和反亲和性规则</p>
+</li>
+<li>
+<p>绑定</p>
+</li>
+</ol>
+<h3 id="阶段四-节点创建pod">阶段四: 节点创建POD<a hidden class="anchor" aria-hidden="true" href="#阶段四-节点创建pod">#</a></h3>
+<pre tabindex="0"><code class="language-mermaid" data-lang="mermaid">graph LR
+    A[API Server] -- Watch事件 --&gt; B[kubelet]
+    B --&gt; C[容器运行时]
+    C --&gt; D[创建容器]
+    D --&gt; E[CNI插件]
+    E --&gt; F[分配Pod IP]
+</code></pre><p>节点操作流程:</p>
+<ol>
+<li>
+<p>kubelet 监听事件</p>
+<p>持续监听API Server 的pod变更事件</p>
+</li>
+<li>
+<p>容器创建
+调用容器运行时拉取镜像</p>
+<p>创建容器命名空间和Cgroups限制</p>
+</li>
+<li>
+<p>网络配置
+CNI插件分配IP</p>
+<p>配置iptables/ipvs规则</p>
+</li>
+<li>
+<p>状态上报</p>
+</li>
+</ol>
+<h3 id="阶段五-服务暴露与访问">阶段五: 服务暴露与访问<a hidden class="anchor" aria-hidden="true" href="#阶段五-服务暴露与访问">#</a></h3>
+<pre tabindex="0"><code class="language-mermaid" data-lang="mermaid">graph TD
+    User[用户访问] --&gt; Ingress[Ingress]
+    Ingress --&gt; Service[Service]
+    Service --&gt; Endpoint[Endpoint]
+    Endpoint --&gt; Pod[Pod]
+</code></pre><p>流量解析流程:</p>
+<ol>
+<li>用户访问
+用户访问域名</li>
+<li>Ingress
+根据域名或者路径将流量分发到不同的Service</li>
+<li>Service
+pod的IP是变动的,但是Service提供了一个固定的虚拟IP,它将请求发给后端的POD</li>
+<li>Endpoint
+记录了后端所有的真实IP地址和端口,Service通过它连接pod.如果pod挂了,就会从名单中删除</li>
+<li>pod
+到达容器内的web应用</li>
+</ol>
+<h3 id="基于k8s上线主节点">基于k8s上线主节点<a hidden class="anchor" aria-hidden="true" href="#基于k8s上线主节点">#</a></h3>
+<p>节点污染机制</p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+  </footer><script src="https://giscus.app/client.js"
+        data-repo="h4xk0r/h4xk0r.github.io"
+        data-repo-id="R_kgDORE9_Hw"
+        data-category="Announcements"
+        data-category-id="DIC_kwDORE9_H84C9ILE"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="top"
+        data-theme="preferred_color_scheme"
+        data-lang="zh-CN"
+        crossorigin="anonymous"
+        async>
+</script>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2026 <a href="https://b1ckdoor.com/">h4xk0r blog</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    
+    let menu = document.getElementById('menu');
+    if (menu) {
+        const scrollPosition = localStorage.getItem("menu-scroll-position");
+        if (scrollPosition) {
+            menu.scrollLeft = parseInt(scrollPosition, 10);
+        }
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            const id = this.getAttribute("href").substr(1);
+            if (!id) return;
+
+            
+            
+            const nextUl = this.nextElementSibling;
+            if (this.closest('.toc') && nextUl && nextUl.tagName === 'UL') {
+                const rect = this.getBoundingClientRect();
+                const offsetX = e.clientX - rect.left;
+
+                
+                if (offsetX < 45) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    const isVisible = window.getComputedStyle(nextUl).display !== 'none';
+                    nextUl.style.display = isVisible ? 'none' : 'block';
+                    this.parentElement.classList.toggle('is-expanded');
+                    
+                    return false; 
+                }
+            }
+
+            
+            
+            e.preventDefault();
+            const targetElement = document.querySelector(`[id='${decodeURIComponent(id)}']`);
+            if (targetElement) {
+                if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                    targetElement.scrollIntoView({ behavior: "smooth" });
+                } else {
+                    targetElement.scrollIntoView();
+                }
+                
+                if (id === "top") {
+                    history.replaceState(null, null, " ");
+                } else {
+                    history.pushState(null, null, `#${id}`);
+                }
+            }
+        });
+    });
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        const html = document.querySelector("html");
+        if (html.dataset.theme === "dark") {
+            html.dataset.theme = 'light';
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            html.dataset.theme = 'dark';
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerHTML = 'copy';
+
+        function copyingDone() {
+            copybutton.innerHTML = 'copied!';
+            setTimeout(() => {
+                copybutton.innerHTML = 'copy';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script></body>
+
+</html>

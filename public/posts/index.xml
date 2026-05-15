@@ -1,18 +1,84 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
-    <title>Posts on Cybersecurity learning</title>
-    <link>http://localhost:1313/posts/</link>
-    <description>Recent content in Posts on Cybersecurity learning</description>
+    <title>Posts on h4xk0r blog</title>
+    <link>https://b1ckdoor.com/posts/</link>
+    <description>Recent content in Posts on h4xk0r blog</description>
     <generator>Hugo -- 0.155.1</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Fri, 10 Apr 2026 23:50:39 +0800</lastBuildDate>
-    <atom:link href="http://localhost:1313/posts/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 14 May 2026 19:38:41 +0800</lastBuildDate>
+    <atom:link href="https://b1ckdoor.com/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>蜜罐及反制技术</title>
+      <link>https://b1ckdoor.com/posts/%E8%9C%9C%E7%BD%90%E5%8F%8A%E5%8F%8D%E5%88%B6%E6%8A%80%E6%9C%AF/</link>
+      <pubDate>Thu, 14 May 2026 19:38:41 +0800</pubDate>
+      <guid>https://b1ckdoor.com/posts/%E8%9C%9C%E7%BD%90%E5%8F%8A%E5%8F%8D%E5%88%B6%E6%8A%80%E6%9C%AF/</guid>
+      <description>&lt;p&gt;蜜罐是一种主动防御技术,它通过故意暴露的漏洞或者敏感信息,诱导黑客进行攻击,增加攻击者的攻击成本并对攻击者的攻击方式进行分析,溯源等以便更好的防御的一种手段.&lt;/p&gt;
+&lt;h2 id=&#34;蜜罐的分类&#34;&gt;蜜罐的分类&lt;/h2&gt;
+&lt;p&gt;蜜罐从低到高分为低交互蜜罐,中交互蜜罐,高交互蜜罐以及蜜罐集群组成的蜜网&lt;/p&gt;
+&lt;h4 id=&#34;低交互蜜罐&#34;&gt;低交互蜜罐:&lt;/h4&gt;
+&lt;p&gt;只提供特定服务,通过脚本或者程序模拟协议的行为实现. 虽然不够仿真,但是成本低,也具备捕获攻击者IP,载荷等信息的能力&lt;/p&gt;
+&lt;h4 id=&#34;中交互蜜罐&#34;&gt;中交互蜜罐:&lt;/h4&gt;
+&lt;p&gt;中交互蜜罐可以模拟一个相对完整的应用环境,但是不具备真实的操作系统内核,是进程级的服务模拟.可以提供更完整的攻击交互,如文件上传,注入等模拟执行成功后的结果&lt;/p&gt;
+&lt;h4 id=&#34;高交互蜜罐&#34;&gt;高交互蜜罐:&lt;/h4&gt;
+&lt;p&gt;高交互蜜罐是基于真实的操作系统和服务构建的.通常在虚拟机或者沙箱中.攻击者拿到的是shell权限.但是如果防护不到位攻击者可能会以此为跳板攻击真实的内网机器.成本极高.用于捕获APT攻击等&lt;/p&gt;
+&lt;h4 id=&#34;蜜网&#34;&gt;蜜网&lt;/h4&gt;
+&lt;p&gt;蜜网实际上是有多个蜜罐组成的集群.构成:
+&lt;strong&gt;Honeywall(蜜罐网关):&lt;/strong&gt; 负责控制流量,防止攻击者逃逸和捕获数据&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;蜜罐集群:&lt;/strong&gt; 包含多种蜜罐&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Honeytoken:&lt;/strong&gt; 散布在网络中的诱饵信息,如数据库账号密码等.用于引诱攻击者下一步进攻&lt;/p&gt;
+&lt;h2 id=&#34;蜜罐反制&#34;&gt;蜜罐反制&lt;/h2&gt;
+&lt;h3 id=&#34;web蜜罐反制&#34;&gt;web蜜罐反制&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;jsonp劫持: 蜜罐前端会内置大量的主流网站(Google,GitHub等)的jsonp接口,只要当前的浏览器登陆过这些网站,蜜罐通过跨域请求就能够直接拿到你的账号信息,或者浏览器,屏幕等硬件信息.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;通过留下诱饵信息,如数据库的连接账户密码等,让攻击者进行连接,从而进行数据库蜜罐反制,或者进入蜜网等&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;通过网站的合理交互功能,如填写手机号或者个人信息,获取攻击者的信息&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;mysql数据库蜜罐反制&#34;&gt;MySQL数据库蜜罐反制&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;成因:&lt;/strong&gt; &lt;code&gt;LOAD DATA LOCAL INFILE&lt;/code&gt;机制: 可以将本地文件发送到数据库中&lt;/p&gt;
+&lt;p&gt;正常使用: 客户端输入 &lt;code&gt;LOAD DATA LOCAL INFILE &#39;/etc/passwd&#39; INTO TABLE users;&lt;/code&gt;，客户端驱动就会读取本地的 &lt;code&gt;/etc/passwd&lt;/code&gt; 并发给服务器&lt;/p&gt;
+&lt;p&gt;蜜罐使用: 当你通过投下的诱饵连接数据库时,蜜罐服务器会在握手成功后或者执行命令的时候主动向客户端发送文件请求的数据包,将攻击者的文件拿到手,一些常见的抓取文件:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;Windows 路径：
+C:/Users/Administrator/AppData/Roaming/Tencent/WeChat/All Users/config/config.data（获取微信基本信息）
+C:/Users/Default/AppData/Local/Google/Chrome/User Data/Default/Login Data（Chrome 凭据）
+
+Linux 路径：
+~/.ssh/id_rsa（SSH 私钥）
+~/.bash_history（历史命令，可能包含敏感密码或其它跳板 IP）
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;攻击方反制手段&#34;&gt;攻击方反制手段&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;存储型XSS:&lt;/p&gt;
+&lt;p&gt;蜜罐可以将攻击者的个人信息或者攻击载荷等展示出来如:&lt;code&gt;Username&lt;/code&gt; ,&lt;code&gt;User-Agent&lt;/code&gt;等,可以在攻击的时候在这些地方插入payload,对防守方进行反制&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;攻击者下载文件植入木马后传回去,当防守方直接打开后就会中招&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;在防守方下载文件之前,替换重要文件如微信的&lt;code&gt;config.data&lt;/code&gt;文件,替换成钓鱼凭证,当防守方查看时就会触发&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;蜜罐N-day&lt;/p&gt;
+&lt;p&gt;防守方的管理系统存在N-day或者使用的插件等存在N-day等&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;蜜罐特征转&#34;&gt;蜜罐特征(&lt;a href=&#34;https://mp.weixin.qq.com/s?biz=Mzk0NzE4MDE2NA==&amp;amp;mid=2247483908&amp;amp;idx=1&amp;amp;sn=e6a319e22c3cd54650bdbba511e58a43&#34;&gt;转&lt;/a&gt;)&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;3.1 协议的返回特征&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;部分开源蜜罐在模拟各个协议时，会在响应中带有一些明显的特征，可以根据这些特征来检测蜜罐。&lt;/p&gt;</description>
+    </item>
     <item>
       <title>Yso</title>
-      <link>http://localhost:1313/posts/yso/</link>
+      <link>https://b1ckdoor.com/posts/yso/</link>
       <pubDate>Fri, 10 Apr 2026 23:50:39 +0800</pubDate>
-      <guid>http://localhost:1313/posts/yso/</guid>
+      <guid>https://b1ckdoor.com/posts/yso/</guid>
       <description>&lt;h2 id=&#34;java_yso&#34;&gt;JAVA_YSO&lt;/h2&gt;
 &lt;h5 id=&#34;基础命令格式&#34;&gt;基础命令格式&lt;/h5&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;java -jar ysoserial.jar &lt;span style=&#34;color:#f92672&#34;&gt;[&lt;/span&gt;利用链&lt;span style=&#34;color:#f92672&#34;&gt;]&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;[&lt;/span&gt;执行的命令&lt;span style=&#34;color:#f92672&#34;&gt;]&lt;/span&gt;
@@ -39,52 +105,104 @@
 &lt;/code&gt;&lt;/pre&gt;&lt;p&gt;利用链:&lt;/p&gt;</description>
     </item>
     <item>
-      <title>浏览器劫持</title>
-      <link>http://localhost:1313/posts/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%8A%AB%E6%8C%81/</link>
+      <title>Chrome DevTools Protocol</title>
+      <link>https://b1ckdoor.com/posts/cdp/</link>
       <pubDate>Mon, 30 Mar 2026 21:28:24 +0800</pubDate>
-      <guid>http://localhost:1313/posts/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%8A%AB%E6%8C%81/</guid>
-      <description>&lt;h2 id=&#34;实现方式&#34;&gt;实现方式:&lt;/h2&gt;
+      <guid>https://b1ckdoor.com/posts/cdp/</guid>
+      <description>&lt;h3 id=&#34;什么是cdpchrome-devtools-protocol&#34;&gt;什么是CDP(Chrome DevTools Protocol)?&lt;/h3&gt;
+&lt;p&gt;cdp是一个基于JSON-RPC格式,通过websocket进行通信的协议.可以通过它对浏览器进行操作&lt;/p&gt;
+&lt;h3 id=&#34;他能做什么&#34;&gt;他能做什么?&lt;/h3&gt;
+&lt;p&gt;cdp是浏览器的底层,简单来说可以控制浏览器做任何事情&lt;/p&gt;
+&lt;h2 id=&#34;如何启动cdp&#34;&gt;如何启动CDP:&lt;/h2&gt;
+&lt;p&gt;以下以chrome浏览器做演示,但是实际上只要使用了Chromium内核的浏览器都原生支持CDP如 &lt;code&gt;chrome,edge&lt;/code&gt;Gecko(firefox) 部分支持,而WebKit(Safari)对CDP却不支持&lt;/p&gt;
+&lt;p&gt;注:  因浏览器默认都是&lt;strong&gt;单实例模式&lt;/strong&gt;,&lt;strong&gt;指令会传递给已有进程但并不执行&lt;/strong&gt;.所以开启远程端口前需要先关闭原有进程,命令:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;taskkill /F /IM chrome.exe
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;开启远程调试端口&#34;&gt;开启远程调试端口&lt;/h3&gt;
+&lt;p&gt;关闭chrome后我们执行&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;chrome.exe --remote-debugging-port=9226 --remote-debugging-address=0.0.0.0 --remote-allow-origins=* --user-data-dir=&amp;#34;C:\Users\Public\ChromeDebug&amp;#34; --headless=new
+
+参数讲解:
+--remote-debugging-port			 指定开启的远程调试端口
+--remote-debugging-address		 允许指定IP访问调试,新版禁用了0.0.0.0,可以使用端口转发.(最后提供一个frpc解决方式,见文章末尾)
+--remote-allow-origins			 允许任何来源连接调试端口
+--headless=new					无头模式(109引入)
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;code&gt;--user-data-dir&lt;/code&gt;: 默认目录为&lt;code&gt;%LOCALAPPDATA%\Google\Chrome\User Data&lt;/code&gt; 当指定一个目录的时候浏览器会打开一个新的浏览器页面相当与两个用户数据互不干扰.&lt;/p&gt;
+&lt;p&gt;这里在测试时发现本地复制&lt;code&gt;user Data&lt;/code&gt;目录启动浏览器依然不可以获取凭证,按理来说不同机器复制才会出现这种情况,希望有大佬解惑.复制命令如下&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;powershell:
+powershell -command &amp;#34;$exclude = @(&amp;#39;Cache&amp;#39;,&amp;#39;Code Cache&amp;#39;,&amp;#39;GPUCache&amp;#39;,&amp;#39;Media Cache&amp;#39;,&amp;#39;Service Worker&amp;#39;); Get-ChildItem -Path $env:LOCALAPPDATA&amp;#39;\Google\Chrome\User Data&amp;#39; -Recurse | Where-Object { $exclude -notcontains $_.Name } | Copy-Item -Destination { Join-Path $env:LOCALAPPDATA&amp;#39;\ChromeDebug&amp;#39; $_.FullName.Substring($env:LOCALAPPDATA.Length + 25) } -Force -ErrorAction SilentlyContinue&amp;#34;
+
+cmd:
+xcopy &amp;#34;%LOCALAPPDATA%\Google\Chrome\User Data&amp;#34; &amp;#34;%LOCALAPPDATA%\ChromeDebug&amp;#34; /E /I /H /C /Y /EXCLUDE:no_copy.txt
+/EXCLUDE:no_copy.txt  指定排除文件
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;开启远程端口后检查是否成功&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>云原生攻防技术</title>
+      <link>https://b1ckdoor.com/posts/%E4%BA%91%E5%8E%9F%E7%94%9F%E6%94%BB%E9%98%B2/</link>
+      <pubDate>Mon, 30 Mar 2026 21:28:24 +0800</pubDate>
+      <guid>https://b1ckdoor.com/posts/%E4%BA%91%E5%8E%9F%E7%94%9F%E6%94%BB%E9%98%B2/</guid>
+      <description>&lt;h2 id=&#34;docker&#34;&gt;Docker&lt;/h2&gt;
+&lt;p&gt;docker是一种轻量级容器技术,可将应用及其依赖打包成标准化单元&lt;/p&gt;
+&lt;h2 id=&#34;docker的优势&#34;&gt;Docker的优势&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;启动快速&lt;/li&gt;
+&lt;li&gt;跨平台&lt;/li&gt;
+&lt;li&gt;高效运维&lt;/li&gt;
+&lt;li&gt;环境一致性 (避免只有我的机器能跑)&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;k8s的作用和架构&#34;&gt;K8s的作用和架构&lt;/h2&gt;
+&lt;h3 id=&#34;为什么需要k8s&#34;&gt;为什么需要k8s?&lt;/h3&gt;
+&lt;p&gt;假设现在又10个容器让你管理,管理的过来,那随着业务发展增加到1000台呢,这些容器又部署在不同的服务器上,每一个环境都不相同.那有什么办法解决这个问题?  于是k8s应运而生&lt;/p&gt;
+&lt;h3 id=&#34;k8s的优势&#34;&gt;k8s的优势&lt;/h3&gt;
 &lt;ol&gt;
 &lt;li&gt;
-&lt;h3 id=&#34;开启远程调试端口&#34;&gt;开启远程调试端口&lt;/h3&gt;
-&lt;p&gt;首先将dll插入浏览器目录后,使用命令将对方的远程调试端口开起来&lt;code&gt;chrome.exe --remote-debugging-port=9222 --remote-allow-origins=*  --headless &lt;/code&gt;&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ol&gt;
-&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;--remote-debugging-port	指定端口
---remote-allow-origins 避免403
---headless 避免弹窗
-&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;注: 如果对方已经开启浏览器需要将浏览器关闭后才能运行插入的dll,关闭浏览器命令&lt;code&gt;taskkill /F /IM chrome.exe /T&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;开启端后查看端口是否在运行监听&lt;code&gt;netstat -ano | findstr :9222&lt;/code&gt;&lt;/p&gt;
-&lt;ol start=&#34;2&#34;&gt;
+&lt;p&gt;资源自动调度&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;k8s会根据容器所需的资源扫描服务器集群,把空闲的机器部署容器,实现资源最大化
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
 &lt;li&gt;
-&lt;h3 id=&#34;打隧道&#34;&gt;打隧道&lt;/h3&gt;
-&lt;/li&gt;
+&lt;p&gt;负载均衡&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;k8s提供一个统一的入口,不管后端容器的IP变化,都会转发到对应的容器中
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;自动修复&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;k8s会不断检查运行状态,如果容器挂了会自动拉起一个新的,如果机器坏了,会自动迁移到其他机器上
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
 &lt;/ol&gt;
-&lt;p&gt;通过frp打通隧道frpc配置&lt;/p&gt;
-&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;[common]
-# 你的 VPS 公网 IP
-server_addr = x.x.x.x
-server_port = 7000
-token = my_secure_token_123
+&lt;h3 id=&#34;k8s核心组件&#34;&gt;K8s核心组件&lt;/h3&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code class=&#34;language-mermaid&#34; data-lang=&#34;mermaid&#34;&gt;graph TD
+    %% 定义 Master 节点结构
+    subgraph MasterGroup[Master节点]
+        direction TB
+        Master[Master节点] --&amp;gt; API[API Server]
+        Master --&amp;gt; CM[Controller Manager]
+        Master --&amp;gt; Sched[Scheduler]
+    end
 
-[chrome_debug]
-type = tcp
-local_ip = 127.0.0.1
-# 对应 Chrome 启动时的 --remote-debugging-port
-local_port = 9222
-# 映射到 VPS 上的端口（确保 VPS 防火墙已开放此端口）
-remote_port = 19222
-
-# 【实战建议】开启加密和压缩，躲避流量检测
-use_encryption = true
-use_compression = true
-&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;frps&lt;/p&gt;</description>
+    %% 定义 Node 节点结构
+    subgraph NodeGroup[Node节点]
+        direction TB
+        Node[Node节点] --&amp;gt; KL[Kubelet]
+        Node --&amp;gt; KP[Kube-Proxy]
+        Node --&amp;gt; P[Pod]
+    end
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;strong&gt;Pod&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;pod是最小的可部署对象&lt;/li&gt;
+&lt;li&gt;它可以封装一个或者多个容器,&lt;strong&gt;POD中的网络和存储,凭据共享&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;k8s不直接运行容器而是运行pod,pod中的容器一般同时运行在一台node中&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;API Server:&lt;/strong&gt; 集群的唯一入口,所有指令优先发送到它
+&lt;strong&gt;node:&lt;/strong&gt; 实际运行容器的机器
+**scheduler:**调度器,监视API Server看有没有没有分配node的POD
+&lt;strong&gt;Service:&lt;/strong&gt; 服务的固定访问入口
+&lt;strong&gt;Deployment:&lt;/strong&gt; 声明式定义应用版本与副本数
+&lt;strong&gt;Horizontal Autoscaler:&lt;/strong&gt; 根据CPU/内存自动扩缩容&lt;/p&gt;</description>
     </item>
     <item>
       <title>XSS</title>
-      <link>http://localhost:1313/posts/xss/</link>
+      <link>https://b1ckdoor.com/posts/xss/</link>
       <pubDate>Thu, 19 Mar 2026 00:33:54 +0800</pubDate>
-      <guid>http://localhost:1313/posts/xss/</guid>
+      <guid>https://b1ckdoor.com/posts/xss/</guid>
       <description>&lt;h2 id=&#34;逃逸手法分类选择&#34;&gt;逃逸手法分类/选择:&lt;/h2&gt;
 &lt;ol&gt;
 &lt;li&gt;
@@ -136,9 +254,9 @@ use_compression = true
     </item>
     <item>
       <title>JS</title>
-      <link>http://localhost:1313/posts/js%E5%AE%A1%E8%AE%A1%E6%8A%80%E5%B7%A7/</link>
+      <link>https://b1ckdoor.com/posts/js%E5%AE%A1%E8%AE%A1%E6%8A%80%E5%B7%A7/</link>
       <pubDate>Sat, 28 Feb 2026 22:41:23 +0800</pubDate>
-      <guid>http://localhost:1313/posts/js%E5%AE%A1%E8%AE%A1%E6%8A%80%E5%B7%A7/</guid>
+      <guid>https://b1ckdoor.com/posts/js%E5%AE%A1%E8%AE%A1%E6%8A%80%E5%B7%A7/</guid>
       <description>&lt;p&gt;本人代码能力不是很好，对很多网站框架和文件理解不是很深，所以看js文件的时候难免有些困难，所以有了这篇文章&lt;/p&gt;
 &lt;h3 id=&#34;js审计技巧&#34;&gt;JS审计技巧&lt;/h3&gt;
 &lt;p&gt;遇到source.map(.map)可以直接还原源码&lt;/p&gt;
@@ -197,9 +315,9 @@ use_compression = true
     </item>
     <item>
       <title>Java基础</title>
-      <link>http://localhost:1313/posts/java%E5%9F%BA%E7%A1%80/</link>
+      <link>https://b1ckdoor.com/posts/java%E5%9F%BA%E7%A1%80/</link>
       <pubDate>Mon, 16 Feb 2026 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/posts/java%E5%9F%BA%E7%A1%80/</guid>
+      <guid>https://b1ckdoor.com/posts/java%E5%9F%BA%E7%A1%80/</guid>
       <description>&lt;h3 id=&#34;java-反射&#34;&gt;JAVA 反射&lt;/h3&gt;
 &lt;h5 id=&#34;什么是java的反射&#34;&gt;什么是java的反射&lt;/h5&gt;
 &lt;p&gt;java反射就是在程序运行状态中，能够知道任何一个类的所有属性和方法，并且能够调用这些属性和方法的功能&lt;/p&gt;
@@ -237,9 +355,9 @@ lnitialization(初始化) 执行静态代码块，静态变量的赋值动作
     </item>
     <item>
       <title>Linux提权</title>
-      <link>http://localhost:1313/posts/linux%E6%8F%90%E6%9D%83/</link>
+      <link>https://b1ckdoor.com/posts/linux%E6%8F%90%E6%9D%83/</link>
       <pubDate>Sun, 15 Feb 2026 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/posts/linux%E6%8F%90%E6%9D%83/</guid>
+      <guid>https://b1ckdoor.com/posts/linux%E6%8F%90%E6%9D%83/</guid>
       <description>&lt;h1 id=&#34;常规提权方式&#34;&gt;常规提权方式&lt;/h1&gt;
 &lt;h2 id=&#34;一sudo滥用提权&#34;&gt;一、sudo滥用提权&lt;/h2&gt;
 &lt;p&gt;&lt;code&gt;sudo -l&lt;/code&gt;提示要输入密码的原因:&lt;/p&gt;
@@ -325,9 +443,9 @@ lnitialization(初始化) 执行静态代码块，静态变量的赋值动作
     </item>
     <item>
       <title>SSRF</title>
-      <link>http://localhost:1313/posts/ssrf/</link>
+      <link>https://b1ckdoor.com/posts/ssrf/</link>
       <pubDate>Sun, 15 Feb 2026 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/posts/ssrf/</guid>
+      <guid>https://b1ckdoor.com/posts/ssrf/</guid>
       <description>&lt;h3 id=&#34;伪协议&#34;&gt;伪协议&lt;/h3&gt;
 &lt;h5 id=&#34;php&#34;&gt;PHP&lt;/h5&gt;
 &lt;p&gt;&lt;code&gt;http/s://  &lt;/code&gt;常用于探测存活主机和开放端口,配合burp&lt;/p&gt;
@@ -380,9 +498,9 @@ IPv6 绕过：
     </item>
     <item>
       <title>Windows提权</title>
-      <link>http://localhost:1313/posts/windows%E6%8F%90%E6%9D%83/</link>
+      <link>https://b1ckdoor.com/posts/windows%E6%8F%90%E6%9D%83/</link>
       <pubDate>Sun, 15 Feb 2026 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/posts/windows%E6%8F%90%E6%9D%83/</guid>
+      <guid>https://b1ckdoor.com/posts/windows%E6%8F%90%E6%9D%83/</guid>
       <description>&lt;h1 id=&#34;windows工作组环境和域环境提权方式详解&#34;&gt;Windows工作组环境和域环境提权方式详解&lt;/h1&gt;
 &lt;h2 id=&#34;一工作组环境提权方式&#34;&gt;一、工作组环境提权方式&lt;/h2&gt;
 &lt;h3 id=&#34;1-alwaysinstallelevated提权&#34;&gt;1. AlwaysInstallElevated提权&lt;/h3&gt;
@@ -435,9 +553,9 @@ IPv6 绕过：
     </item>
     <item>
       <title>PHP反序列化</title>
-      <link>http://localhost:1313/posts/php_serialize/</link>
+      <link>https://b1ckdoor.com/posts/php_serialize/</link>
       <pubDate>Sat, 07 Feb 2026 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/posts/php_serialize/</guid>
+      <guid>https://b1ckdoor.com/posts/php_serialize/</guid>
       <description>&lt;p&gt;距离第一次学习php反序列已经很长时间了，初次学习时就学的迷迷糊糊，有很多理解不到位的地方，正好最近有时间打算回过头重新开始学习一遍，理解不到位之处请各位大佬多多指正。&lt;/p&gt;
 &lt;h3 id=&#34;为什么需要序列化和反序列化&#34;&gt;为什么需要序列化和反序列化？&lt;/h3&gt;
 &lt;ol&gt;
@@ -540,9 +658,9 @@ IPv6 绕过：
     </item>
     <item>
       <title>XML 漏洞详解</title>
-      <link>http://localhost:1313/posts/xml/</link>
+      <link>https://b1ckdoor.com/posts/xml/</link>
       <pubDate>Wed, 04 Feb 2026 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/posts/xml/</guid>
+      <guid>https://b1ckdoor.com/posts/xml/</guid>
       <description>&lt;h1 id=&#34;xml漏洞&#34;&gt;XML漏洞&lt;/h1&gt;
 &lt;h2 id=&#34;理论&#34;&gt;理论：&lt;/h2&gt;
 &lt;p&gt;xml是一种用来传输和存储数据的格式，长得有些像HTML&lt;/p&gt;
@@ -595,9 +713,9 @@ Content-Type: application/xml  &amp;lt;-- 修改这里
     </item>
     <item>
       <title>MySQL getshell</title>
-      <link>http://localhost:1313/posts/mysql-getshell/</link>
+      <link>https://b1ckdoor.com/posts/mysql-getshell/</link>
       <pubDate>Fri, 30 Jan 2026 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/posts/mysql-getshell/</guid>
+      <guid>https://b1ckdoor.com/posts/mysql-getshell/</guid>
       <description>&lt;h2 id=&#34;udf--os-shell&#34;&gt;UDF  (&amp;ndash;os-shell)&lt;/h2&gt;
 &lt;h3 id=&#34;利用条件&#34;&gt;利用条件&lt;/h3&gt;
 &lt;ul&gt;
@@ -638,9 +756,9 @@ Windows (phpStudy)	D:\phpstudy_pro\WWW\, C:\phpStudy\WWW\
     </item>
     <item>
       <title></title>
-      <link>http://localhost:1313/posts/c/c-%E8%AF%AD%E8%A8%80-%E5%AD%A6%E4%B9%A0/</link>
+      <link>https://b1ckdoor.com/posts/c/c-%E8%AF%AD%E8%A8%80-%E5%AD%A6%E4%B9%A0/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/posts/c/c-%E8%AF%AD%E8%A8%80-%E5%AD%A6%E4%B9%A0/</guid>
+      <guid>https://b1ckdoor.com/posts/c/c-%E8%AF%AD%E8%A8%80-%E5%AD%A6%E4%B9%A0/</guid>
       <description>&lt;h1 id=&#34;c-语言-学习&#34;&gt;C 语言 学习&lt;/h1&gt;
 &lt;p&gt;学习c语言是为了后面学习免杀,记录一下学习过程方便温习&lt;/p&gt;
 &lt;h2 id=&#34;基础知识&#34;&gt;基础知识&lt;/h2&gt;

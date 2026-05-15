@@ -1,6 +1,6 @@
-baseURL = 'https://f4lt.com/'
+baseURL = 'https://b1ckdoor.com/'
 languageCode = "zh-cn"
-title = "Cybersecurity learning"
+title = "h4xk0r blog"
 theme = "PaperMod"
 
 [outputs]
@@ -8,7 +8,8 @@ theme = "PaperMod"
 
 [params]
     author = "h4xk0r" 
-    
+    comments = true
+
     mainSections = ["posts"]
     defaultTheme = "dark"
     ShowCodeCopyButtons = true

