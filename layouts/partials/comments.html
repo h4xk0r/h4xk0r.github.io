@@ -1,15 +1,32 @@
-<script src="https://giscus.app/client.js"
-        data-repo="h4xk0r/h4xk0r.github.io"
-        data-repo-id="R_kgDORE9_Hw"
-        data-category="Announcements"
-        data-category-id="DIC_kwDORE9_H84C9ILE"
-        data-mapping="pathname"
-        data-strict="0"
-        data-reactions-enabled="1"
-        data-emit-metadata="0"
-        data-input-position="top"
-        data-theme="preferred_color_scheme"
-        data-lang="zh-CN"
-        crossorigin="anonymous"
-        async>
-</script>
+<div class="comments">
+    <script>
+        // 1. 动态检测 PaperMod 当前到底是黑夜还是白天模式
+        let giscusTheme = "github-light";
+        if (document.body.className.includes("dark")) {
+            giscusTheme = "github-dark";
+        }
+
+        // 2. 注入你专属的 Giscus 配置参数
+        let giscusAttributes = {
+            "src": "https://giscus.app/client.js",
+            "data-repo": "h4xk0r/h4xk0r.github.io",
+            "data-repo-id": "R_kgDORE9_Hw",
+            "data-category": "Announcements",
+            "data-category-id": "DIC_kwDORE9_H84C9ILE",
+            "data-mapping": "pathname",
+            "data-strict": "0",
+            "data-reactions-enabled": "1",
+            "data-emit-metadata": "0",
+            "data-input-position": "top",
+            "data-theme": giscusTheme,            // 🎯 核心：动态赋予黑夜或白天主题
+            "data-lang": "zh-CN",
+            "crossorigin": "anonymous",
+            "async": ""
+        };
+
+        // 3. 动态创建 script 标签并挂载到页面
+        let script = document.createElement("script");
+        Object.entries(giscusAttributes).forEach(([key, value]) => script.setAttribute(key, value));
+        document.querySelector('.comments').appendChild(script);
+    </script>
+</div>
