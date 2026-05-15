@@ -2,24 +2,24 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>Categories on h4xk0r blog</title>
-    <link>https://b1ckdoor.com/categories/</link>
+    <link>http://localhost:1313/categories/</link>
     <description>Recent content in Categories on h4xk0r blog</description>
     <generator>Hugo -- 0.155.1</generator>
     <language>zh-cn</language>
     <lastBuildDate>Mon, 16 Feb 2026 00:00:00 +0000</lastBuildDate>
-    <atom:link href="https://b1ckdoor.com/categories/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://localhost:1313/categories/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Java</title>
-      <link>https://b1ckdoor.com/categories/java/</link>
+      <link>http://localhost:1313/categories/java/</link>
       <pubDate>Mon, 16 Feb 2026 00:00:00 +0000</pubDate>
-      <guid>https://b1ckdoor.com/categories/java/</guid>
+      <guid>http://localhost:1313/categories/java/</guid>
       <description></description>
     </item>
     <item>
       <title>内网</title>
-      <link>https://b1ckdoor.com/categories/%E5%86%85%E7%BD%91/</link>
+      <link>http://localhost:1313/categories/%E5%86%85%E7%BD%91/</link>
       <pubDate>Sun, 15 Feb 2026 00:00:00 +0000</pubDate>
-      <guid>https://b1ckdoor.com/categories/%E5%86%85%E7%BD%91/</guid>
+      <guid>http://localhost:1313/categories/%E5%86%85%E7%BD%91/</guid>
       <description></description>
     </item>
   </channel>

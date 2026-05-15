@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>Posts on h4xk0r blog</title>
-    <link>https://b1ckdoor.com/posts/</link>
+    <link>http://localhost:1313/posts/</link>
     <description>Recent content in Posts on h4xk0r blog</description>
     <generator>Hugo -- 0.155.1</generator>
     <language>zh-cn</language>
     <lastBuildDate>Thu, 14 May 2026 19:38:41 +0800</lastBuildDate>
-    <atom:link href="https://b1ckdoor.com/posts/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://localhost:1313/posts/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>蜜罐及反制技术</title>
-      <link>https://b1ckdoor.com/posts/%E8%9C%9C%E7%BD%90%E5%8F%8A%E5%8F%8D%E5%88%B6%E6%8A%80%E6%9C%AF/</link>
+      <link>http://localhost:1313/posts/honeypot-anti-takeover/</link>
       <pubDate>Thu, 14 May 2026 19:38:41 +0800</pubDate>
-      <guid>https://b1ckdoor.com/posts/%E8%9C%9C%E7%BD%90%E5%8F%8A%E5%8F%8D%E5%88%B6%E6%8A%80%E6%9C%AF/</guid>
+      <guid>http://localhost:1313/posts/honeypot-anti-takeover/</guid>
       <description>&lt;p&gt;蜜罐是一种主动防御技术,它通过故意暴露的漏洞或者敏感信息,诱导黑客进行攻击,增加攻击者的攻击成本并对攻击者的攻击方式进行分析,溯源等以便更好的防御的一种手段.&lt;/p&gt;
 &lt;h2 id=&#34;蜜罐的分类&#34;&gt;蜜罐的分类&lt;/h2&gt;
 &lt;p&gt;蜜罐从低到高分为低交互蜜罐,中交互蜜罐,高交互蜜罐以及蜜罐集群组成的蜜网&lt;/p&gt;
@@ -76,9 +76,9 @@ Linux 路径：
     </item>
     <item>
       <title>Yso</title>
-      <link>https://b1ckdoor.com/posts/yso/</link>
+      <link>http://localhost:1313/posts/yso/</link>
       <pubDate>Fri, 10 Apr 2026 23:50:39 +0800</pubDate>
-      <guid>https://b1ckdoor.com/posts/yso/</guid>
+      <guid>http://localhost:1313/posts/yso/</guid>
       <description>&lt;h2 id=&#34;java_yso&#34;&gt;JAVA_YSO&lt;/h2&gt;
 &lt;h5 id=&#34;基础命令格式&#34;&gt;基础命令格式&lt;/h5&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;java -jar ysoserial.jar &lt;span style=&#34;color:#f92672&#34;&gt;[&lt;/span&gt;利用链&lt;span style=&#34;color:#f92672&#34;&gt;]&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;[&lt;/span&gt;执行的命令&lt;span style=&#34;color:#f92672&#34;&gt;]&lt;/span&gt;
@@ -106,9 +106,9 @@ Linux 路径：
     </item>
     <item>
       <title>Chrome DevTools Protocol</title>
-      <link>https://b1ckdoor.com/posts/cdp/</link>
+      <link>http://localhost:1313/posts/cdp/</link>
       <pubDate>Mon, 30 Mar 2026 21:28:24 +0800</pubDate>
-      <guid>https://b1ckdoor.com/posts/cdp/</guid>
+      <guid>http://localhost:1313/posts/cdp/</guid>
       <description>&lt;h3 id=&#34;什么是cdpchrome-devtools-protocol&#34;&gt;什么是CDP(Chrome DevTools Protocol)?&lt;/h3&gt;
 &lt;p&gt;cdp是一个基于JSON-RPC格式,通过websocket进行通信的协议.可以通过它对浏览器进行操作&lt;/p&gt;
 &lt;h3 id=&#34;他能做什么&#34;&gt;他能做什么?&lt;/h3&gt;
@@ -138,9 +138,9 @@ xcopy &amp;#34;%LOCALAPPDATA%\Google\Chrome\User Data&amp;#34; &amp;#34;%LOCALAP
     </item>
     <item>
       <title>云原生攻防技术</title>
-      <link>https://b1ckdoor.com/posts/%E4%BA%91%E5%8E%9F%E7%94%9F%E6%94%BB%E9%98%B2/</link>
+      <link>http://localhost:1313/posts/%E4%BA%91%E5%8E%9F%E7%94%9F%E6%94%BB%E9%98%B2/</link>
       <pubDate>Mon, 30 Mar 2026 21:28:24 +0800</pubDate>
-      <guid>https://b1ckdoor.com/posts/%E4%BA%91%E5%8E%9F%E7%94%9F%E6%94%BB%E9%98%B2/</guid>
+      <guid>http://localhost:1313/posts/%E4%BA%91%E5%8E%9F%E7%94%9F%E6%94%BB%E9%98%B2/</guid>
       <description>&lt;h2 id=&#34;docker&#34;&gt;Docker&lt;/h2&gt;
 &lt;p&gt;docker是一种轻量级容器技术,可将应用及其依赖打包成标准化单元&lt;/p&gt;
 &lt;h2 id=&#34;docker的优势&#34;&gt;Docker的优势&lt;/h2&gt;
@@ -200,9 +200,9 @@ xcopy &amp;#34;%LOCALAPPDATA%\Google\Chrome\User Data&amp;#34; &amp;#34;%LOCALAP
     </item>
     <item>
       <title>XSS</title>
-      <link>https://b1ckdoor.com/posts/xss/</link>
+      <link>http://localhost:1313/posts/xss/</link>
       <pubDate>Thu, 19 Mar 2026 00:33:54 +0800</pubDate>
-      <guid>https://b1ckdoor.com/posts/xss/</guid>
+      <guid>http://localhost:1313/posts/xss/</guid>
       <description>&lt;h2 id=&#34;逃逸手法分类选择&#34;&gt;逃逸手法分类/选择:&lt;/h2&gt;
 &lt;ol&gt;
 &lt;li&gt;
@@ -254,9 +254,9 @@ xcopy &amp;#34;%LOCALAPPDATA%\Google\Chrome\User Data&amp;#34; &amp;#34;%LOCALAP
     </item>
     <item>
       <title>JS</title>
-      <link>https://b1ckdoor.com/posts/js%E5%AE%A1%E8%AE%A1%E6%8A%80%E5%B7%A7/</link>
+      <link>http://localhost:1313/posts/js%E5%AE%A1%E8%AE%A1%E6%8A%80%E5%B7%A7/</link>
       <pubDate>Sat, 28 Feb 2026 22:41:23 +0800</pubDate>
-      <guid>https://b1ckdoor.com/posts/js%E5%AE%A1%E8%AE%A1%E6%8A%80%E5%B7%A7/</guid>
+      <guid>http://localhost:1313/posts/js%E5%AE%A1%E8%AE%A1%E6%8A%80%E5%B7%A7/</guid>
       <description>&lt;p&gt;本人代码能力不是很好，对很多网站框架和文件理解不是很深，所以看js文件的时候难免有些困难，所以有了这篇文章&lt;/p&gt;
 &lt;h3 id=&#34;js审计技巧&#34;&gt;JS审计技巧&lt;/h3&gt;
 &lt;p&gt;遇到source.map(.map)可以直接还原源码&lt;/p&gt;
@@ -315,9 +315,9 @@ xcopy &amp;#34;%LOCALAPPDATA%\Google\Chrome\User Data&amp;#34; &amp;#34;%LOCALAP
     </item>
     <item>
       <title>Java基础</title>
-      <link>https://b1ckdoor.com/posts/java%E5%9F%BA%E7%A1%80/</link>
+      <link>http://localhost:1313/posts/java%E5%9F%BA%E7%A1%80/</link>
       <pubDate>Mon, 16 Feb 2026 00:00:00 +0000</pubDate>
-      <guid>https://b1ckdoor.com/posts/java%E5%9F%BA%E7%A1%80/</guid>
+      <guid>http://localhost:1313/posts/java%E5%9F%BA%E7%A1%80/</guid>
       <description>&lt;h3 id=&#34;java-反射&#34;&gt;JAVA 反射&lt;/h3&gt;
 &lt;h5 id=&#34;什么是java的反射&#34;&gt;什么是java的反射&lt;/h5&gt;
 &lt;p&gt;java反射就是在程序运行状态中，能够知道任何一个类的所有属性和方法，并且能够调用这些属性和方法的功能&lt;/p&gt;
@@ -355,9 +355,9 @@ lnitialization(初始化) 执行静态代码块，静态变量的赋值动作
     </item>
     <item>
       <title>Linux提权</title>
-      <link>https://b1ckdoor.com/posts/linux%E6%8F%90%E6%9D%83/</link>
+      <link>http://localhost:1313/posts/linux%E6%8F%90%E6%9D%83/</link>
       <pubDate>Sun, 15 Feb 2026 00:00:00 +0000</pubDate>
-      <guid>https://b1ckdoor.com/posts/linux%E6%8F%90%E6%9D%83/</guid>
+      <guid>http://localhost:1313/posts/linux%E6%8F%90%E6%9D%83/</guid>
       <description>&lt;h1 id=&#34;常规提权方式&#34;&gt;常规提权方式&lt;/h1&gt;
 &lt;h2 id=&#34;一sudo滥用提权&#34;&gt;一、sudo滥用提权&lt;/h2&gt;
 &lt;p&gt;&lt;code&gt;sudo -l&lt;/code&gt;提示要输入密码的原因:&lt;/p&gt;
@@ -443,9 +443,9 @@ lnitialization(初始化) 执行静态代码块，静态变量的赋值动作
     </item>
     <item>
       <title>SSRF</title>
-      <link>https://b1ckdoor.com/posts/ssrf/</link>
+      <link>http://localhost:1313/posts/ssrf/</link>
       <pubDate>Sun, 15 Feb 2026 00:00:00 +0000</pubDate>
-      <guid>https://b1ckdoor.com/posts/ssrf/</guid>
+      <guid>http://localhost:1313/posts/ssrf/</guid>
       <description>&lt;h3 id=&#34;伪协议&#34;&gt;伪协议&lt;/h3&gt;
 &lt;h5 id=&#34;php&#34;&gt;PHP&lt;/h5&gt;
 &lt;p&gt;&lt;code&gt;http/s://  &lt;/code&gt;常用于探测存活主机和开放端口,配合burp&lt;/p&gt;
@@ -498,9 +498,9 @@ IPv6 绕过：
     </item>
     <item>
       <title>Windows提权</title>
-      <link>https://b1ckdoor.com/posts/windows%E6%8F%90%E6%9D%83/</link>
+      <link>http://localhost:1313/posts/windows%E6%8F%90%E6%9D%83/</link>
       <pubDate>Sun, 15 Feb 2026 00:00:00 +0000</pubDate>
-      <guid>https://b1ckdoor.com/posts/windows%E6%8F%90%E6%9D%83/</guid>
+      <guid>http://localhost:1313/posts/windows%E6%8F%90%E6%9D%83/</guid>
       <description>&lt;h1 id=&#34;windows工作组环境和域环境提权方式详解&#34;&gt;Windows工作组环境和域环境提权方式详解&lt;/h1&gt;
 &lt;h2 id=&#34;一工作组环境提权方式&#34;&gt;一、工作组环境提权方式&lt;/h2&gt;
 &lt;h3 id=&#34;1-alwaysinstallelevated提权&#34;&gt;1. AlwaysInstallElevated提权&lt;/h3&gt;
@@ -553,9 +553,9 @@ IPv6 绕过：
     </item>
     <item>
       <title>PHP反序列化</title>
-      <link>https://b1ckdoor.com/posts/php_serialize/</link>
+      <link>http://localhost:1313/posts/php_serialize/</link>
       <pubDate>Sat, 07 Feb 2026 00:00:00 +0000</pubDate>
-      <guid>https://b1ckdoor.com/posts/php_serialize/</guid>
+      <guid>http://localhost:1313/posts/php_serialize/</guid>
       <description>&lt;p&gt;距离第一次学习php反序列已经很长时间了，初次学习时就学的迷迷糊糊，有很多理解不到位的地方，正好最近有时间打算回过头重新开始学习一遍，理解不到位之处请各位大佬多多指正。&lt;/p&gt;
 &lt;h3 id=&#34;为什么需要序列化和反序列化&#34;&gt;为什么需要序列化和反序列化？&lt;/h3&gt;
 &lt;ol&gt;
@@ -658,9 +658,9 @@ IPv6 绕过：
     </item>
     <item>
       <title>XML 漏洞详解</title>
-      <link>https://b1ckdoor.com/posts/xml/</link>
+      <link>http://localhost:1313/posts/xml/</link>
       <pubDate>Wed, 04 Feb 2026 00:00:00 +0000</pubDate>
-      <guid>https://b1ckdoor.com/posts/xml/</guid>
+      <guid>http://localhost:1313/posts/xml/</guid>
       <description>&lt;h1 id=&#34;xml漏洞&#34;&gt;XML漏洞&lt;/h1&gt;
 &lt;h2 id=&#34;理论&#34;&gt;理论：&lt;/h2&gt;
 &lt;p&gt;xml是一种用来传输和存储数据的格式，长得有些像HTML&lt;/p&gt;
@@ -713,9 +713,9 @@ Content-Type: application/xml  &amp;lt;-- 修改这里
     </item>
     <item>
       <title>MySQL getshell</title>
-      <link>https://b1ckdoor.com/posts/mysql-getshell/</link>
+      <link>http://localhost:1313/posts/mysql-getshell/</link>
       <pubDate>Fri, 30 Jan 2026 00:00:00 +0000</pubDate>
-      <guid>https://b1ckdoor.com/posts/mysql-getshell/</guid>
+      <guid>http://localhost:1313/posts/mysql-getshell/</guid>
       <description>&lt;h2 id=&#34;udf--os-shell&#34;&gt;UDF  (&amp;ndash;os-shell)&lt;/h2&gt;
 &lt;h3 id=&#34;利用条件&#34;&gt;利用条件&lt;/h3&gt;
 &lt;ul&gt;
@@ -756,9 +756,9 @@ Windows (phpStudy)	D:\phpstudy_pro\WWW\, C:\phpStudy\WWW\
     </item>
     <item>
       <title></title>
-      <link>https://b1ckdoor.com/posts/c/c-%E8%AF%AD%E8%A8%80-%E5%AD%A6%E4%B9%A0/</link>
+      <link>http://localhost:1313/posts/c/c-%E8%AF%AD%E8%A8%80-%E5%AD%A6%E4%B9%A0/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>https://b1ckdoor.com/posts/c/c-%E8%AF%AD%E8%A8%80-%E5%AD%A6%E4%B9%A0/</guid>
+      <guid>http://localhost:1313/posts/c/c-%E8%AF%AD%E8%A8%80-%E5%AD%A6%E4%B9%A0/</guid>
       <description>&lt;h1 id=&#34;c-语言-学习&#34;&gt;C 语言 学习&lt;/h1&gt;
 &lt;p&gt;学习c语言是为了后面学习免杀,记录一下学习过程方便温习&lt;/p&gt;
 &lt;h2 id=&#34;基础知识&#34;&gt;基础知识&lt;/h2&gt;

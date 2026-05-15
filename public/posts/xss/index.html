@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en" dir="auto" data-theme="dark">
 
-<head><meta charset="utf-8">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="robots" content="index, follow">
+<meta name="robots" content="noindex, nofollow">
 <title>XSS | h4xk0r blog</title>
 <meta name="keywords" content="">
 <meta name="description" content="逃逸手法分类/选择:
@@ -56,16 +56,16 @@ HTTP头(盲XSS) 在 Referer、User-Agent、X-Forwarded-For 中注入盲打 Paylo
 编码绕过:
 浏览器解析 HTML 时有特定的解码顺序（HTML 解码 -&gt; URL 解码 -&gt; JS 解码）">
 <meta name="author" content="h4xk0r">
-<link rel="canonical" href="https://b1ckdoor.com/posts/xss/">
+<link rel="canonical" href="http://localhost:1313/posts/xss/">
 <link crossorigin="anonymous" href="/assets/css/stylesheet.a72a21d173e6574a7d787ef864b8ff56506981bd547deea0fbd1766f099539cc.css" integrity="sha256-pyoh0XPmV0p9eH74ZLj/VlBpgb1Ufe6g&#43;9F2bwmVOcw=" rel="preload stylesheet" as="style">
-<link rel="icon" href="https://b1ckdoor.com/favicon.ico">
-<link rel="icon" type="image/png" sizes="16x16" href="https://b1ckdoor.com/favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="https://b1ckdoor.com/favicon-32x32.png">
-<link rel="apple-touch-icon" href="https://b1ckdoor.com/apple-touch-icon.png">
-<link rel="mask-icon" href="https://b1ckdoor.com/safari-pinned-tab.svg">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
 <meta name="theme-color" content="#2e2e33">
 <meta name="msapplication-TileColor" content="#2e2e33">
-<link rel="alternate" hreflang="en" href="https://b1ckdoor.com/posts/xss/">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/posts/xss/">
 <noscript>
     <style>
         #theme-toggle,
@@ -80,143 +80,13 @@ HTTP头(盲XSS) 在 Referer、User-Agent、X-Forwarded-For 中注入盲打 Paylo
         document.querySelector("html").dataset.theme = 'light';
     }
 
-</script><meta property="og:url" content="https://b1ckdoor.com/posts/xss/">
-  <meta property="og:site_name" content="h4xk0r blog">
-  <meta property="og:title" content="XSS">
-  <meta property="og:description" content="逃逸手法分类/选择: **HTML标签内部:**如在&lt;div&gt; xxx &lt;/div&gt;中
-逃逸: 直接闭合标签&lt;/div&gt; &lt;script&gt;alert(1)&lt;/script&gt;
-HTML属性内部:&lt;input type=&#34;text&#34; value=&#34;xxxx&#34;&gt;
-逃逸:
-一. 闭合属性,添加事件或者闭合标签 &#34; onmouseover=&#34;alert(1)或者
-&#34;&gt; &lt;script&gt;alert(1)&lt;/script&gt;
-Javascript变量内: &lt;script&gt; var name = &#39;xxxx&#39;; &lt;/script&gt;
-逃逸: 闭合单引号或者标签,闭合或者注释掉后面的代码, &#39;; alert(1); // DOM渲染: 数据不回传服务器，直接被前端 JS（如 .innerHTML、eval()）接收并渲染。
-挖掘思路 输入框测试: 先看源代码,输入的数据在什么里面,再测试能不能截断或者添加事件等方法,输入绕过的字符如: &#39; &#34; &lt; &gt; / ; \等,观察源代码哪一个被过滤了
-变成&amp;lt; 说明做了实体编码 没有变化,说明有xss的可能 其他测试点:
-json报错页面: 很多 API 报错时会原样回显你输入的非法 JSON 字段
-配合文件上传
-https://www.freebuf.com/vuls/418170.html 可以看这篇文章
-HTTP头(盲XSS) 在 Referer、User-Agent、X-Forwarded-For 中注入盲打 Payload，盲打后台
-绕过: 使用不太常见的标签或者事件:
-这里推荐一个网站 https://portswigger.net/web-security/cross-site-scripting/cheat-sheet
-编码绕过:
-浏览器解析 HTML 时有特定的解码顺序（HTML 解码 -&gt; URL 解码 -&gt; JS 解码）">
-  <meta property="og:locale" content="zh-cn">
-  <meta property="og:type" content="article">
-    <meta property="article:section" content="posts">
-    <meta property="article:published_time" content="2026-03-19T00:33:54+08:00">
-    <meta property="article:modified_time" content="2026-03-19T00:33:54+08:00">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="XSS">
-<meta name="twitter:description" content="逃逸手法分类/选择:
-
-
-**HTML标签内部:**如在&lt;div&gt; xxx &lt;/div&gt;中
-逃逸: 直接闭合标签&lt;/div&gt;  &lt;script&gt;alert(1)&lt;/script&gt;
-
-
-HTML属性内部:&lt;input type=&quot;text&quot; value=&quot;xxxx&quot;&gt;
-逃逸:
-一. 闭合属性,添加事件或者闭合标签 &quot;  onmouseover=&quot;alert(1)或者
-&quot;&gt;  &lt;script&gt;alert(1)&lt;/script&gt;
-
-
-Javascript变量内: &lt;script&gt; var name = &#39;xxxx&#39;; &lt;/script&gt;
-逃逸: 闭合单引号或者标签,闭合或者注释掉后面的代码, &#39;; alert(1);      // 
-
-
-DOM渲染: 数据不回传服务器，直接被前端 JS（如 .innerHTML、eval()）接收并渲染。
-
-
-挖掘思路
-输入框测试: 先看源代码,输入的数据在什么里面,再测试能不能截断或者添加事件等方法,输入绕过的字符如: &#39; &quot; &lt; &gt; / ; \等,观察源代码哪一个被过滤了
-
-变成&amp;lt; 说明做了实体编码
-没有变化,说明有xss的可能
-
-其他测试点:
-
-
-json报错页面: 很多 API 报错时会原样回显你输入的非法 JSON 字段
-
-
-配合文件上传
-https://www.freebuf.com/vuls/418170.html 可以看这篇文章
-
-
-HTTP头(盲XSS) 在 Referer、User-Agent、X-Forwarded-For 中注入盲打 Payload，盲打后台
-
-
-绕过:
-
-
-使用不太常见的标签或者事件:
-这里推荐一个网站 https://portswigger.net/web-security/cross-site-scripting/cheat-sheet
-
-
-编码绕过:
-浏览器解析 HTML 时有特定的解码顺序（HTML 解码 -&gt; URL 解码 -&gt; JS 解码）">
-
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  "itemListElement": [
-    {
-      "@type": "ListItem",
-      "position":  1 ,
-      "name": "Posts",
-      "item": "https://b1ckdoor.com/posts/"
-    }, 
-    {
-      "@type": "ListItem",
-      "position":  2 ,
-      "name": "XSS",
-      "item": "https://b1ckdoor.com/posts/xss/"
-    }
-  ]
-}
-</script>
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BlogPosting",
-  "headline": "XSS",
-  "name": "XSS",
-  "description": "逃逸手法分类/选择: **HTML标签内部:**如在\u0026lt;div\u0026gt; xxx \u0026lt;/div\u0026gt;中\n逃逸: 直接闭合标签\u0026lt;/div\u0026gt; \u0026lt;script\u0026gt;alert(1)\u0026lt;/script\u0026gt;\nHTML属性内部:\u0026lt;input type=\u0026quot;text\u0026quot; value=\u0026quot;xxxx\u0026quot;\u0026gt;\n逃逸:\n一. 闭合属性,添加事件或者闭合标签 \u0026quot; onmouseover=\u0026quot;alert(1)或者\n\u0026quot;\u0026gt; \u0026lt;script\u0026gt;alert(1)\u0026lt;/script\u0026gt;\nJavascript变量内: \u0026lt;script\u0026gt; var name = 'xxxx'; \u0026lt;/script\u0026gt;\n逃逸: 闭合单引号或者标签,闭合或者注释掉后面的代码, '; alert(1); // DOM渲染: 数据不回传服务器，直接被前端 JS（如 .innerHTML、eval()）接收并渲染。\n挖掘思路 输入框测试: 先看源代码,输入的数据在什么里面,再测试能不能截断或者添加事件等方法,输入绕过的字符如: ' \u0026quot; \u0026lt; \u0026gt; / ; \\等,观察源代码哪一个被过滤了\n变成\u0026amp;lt; 说明做了实体编码 没有变化,说明有xss的可能 其他测试点:\njson报错页面: 很多 API 报错时会原样回显你输入的非法 JSON 字段\n配合文件上传\nhttps://www.freebuf.com/vuls/418170.html 可以看这篇文章\nHTTP头(盲XSS) 在 Referer、User-Agent、X-Forwarded-For 中注入盲打 Payload，盲打后台\n绕过: 使用不太常见的标签或者事件:\n这里推荐一个网站 https://portswigger.net/web-security/cross-site-scripting/cheat-sheet\n编码绕过:\n浏览器解析 HTML 时有特定的解码顺序（HTML 解码 -\u0026gt; URL 解码 -\u0026gt; JS 解码）\n",
-  "keywords": [
-    
-  ],
-  "articleBody": "逃逸手法分类/选择: **HTML标签内部:**如在 xxx 中\n逃逸: 直接闭合标签 HTML属性内部:\n逃逸:\n一. 闭合属性,添加事件或者闭合标签 \" onmouseover=\"alert(1)或者\n\"\u003e Javascript变量内: 逃逸: 闭合单引号或者标签,闭合或者注释掉后面的代码, '; alert(1); // DOM渲染: 数据不回传服务器，直接被前端 JS（如 .innerHTML、eval()）接收并渲染。\n挖掘思路 输入框测试: 先看源代码,输入的数据在什么里面,再测试能不能截断或者添加事件等方法,输入绕过的字符如: ' \" \u003c \u003e / ; \\等,观察源代码哪一个被过滤了\n变成\u0026lt; 说明做了实体编码 没有变化,说明有xss的可能 其他测试点:\njson报错页面: 很多 API 报错时会原样回显你输入的非法 JSON 字段\n配合文件上传\nhttps://www.freebuf.com/vuls/418170.html 可以看这篇文章\nHTTP头(盲XSS) 在 Referer、User-Agent、X-Forwarded-For 中注入盲打 Payload，盲打后台\n绕过: 使用不太常见的标签或者事件:\n这里推荐一个网站 https://portswigger.net/web-security/cross-site-scripting/cheat-sheet\n编码绕过:\n浏览器解析 HTML 时有特定的解码顺序（HTML 解码 -\u003e URL 解码 -\u003e JS 解码）\n其他编码方式:\n动态执行编码(利用 JS 内置函数对加密/编码后的内容进行动态解密执行)\nCSS编码: 在 style 属性或 CSS 文件中，可以使用反斜杠后跟十六进制\nJSFuck,AAEncode,JJEncode编码(要求不限制长度,绕waf有效)\n白盒审计的一些搜索关键词 语言/框架 搜索关键词 (高危标志) 漏洞原理 Java (Thymeleaf) th:utext Unescaped Text，直接渲染 HTML Java (JSP) \u003c%= 或 ${...} 原生输出，默认不转义 PHP (ThinkPHP/Smarty) ` raw` PHP (Laravel) {!! $var !!} 强制不转义输出 Python (Django/Jinja2) ` safe` Vue.js / React v-html / dangerouslySet... 框架留给开发者的“执行后门” 前端 JavaScript .innerHTML / document.write 原生 JS 最经典的 DOM XSS 入口 推荐文章: https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/XSS%20Injection\n一些推荐的工具: https://github.com/mandatoryprogrammer/xsshunter-express https://github.com/ssl/ezXSS https://github.com/s0md3v/XSStrike ",
-  "wordCount" : "142",
-  "inLanguage": "en",
-  "datePublished": "2026-03-19T00:33:54+08:00",
-  "dateModified": "2026-03-19T00:33:54+08:00",
-  "author":{
-    "@type": "Person",
-    "name": "h4xk0r"
-  },
-  "mainEntityOfPage": {
-    "@type": "WebPage",
-    "@id": "https://b1ckdoor.com/posts/xss/"
-  },
-  "publisher": {
-    "@type": "Organization",
-    "name": "h4xk0r blog",
-    "logo": {
-      "@type": "ImageObject",
-      "url": "https://b1ckdoor.com/favicon.ico"
-    }
-  }
-}
 </script>
 </head>
 <body id="top">
     <header class="header">
     <nav class="nav">
         <div class="logo">
-            <a href="https://b1ckdoor.com/" accesskey="h" title="h4xk0r blog (Alt + H)">h4xk0r blog</a>
+            <a href="http://localhost:1313/" accesskey="h" title="h4xk0r blog (Alt + H)">h4xk0r blog</a>
             <div class="logo-switches">
                 <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
                     <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
@@ -242,22 +112,22 @@ HTTP头(盲XSS) 在 Referer、User-Agent、X-Forwarded-For 中注入盲打 Paylo
         </div>
         <ul id="menu">
             <li>
-                <a href="https://b1ckdoor.com/posts/" title="档案">
+                <a href="http://localhost:1313/posts/" title="档案">
                     <span>档案</span>
                 </a>
             </li>
             <li>
-                <a href="https://b1ckdoor.com/search/" title="搜索 (Alt &#43; /)" accesskey=/>
+                <a href="http://localhost:1313/search/" title="搜索 (Alt &#43; /)" accesskey=/>
                     <span>搜索</span>
                 </a>
             </li>
             <li>
-                <a href="https://b1ckdoor.com/categories/" title="分类">
+                <a href="http://localhost:1313/categories/" title="分类">
                     <span>分类</span>
                 </a>
             </li>
             <li>
-                <a href="https://b1ckdoor.com/fuzzlist/" title="Fuzzlist">
+                <a href="http://localhost:1313/fuzzlist/" title="Fuzzlist">
                     <span>Fuzzlist</span>
                 </a>
             </li>
@@ -427,26 +297,63 @@ https://github.com/s0md3v/XSStrike
   <footer class="post-footer">
     <ul class="post-tags">
     </ul>
-  </footer><script src="https://giscus.app/client.js"
-        data-repo="h4xk0r/h4xk0r.github.io"
-        data-repo-id="R_kgDORE9_Hw"
-        data-category="Announcements"
-        data-category-id="DIC_kwDORE9_H84C9ILE"
-        data-mapping="pathname"
-        data-strict="0"
-        data-reactions-enabled="1"
-        data-emit-metadata="0"
-        data-input-position="top"
-        data-theme="preferred_color_scheme"
-        data-lang="zh-CN"
-        crossorigin="anonymous"
-        async>
-</script>
+  </footer><div class="comments">
+    <div id="utterances-container"></div>
+    <script>
+        
+        function getUtterancesTheme() {
+            if (document.body.className.includes("dark") || localStorage.getItem("pref-theme") === "dark") {
+                return "github-dark"; 
+            }
+            return "github-light";    
+        }
+
+        
+        function loadUtterances() {
+            const container = document.getElementById('utterances-container');
+            container.innerHTML = ''; 
+
+            let script = document.createElement("script");
+            script.setAttribute("src", "https://utteranc.es/client.js");
+            script.setAttribute("repo", "h4xk0r/h4xk0r.github.io");
+            script.setAttribute("issue-term", "pathname");
+            script.setAttribute("label", "Comment");
+            script.setAttribute("theme", getUtterancesTheme()); 
+            script.setAttribute("crossorigin", "anonymous");
+            script.setAttribute("async", "true");
+
+            container.appendChild(script);
+        }
+
+        
+        loadUtterances();
+
+        
+        const themeToggle = document.getElementById("theme-toggle");
+        if (themeToggle) {
+            themeToggle.addEventListener("click", () => {
+                setTimeout(() => {
+                    
+                    const newTheme = document.body.className.includes("dark") ? "github-dark" : "github-light";
+                    const message = {
+                        type: 'set-theme',
+                        theme: newTheme
+                    };
+                    
+                    const iframe = document.querySelector('.utterances-frame');
+                    if (iframe) {
+                        iframe.contentWindow.postMessage(message, 'https://utteranc.es');
+                    }
+                }, 100); 
+            });
+        }
+    </script>
+</div>
 </article>
     </main>
     
 <footer class="footer">
-        <span>&copy; 2026 <a href="https://b1ckdoor.com/">h4xk0r blog</a></span> · 
+        <span>&copy; 2026 <a href="http://localhost:1313/">h4xk0r blog</a></span> · 
 
     <span>
         Powered by

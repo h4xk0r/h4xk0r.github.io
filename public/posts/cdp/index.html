@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en" dir="auto" data-theme="dark">
 
-<head><meta charset="utf-8">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="robots" content="index, follow">
+<meta name="robots" content="noindex, nofollow">
 <title>Chrome DevTools Protocol | h4xk0r blog</title>
 <meta name="keywords" content="">
 <meta name="description" content="什么是CDP(Chrome DevTools Protocol)?
@@ -34,16 +34,16 @@ xcopy &#34;%LOCALAPPDATA%\Google\Chrome\User Data&#34; &#34;%LOCALAPPDATA%\Chrom
 /EXCLUDE:no_copy.txt  指定排除文件
 开启远程端口后检查是否成功">
 <meta name="author" content="h4xk0r">
-<link rel="canonical" href="https://b1ckdoor.com/posts/cdp/">
+<link rel="canonical" href="http://localhost:1313/posts/cdp/">
 <link crossorigin="anonymous" href="/assets/css/stylesheet.a72a21d173e6574a7d787ef864b8ff56506981bd547deea0fbd1766f099539cc.css" integrity="sha256-pyoh0XPmV0p9eH74ZLj/VlBpgb1Ufe6g&#43;9F2bwmVOcw=" rel="preload stylesheet" as="style">
-<link rel="icon" href="https://b1ckdoor.com/favicon.ico">
-<link rel="icon" type="image/png" sizes="16x16" href="https://b1ckdoor.com/favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="https://b1ckdoor.com/favicon-32x32.png">
-<link rel="apple-touch-icon" href="https://b1ckdoor.com/apple-touch-icon.png">
-<link rel="mask-icon" href="https://b1ckdoor.com/safari-pinned-tab.svg">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
 <meta name="theme-color" content="#2e2e33">
 <meta name="msapplication-TileColor" content="#2e2e33">
-<link rel="alternate" hreflang="en" href="https://b1ckdoor.com/posts/cdp/">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/posts/cdp/">
 <noscript>
     <style>
         #theme-toggle,
@@ -58,111 +58,13 @@ xcopy &#34;%LOCALAPPDATA%\Google\Chrome\User Data&#34; &#34;%LOCALAPPDATA%\Chrom
         document.querySelector("html").dataset.theme = 'light';
     }
 
-</script><meta property="og:url" content="https://b1ckdoor.com/posts/cdp/">
-  <meta property="og:site_name" content="h4xk0r blog">
-  <meta property="og:title" content="Chrome DevTools Protocol">
-  <meta property="og:description" content="什么是CDP(Chrome DevTools Protocol)? cdp是一个基于JSON-RPC格式,通过websocket进行通信的协议.可以通过它对浏览器进行操作
-他能做什么? cdp是浏览器的底层,简单来说可以控制浏览器做任何事情
-如何启动CDP: 以下以chrome浏览器做演示,但是实际上只要使用了Chromium内核的浏览器都原生支持CDP如 chrome,edgeGecko(firefox) 部分支持,而WebKit(Safari)对CDP却不支持
-注: 因浏览器默认都是单实例模式,指令会传递给已有进程但并不执行.所以开启远程端口前需要先关闭原有进程,命令:
-taskkill /F /IM chrome.exe 开启远程调试端口 关闭chrome后我们执行
-chrome.exe --remote-debugging-port=9226 --remote-debugging-address=0.0.0.0 --remote-allow-origins=* --user-data-dir=&#34;C:\Users\Public\ChromeDebug&#34; --headless=new 参数讲解: --remote-debugging-port	指定开启的远程调试端口 --remote-debugging-address	允许指定IP访问调试,新版禁用了0.0.0.0,可以使用端口转发.(最后提供一个frpc解决方式,见文章末尾) --remote-allow-origins	允许任何来源连接调试端口 --headless=new	无头模式(109引入) --user-data-dir: 默认目录为%LOCALAPPDATA%\Google\Chrome\User Data 当指定一个目录的时候浏览器会打开一个新的浏览器页面相当与两个用户数据互不干扰.
-这里在测试时发现本地复制user Data目录启动浏览器依然不可以获取凭证,按理来说不同机器复制才会出现这种情况,希望有大佬解惑.复制命令如下
-powershell: powershell -command &#34;$exclude = @(&#39;Cache&#39;,&#39;Code Cache&#39;,&#39;GPUCache&#39;,&#39;Media Cache&#39;,&#39;Service Worker&#39;); Get-ChildItem -Path $env:LOCALAPPDATA&#39;\Google\Chrome\User Data&#39; -Recurse | Where-Object { $exclude -notcontains $_.Name } | Copy-Item -Destination { Join-Path $env:LOCALAPPDATA&#39;\ChromeDebug&#39; $_.FullName.Substring($env:LOCALAPPDATA.Length &#43; 25) } -Force -ErrorAction SilentlyContinue&#34; cmd: xcopy &#34;%LOCALAPPDATA%\Google\Chrome\User Data&#34; &#34;%LOCALAPPDATA%\ChromeDebug&#34; /E /I /H /C /Y /EXCLUDE:no_copy.txt /EXCLUDE:no_copy.txt 指定排除文件 开启远程端口后检查是否成功">
-  <meta property="og:locale" content="zh-cn">
-  <meta property="og:type" content="article">
-    <meta property="article:section" content="posts">
-    <meta property="article:published_time" content="2026-03-30T21:28:24+08:00">
-    <meta property="article:modified_time" content="2026-03-30T21:28:24+08:00">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Chrome DevTools Protocol">
-<meta name="twitter:description" content="什么是CDP(Chrome DevTools Protocol)?
-cdp是一个基于JSON-RPC格式,通过websocket进行通信的协议.可以通过它对浏览器进行操作
-他能做什么?
-cdp是浏览器的底层,简单来说可以控制浏览器做任何事情
-如何启动CDP:
-以下以chrome浏览器做演示,但是实际上只要使用了Chromium内核的浏览器都原生支持CDP如 chrome,edgeGecko(firefox) 部分支持,而WebKit(Safari)对CDP却不支持
-注:  因浏览器默认都是单实例模式,指令会传递给已有进程但并不执行.所以开启远程端口前需要先关闭原有进程,命令:
-taskkill /F /IM chrome.exe
-开启远程调试端口
-关闭chrome后我们执行
-chrome.exe --remote-debugging-port=9226 --remote-debugging-address=0.0.0.0 --remote-allow-origins=* --user-data-dir=&#34;C:\Users\Public\ChromeDebug&#34; --headless=new
-
-参数讲解:
---remote-debugging-port			 指定开启的远程调试端口
---remote-debugging-address		 允许指定IP访问调试,新版禁用了0.0.0.0,可以使用端口转发.(最后提供一个frpc解决方式,见文章末尾)
---remote-allow-origins			 允许任何来源连接调试端口
---headless=new					无头模式(109引入)
---user-data-dir: 默认目录为%LOCALAPPDATA%\Google\Chrome\User Data 当指定一个目录的时候浏览器会打开一个新的浏览器页面相当与两个用户数据互不干扰.
-这里在测试时发现本地复制user Data目录启动浏览器依然不可以获取凭证,按理来说不同机器复制才会出现这种情况,希望有大佬解惑.复制命令如下
-powershell:
-powershell -command &#34;$exclude = @(&#39;Cache&#39;,&#39;Code Cache&#39;,&#39;GPUCache&#39;,&#39;Media Cache&#39;,&#39;Service Worker&#39;); Get-ChildItem -Path $env:LOCALAPPDATA&#39;\Google\Chrome\User Data&#39; -Recurse | Where-Object { $exclude -notcontains $_.Name } | Copy-Item -Destination { Join-Path $env:LOCALAPPDATA&#39;\ChromeDebug&#39; $_.FullName.Substring($env:LOCALAPPDATA.Length &#43; 25) } -Force -ErrorAction SilentlyContinue&#34;
-
-cmd:
-xcopy &#34;%LOCALAPPDATA%\Google\Chrome\User Data&#34; &#34;%LOCALAPPDATA%\ChromeDebug&#34; /E /I /H /C /Y /EXCLUDE:no_copy.txt
-/EXCLUDE:no_copy.txt  指定排除文件
-开启远程端口后检查是否成功">
-
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  "itemListElement": [
-    {
-      "@type": "ListItem",
-      "position":  1 ,
-      "name": "Posts",
-      "item": "https://b1ckdoor.com/posts/"
-    }, 
-    {
-      "@type": "ListItem",
-      "position":  2 ,
-      "name": "Chrome DevTools Protocol",
-      "item": "https://b1ckdoor.com/posts/cdp/"
-    }
-  ]
-}
-</script>
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BlogPosting",
-  "headline": "Chrome DevTools Protocol",
-  "name": "Chrome DevTools Protocol",
-  "description": "什么是CDP(Chrome DevTools Protocol)? cdp是一个基于JSON-RPC格式,通过websocket进行通信的协议.可以通过它对浏览器进行操作\n他能做什么? cdp是浏览器的底层,简单来说可以控制浏览器做任何事情\n如何启动CDP: 以下以chrome浏览器做演示,但是实际上只要使用了Chromium内核的浏览器都原生支持CDP如 chrome,edgeGecko(firefox) 部分支持,而WebKit(Safari)对CDP却不支持\n注: 因浏览器默认都是单实例模式,指令会传递给已有进程但并不执行.所以开启远程端口前需要先关闭原有进程,命令:\ntaskkill /F /IM chrome.exe 开启远程调试端口 关闭chrome后我们执行\nchrome.exe --remote-debugging-port=9226 --remote-debugging-address=0.0.0.0 --remote-allow-origins=* --user-data-dir=\u0026#34;C:\\Users\\Public\\ChromeDebug\u0026#34; --headless=new 参数讲解: --remote-debugging-port\t指定开启的远程调试端口 --remote-debugging-address\t允许指定IP访问调试,新版禁用了0.0.0.0,可以使用端口转发.(最后提供一个frpc解决方式,见文章末尾) --remote-allow-origins\t允许任何来源连接调试端口 --headless=new\t无头模式(109引入) --user-data-dir: 默认目录为%LOCALAPPDATA%\\Google\\Chrome\\User Data 当指定一个目录的时候浏览器会打开一个新的浏览器页面相当与两个用户数据互不干扰.\n这里在测试时发现本地复制user Data目录启动浏览器依然不可以获取凭证,按理来说不同机器复制才会出现这种情况,希望有大佬解惑.复制命令如下\npowershell: powershell -command \u0026#34;$exclude = @(\u0026#39;Cache\u0026#39;,\u0026#39;Code Cache\u0026#39;,\u0026#39;GPUCache\u0026#39;,\u0026#39;Media Cache\u0026#39;,\u0026#39;Service Worker\u0026#39;); Get-ChildItem -Path $env:LOCALAPPDATA\u0026#39;\\Google\\Chrome\\User Data\u0026#39; -Recurse | Where-Object { $exclude -notcontains $_.Name } | Copy-Item -Destination { Join-Path $env:LOCALAPPDATA\u0026#39;\\ChromeDebug\u0026#39; $_.FullName.Substring($env:LOCALAPPDATA.Length + 25) } -Force -ErrorAction SilentlyContinue\u0026#34; cmd: xcopy \u0026#34;%LOCALAPPDATA%\\Google\\Chrome\\User Data\u0026#34; \u0026#34;%LOCALAPPDATA%\\ChromeDebug\u0026#34; /E /I /H /C /Y /EXCLUDE:no_copy.txt /EXCLUDE:no_copy.txt 指定排除文件 开启远程端口后检查是否成功\n",
-  "keywords": [
-    
-  ],
-  "articleBody": "什么是CDP(Chrome DevTools Protocol)? cdp是一个基于JSON-RPC格式,通过websocket进行通信的协议.可以通过它对浏览器进行操作\n他能做什么? cdp是浏览器的底层,简单来说可以控制浏览器做任何事情\n如何启动CDP: 以下以chrome浏览器做演示,但是实际上只要使用了Chromium内核的浏览器都原生支持CDP如 chrome,edgeGecko(firefox) 部分支持,而WebKit(Safari)对CDP却不支持\n注: 因浏览器默认都是单实例模式,指令会传递给已有进程但并不执行.所以开启远程端口前需要先关闭原有进程,命令:\ntaskkill /F /IM chrome.exe 开启远程调试端口 关闭chrome后我们执行\nchrome.exe --remote-debugging-port=9226 --remote-debugging-address=0.0.0.0 --remote-allow-origins=* --user-data-dir=\"C:\\Users\\Public\\ChromeDebug\" --headless=new 参数讲解: --remote-debugging-port\t指定开启的远程调试端口 --remote-debugging-address\t允许指定IP访问调试,新版禁用了0.0.0.0,可以使用端口转发.(最后提供一个frpc解决方式,见文章末尾) --remote-allow-origins\t允许任何来源连接调试端口 --headless=new\t无头模式(109引入) --user-data-dir: 默认目录为%LOCALAPPDATA%\\Google\\Chrome\\User Data 当指定一个目录的时候浏览器会打开一个新的浏览器页面相当与两个用户数据互不干扰.\n这里在测试时发现本地复制user Data目录启动浏览器依然不可以获取凭证,按理来说不同机器复制才会出现这种情况,希望有大佬解惑.复制命令如下\npowershell: powershell -command \"$exclude = @('Cache','Code Cache','GPUCache','Media Cache','Service Worker'); Get-ChildItem -Path $env:LOCALAPPDATA'\\Google\\Chrome\\User Data' -Recurse | Where-Object { $exclude -notcontains $_.Name } | Copy-Item -Destination { Join-Path $env:LOCALAPPDATA'\\ChromeDebug' $_.FullName.Substring($env:LOCALAPPDATA.Length + 25) } -Force -ErrorAction SilentlyContinue\" cmd: xcopy \"%LOCALAPPDATA%\\Google\\Chrome\\User Data\" \"%LOCALAPPDATA%\\ChromeDebug\" /E /I /H /C /Y /EXCLUDE:no_copy.txt /EXCLUDE:no_copy.txt 指定排除文件 开启远程端口后检查是否成功\nnetstat -ano | findstr :port frpc配置 [[proxies]] name = \"chrome-debug-tcp\" type = \"tcp\" local_ip = \"127.0.0.1\" local_port = 9226 # 你的 Chrome 开启的端口 remote_port = 19226 # 映射到 frps 服务器上的端口 ",
-  "wordCount" : "117",
-  "inLanguage": "en",
-  "datePublished": "2026-03-30T21:28:24+08:00",
-  "dateModified": "2026-03-30T21:28:24+08:00",
-  "author":{
-    "@type": "Person",
-    "name": "h4xk0r"
-  },
-  "mainEntityOfPage": {
-    "@type": "WebPage",
-    "@id": "https://b1ckdoor.com/posts/cdp/"
-  },
-  "publisher": {
-    "@type": "Organization",
-    "name": "h4xk0r blog",
-    "logo": {
-      "@type": "ImageObject",
-      "url": "https://b1ckdoor.com/favicon.ico"
-    }
-  }
-}
 </script>
 </head>
 <body id="top">
     <header class="header">
     <nav class="nav">
         <div class="logo">
-            <a href="https://b1ckdoor.com/" accesskey="h" title="h4xk0r blog (Alt + H)">h4xk0r blog</a>
+            <a href="http://localhost:1313/" accesskey="h" title="h4xk0r blog (Alt + H)">h4xk0r blog</a>
             <div class="logo-switches">
                 <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
                     <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
@@ -188,22 +90,22 @@ xcopy &#34;%LOCALAPPDATA%\Google\Chrome\User Data&#34; &#34;%LOCALAPPDATA%\Chrom
         </div>
         <ul id="menu">
             <li>
-                <a href="https://b1ckdoor.com/posts/" title="档案">
+                <a href="http://localhost:1313/posts/" title="档案">
                     <span>档案</span>
                 </a>
             </li>
             <li>
-                <a href="https://b1ckdoor.com/search/" title="搜索 (Alt &#43; /)" accesskey=/>
+                <a href="http://localhost:1313/search/" title="搜索 (Alt &#43; /)" accesskey=/>
                     <span>搜索</span>
                 </a>
             </li>
             <li>
-                <a href="https://b1ckdoor.com/categories/" title="分类">
+                <a href="http://localhost:1313/categories/" title="分类">
                     <span>分类</span>
                 </a>
             </li>
             <li>
-                <a href="https://b1ckdoor.com/fuzzlist/" title="Fuzzlist">
+                <a href="http://localhost:1313/fuzzlist/" title="Fuzzlist">
                     <span>Fuzzlist</span>
                 </a>
             </li>
@@ -292,26 +194,63 @@ remote_port = 19226        # 映射到 frps 服务器上的端口
   <footer class="post-footer">
     <ul class="post-tags">
     </ul>
-  </footer><script src="https://giscus.app/client.js"
-        data-repo="h4xk0r/h4xk0r.github.io"
-        data-repo-id="R_kgDORE9_Hw"
-        data-category="Announcements"
-        data-category-id="DIC_kwDORE9_H84C9ILE"
-        data-mapping="pathname"
-        data-strict="0"
-        data-reactions-enabled="1"
-        data-emit-metadata="0"
-        data-input-position="top"
-        data-theme="preferred_color_scheme"
-        data-lang="zh-CN"
-        crossorigin="anonymous"
-        async>
-</script>
+  </footer><div class="comments">
+    <div id="utterances-container"></div>
+    <script>
+        
+        function getUtterancesTheme() {
+            if (document.body.className.includes("dark") || localStorage.getItem("pref-theme") === "dark") {
+                return "github-dark"; 
+            }
+            return "github-light";    
+        }
+
+        
+        function loadUtterances() {
+            const container = document.getElementById('utterances-container');
+            container.innerHTML = ''; 
+
+            let script = document.createElement("script");
+            script.setAttribute("src", "https://utteranc.es/client.js");
+            script.setAttribute("repo", "h4xk0r/h4xk0r.github.io");
+            script.setAttribute("issue-term", "pathname");
+            script.setAttribute("label", "Comment");
+            script.setAttribute("theme", getUtterancesTheme()); 
+            script.setAttribute("crossorigin", "anonymous");
+            script.setAttribute("async", "true");
+
+            container.appendChild(script);
+        }
+
+        
+        loadUtterances();
+
+        
+        const themeToggle = document.getElementById("theme-toggle");
+        if (themeToggle) {
+            themeToggle.addEventListener("click", () => {
+                setTimeout(() => {
+                    
+                    const newTheme = document.body.className.includes("dark") ? "github-dark" : "github-light";
+                    const message = {
+                        type: 'set-theme',
+                        theme: newTheme
+                    };
+                    
+                    const iframe = document.querySelector('.utterances-frame');
+                    if (iframe) {
+                        iframe.contentWindow.postMessage(message, 'https://utteranc.es');
+                    }
+                }, 100); 
+            });
+        }
+    </script>
+</div>
 </article>
     </main>
     
 <footer class="footer">
-        <span>&copy; 2026 <a href="https://b1ckdoor.com/">h4xk0r blog</a></span> · 
+        <span>&copy; 2026 <a href="http://localhost:1313/">h4xk0r blog</a></span> · 
 
     <span>
         Powered by

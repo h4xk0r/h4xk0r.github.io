@@ -9,6 +9,7 @@ theme = "PaperMod"
 [params]
     author = "h4xk0r" 
     comments = true
+    StickyHeader = true
 
     mainSections = ["posts"]
     defaultTheme = "dark"

