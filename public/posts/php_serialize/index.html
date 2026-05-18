@@ -108,7 +108,7 @@ php中的序列化反序列化函数
 1、 __construct() 和 __destruct()">
 <meta name="author" content="h4xk0r">
 <link rel="canonical" href="http://localhost:1313/posts/php_serialize/">
-<link crossorigin="anonymous" href="/assets/css/stylesheet.a72a21d173e6574a7d787ef864b8ff56506981bd547deea0fbd1766f099539cc.css" integrity="sha256-pyoh0XPmV0p9eH74ZLj/VlBpgb1Ufe6g&#43;9F2bwmVOcw=" rel="preload stylesheet" as="style">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.da54c57d4305d35203753b611a507d3c3386f2dc610c5ecafc9137dfc0197499.css" integrity="sha256-2lTFfUMF01IDdTthGlB9PDOG8txhDF7K/JE338AZdJk=" rel="preload stylesheet" as="style">
 <link rel="icon" href="http://localhost:1313/favicon.ico">
 <link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
@@ -714,58 +714,84 @@ __toString()	对象转换成字符串调用
   <footer class="post-footer">
     <ul class="post-tags">
     </ul>
-  </footer><div class="comments">
-    <div id="utterances-container"></div>
-    <script>
+  </footer><div id="utterances-container"></div>
+
+<script>
+    
+    function isDarkMode() {
+        const html = document.documentElement;
+        const body = document.body;
+
         
-        function getUtterancesTheme() {
-            if (document.body.className.includes("dark") || localStorage.getItem("pref-theme") === "dark") {
-                return "github-dark"; 
-            }
-            return "github-light";    
+        if (html.getAttribute("data-theme") === "dark" || html.classList.contains("dark") ||
+            body.getAttribute("data-theme") === "dark" || body.classList.contains("dark")) {
+            return true;
         }
-
         
-        function loadUtterances() {
-            const container = document.getElementById('utterances-container');
-            container.innerHTML = ''; 
-
-            let script = document.createElement("script");
-            script.setAttribute("src", "https://utteranc.es/client.js");
-            script.setAttribute("repo", "h4xk0r/h4xk0r.github.io");
-            script.setAttribute("issue-term", "pathname");
-            script.setAttribute("label", "Comment");
-            script.setAttribute("theme", getUtterancesTheme()); 
-            script.setAttribute("crossorigin", "anonymous");
-            script.setAttribute("async", "true");
-
-            container.appendChild(script);
+        if (html.getAttribute("data-theme") === "light" || html.classList.contains("light") ||
+            body.getAttribute("data-theme") === "light" || body.classList.contains("light")) {
+            return false;
         }
-
         
+        const prefTheme = localStorage.getItem("pref-theme");
+        if (prefTheme) {
+            return prefTheme === "dark";
+        }
+        
+        return window.matchMedia('(prefers-color-scheme: dark)').matches;
+    }
+
+    function getTargetTheme() {
+        return isDarkMode() ? "github-dark" : "github-light";
+    }
+
+    function loadUtterances() {
+        const container = document.getElementById("utterances-container");
+        if (!container || container.hasChildNodes()) return;
+
+        const script = document.createElement("script");
+        script.src = "https://utteranc.es/client.js";
+        script.setAttribute("repo", "h4xk0r/h4xk0r.github.io"); 
+        script.setAttribute("issue-term", "pathname");
+        script.setAttribute("label", "comment");
+        script.setAttribute("theme", getTargetTheme());
+        script.setAttribute("crossorigin", "anonymous");
+        script.async = true;
+
+        container.appendChild(script);
+    }
+
+    function syncUtterancesTheme() {
+        const iframe = document.querySelector("iframe.utterances-frame");
+        if (iframe && iframe.contentWindow) {
+            iframe.contentWindow.postMessage({
+                type: 'set-theme',
+                theme: getTargetTheme()
+            }, 'https://utteranc.es');
+        }
+    }
+
+    
+    if (document.readyState === "interactive" || document.readyState === "complete") {
         loadUtterances();
+    } else {
+        document.addEventListener("DOMContentLoaded", loadUtterances);
+    }
 
-        
-        const themeToggle = document.getElementById("theme-toggle");
-        if (themeToggle) {
-            themeToggle.addEventListener("click", () => {
-                setTimeout(() => {
-                    
-                    const newTheme = document.body.className.includes("dark") ? "github-dark" : "github-light";
-                    const message = {
-                        type: 'set-theme',
-                        theme: newTheme
-                    };
-                    
-                    const iframe = document.querySelector('.utterances-frame');
-                    if (iframe) {
-                        iframe.contentWindow.postMessage(message, 'https://utteranc.es');
-                    }
-                }, 100); 
-            });
+    
+    const observer = new MutationObserver((mutations) => {
+        for (const mutation of mutations) {
+            if (mutation.attributeName === "class" || mutation.attributeName === "data-theme") {
+                syncUtterancesTheme();
+                break; 
+            }
         }
-    </script>
-</div>
+    });
+
+    
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class", "data-theme"] });
+    observer.observe(document.body, { attributes: true, attributeFilter: ["class", "data-theme"] });
+</script>
 </article>
     </main>
     

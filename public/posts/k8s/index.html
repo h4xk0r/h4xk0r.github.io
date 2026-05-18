@@ -5,36 +5,60 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="robots" content="noindex, nofollow">
-<title>Chrome DevTools Protocol | h4xk0r blog</title>
+<title>K8s | h4xk0r blog</title>
 <meta name="keywords" content="">
-<meta name="description" content="什么是CDP(Chrome DevTools Protocol)?
-cdp是一个基于JSON-RPC格式,通过websocket进行通信的协议.可以通过它对浏览器进行操作
-他能做什么?
-cdp是浏览器的底层,简单来说可以控制浏览器做任何事情
-如何启动CDP:
-以下以chrome浏览器做演示,但是实际上只要使用了Chromium内核的浏览器都原生支持CDP如 chrome,edgeGecko(firefox) 部分支持,而WebKit(Safari)对CDP却不支持
-注:  因浏览器默认都是单实例模式,指令会传递给已有进程但并不执行.所以开启远程端口前需要先关闭原有进程,命令:
-taskkill /F /IM chrome.exe
-开启远程调试端口
-关闭chrome后我们执行
-chrome.exe --remote-debugging-port=9226 --remote-debugging-address=0.0.0.0 --remote-allow-origins=* --user-data-dir=&#34;C:\Users\Public\ChromeDebug&#34; --headless=new
+<meta name="description" content="Docker
+docker是一种轻量级容器技术,可将应用及其依赖打包成标准化单元
+Docker的优势
 
-参数讲解:
---remote-debugging-port			 指定开启的远程调试端口
---remote-debugging-address		 允许指定IP访问调试,新版禁用了0.0.0.0,可以使用端口转发.(最后提供一个frpc解决方式,见文章末尾)
---remote-allow-origins			 允许任何来源连接调试端口
---headless=new					无头模式(109引入)
---user-data-dir: 默认目录为%LOCALAPPDATA%\Google\Chrome\User Data 当指定一个目录的时候浏览器会打开一个新的浏览器页面相当与两个用户数据互不干扰.
-这里在测试时发现本地复制user Data目录启动浏览器依然不可以获取凭证,按理来说不同机器复制才会出现这种情况,希望有大佬解惑.复制命令如下
-powershell:
-powershell -command &#34;$exclude = @(&#39;Cache&#39;,&#39;Code Cache&#39;,&#39;GPUCache&#39;,&#39;Media Cache&#39;,&#39;Service Worker&#39;); Get-ChildItem -Path $env:LOCALAPPDATA&#39;\Google\Chrome\User Data&#39; -Recurse | Where-Object { $exclude -notcontains $_.Name } | Copy-Item -Destination { Join-Path $env:LOCALAPPDATA&#39;\ChromeDebug&#39; $_.FullName.Substring($env:LOCALAPPDATA.Length &#43; 25) } -Force -ErrorAction SilentlyContinue&#34;
+启动快速
+跨平台
+高效运维
+环境一致性 (避免只有我的机器能跑)
 
-cmd:
-xcopy &#34;%LOCALAPPDATA%\Google\Chrome\User Data&#34; &#34;%LOCALAPPDATA%\ChromeDebug&#34; /E /I /H /C /Y /EXCLUDE:no_copy.txt
-/EXCLUDE:no_copy.txt  指定排除文件
-开启远程端口后检查是否成功">
+K8s的作用和架构
+为什么需要k8s?
+假设现在又10个容器让你管理,管理的过来,那随着业务发展增加到1000台呢,这些容器又部署在不同的服务器上,每一个环境都不相同.那有什么办法解决这个问题?  于是k8s应运而生
+k8s的优势
+
+
+资源自动调度
+k8s会根据容器所需的资源扫描服务器集群,把空闲的机器部署容器,实现资源最大化
+
+
+负载均衡
+k8s提供一个统一的入口,不管后端容器的IP变化,都会转发到对应的容器中
+
+
+自动修复
+k8s会不断检查运行状态,如果容器挂了会自动拉起一个新的,如果机器坏了,会自动迁移到其他机器上
+
+
+K8s核心组件
+
+  graph TD
+    %% 定义 Master 节点结构
+    subgraph MasterGroup[Master节点]
+        direction TB
+        Master[Master节点] --&gt; API[API Server]
+        Master --&gt; CM[Controller Manager]
+        Master --&gt; Sched[Scheduler]
+    end
+
+    %% 定义 Node 节点结构
+    subgraph NodeGroup[Node节点]
+        direction TB
+        Node[Node节点] --&gt; KL[Kubelet]
+        Node --&gt; KP[Kube-Proxy]
+        Node --&gt; P[Pod]
+    end
+
+
+
+
+Pod">
 <meta name="author" content="h4xk0r">
-<link rel="canonical" href="http://localhost:1313/posts/cdp/">
+<link rel="canonical" href="http://localhost:1313/posts/k8s/">
 <link crossorigin="anonymous" href="/assets/css/stylesheet.da54c57d4305d35203753b611a507d3c3386f2dc610c5ecafc9137dfc0197499.css" integrity="sha256-2lTFfUMF01IDdTthGlB9PDOG8txhDF7K/JE338AZdJk=" rel="preload stylesheet" as="style">
 <link rel="icon" href="http://localhost:1313/favicon.ico">
 <link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
@@ -43,7 +67,7 @@ xcopy &#34;%LOCALAPPDATA%\Google\Chrome\User Data&#34; &#34;%LOCALAPPDATA%\Chrom
 <link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
 <meta name="theme-color" content="#2e2e33">
 <meta name="msapplication-TileColor" content="#2e2e33">
-<link rel="alternate" hreflang="en" href="http://localhost:1313/posts/cdp/">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/posts/k8s/">
 <noscript>
     <style>
         #theme-toggle,
@@ -118,9 +142,9 @@ xcopy &#34;%LOCALAPPDATA%\Google\Chrome\User Data&#34; &#34;%LOCALAPPDATA%\Chrom
   <header class="post-header">
     
     <h1 class="post-title entry-hint-parent">
-      Chrome DevTools Protocol
+      K8s
     </h1>
-    <div class="post-meta"><span title='2026-03-30 21:28:24 +0800 CST'>March 30, 2026</span>&nbsp;·&nbsp;<span>1 min</span>&nbsp;·&nbsp;<span>h4xk0r</span>
+    <div class="post-meta"><span title='2026-03-30 21:28:24 +0800 CST'>March 30, 2026</span>&nbsp;·&nbsp;<span>2 min</span>&nbsp;·&nbsp;<span>h4xk0r</span>
 
 </div>
   </header> <div class="toc">
@@ -129,23 +153,37 @@ xcopy &#34;%LOCALAPPDATA%\Google\Chrome\User Data&#34; &#34;%LOCALAPPDATA%\Chrom
             <span class="details">Table of Contents</span>
         </summary>
 
-        <div class="inner"><ul><ul>
+        <div class="inner"><ul>
                 <li>
-                    <a href="#%e4%bb%80%e4%b9%88%e6%98%afcdpchrome-devtools-protocol" aria-label="什么是CDP(Chrome DevTools Protocol)?">什么是CDP(Chrome DevTools Protocol)?</a></li>
+                    <a href="#docker" aria-label="Docker">Docker</a></li>
                 <li>
-                    <a href="#%e4%bb%96%e8%83%bd%e5%81%9a%e4%bb%80%e4%b9%88" aria-label="他能做什么?">他能做什么?</a></li></ul>
-                    
+                    <a href="#docker%e7%9a%84%e4%bc%98%e5%8a%bf" aria-label="Docker的优势">Docker的优势</a></li>
                 <li>
-                    <a href="#%e5%a6%82%e4%bd%95%e5%90%af%e5%8a%a8cdp" aria-label="如何启动CDP:">如何启动CDP:</a><ul>
+                    <a href="#k8s%e7%9a%84%e4%bd%9c%e7%94%a8%e5%92%8c%e6%9e%b6%e6%9e%84" aria-label="K8s的作用和架构">K8s的作用和架构</a><ul>
                         
                 <li>
-                    <a href="#%e5%bc%80%e5%90%af%e8%bf%9c%e7%a8%8b%e8%b0%83%e8%af%95%e7%ab%af%e5%8f%a3" aria-label="开启远程调试端口">开启远程调试端口</a><ul>
-                        
+                    <a href="#%e4%b8%ba%e4%bb%80%e4%b9%88%e9%9c%80%e8%a6%81k8s" aria-label="为什么需要k8s?">为什么需要k8s?</a></li>
                 <li>
-                    <a href="#frpc%e9%85%8d%e7%bd%ae" aria-label="frpc配置">frpc配置</a>
+                    <a href="#k8s%e7%9a%84%e4%bc%98%e5%8a%bf" aria-label="k8s的优势">k8s的优势</a></li>
+                <li>
+                    <a href="#k8s%e6%a0%b8%e5%bf%83%e7%bb%84%e4%bb%b6" aria-label="K8s核心组件">K8s核心组件</a></li></ul>
                 </li>
-            </ul>
-            </li>
+                <li>
+                    <a href="#k8s-pod%e7%94%9f%e5%91%bd%e5%91%a8%e6%9c%9f" aria-label="K8s POD生命周期">K8s POD生命周期</a><ul>
+                        
+                <li>
+                    <a href="#%e9%98%b6%e6%ae%b5%e4%b8%80-%e7%94%a8%e6%88%b7%e6%8f%90%e4%ba%a4%e8%af%b7%e6%b1%82" aria-label="阶段一: 用户提交请求">阶段一: 用户提交请求</a></li>
+                <li>
+                    <a href="#%e9%98%b6%e6%ae%b5%e4%ba%8c-api-server-%e9%89%b4%e6%9d%83%e6%b5%81%e7%a8%8b" aria-label="阶段二: API Server 鉴权流程">阶段二: API Server 鉴权流程</a></li>
+                <li>
+                    <a href="#%e9%98%b6%e6%ae%b5%e4%b8%89-%e8%b0%83%e5%ba%a6%e5%99%a8%e9%80%89%e6%8b%a9%e8%8a%82%e7%82%b9" aria-label="阶段三: 调度器选择节点">阶段三: 调度器选择节点</a></li>
+                <li>
+                    <a href="#%e9%98%b6%e6%ae%b5%e5%9b%9b-%e8%8a%82%e7%82%b9%e5%88%9b%e5%bb%bapod" aria-label="阶段四: 节点创建POD">阶段四: 节点创建POD</a></li>
+                <li>
+                    <a href="#%e9%98%b6%e6%ae%b5%e4%ba%94-%e6%9c%8d%e5%8a%a1%e6%9a%b4%e9%9c%b2%e4%b8%8e%e8%ae%bf%e9%97%ae" aria-label="阶段五: 服务暴露与访问">阶段五: 服务暴露与访问</a></li>
+                <li>
+                    <a href="#%e5%9f%ba%e4%ba%8ek8s%e4%b8%8a%e7%ba%bf%e4%b8%bb%e8%8a%82%e7%82%b9" aria-label="基于k8s上线主节点">基于k8s上线主节点</a>
+                </li>
             </ul>
             </li>
             </ul>
@@ -153,41 +191,222 @@ xcopy &#34;%LOCALAPPDATA%\Google\Chrome\User Data&#34; &#34;%LOCALAPPDATA%\Chrom
     </details>
 </div>
 
-  <div class="post-content"><h3 id="什么是cdpchrome-devtools-protocol">什么是CDP(Chrome DevTools Protocol)?<a hidden class="anchor" aria-hidden="true" href="#什么是cdpchrome-devtools-protocol">#</a></h3>
-<p>cdp是一个基于JSON-RPC格式,通过websocket进行通信的协议.可以通过它对浏览器进行操作</p>
-<h3 id="他能做什么">他能做什么?<a hidden class="anchor" aria-hidden="true" href="#他能做什么">#</a></h3>
-<p>cdp是浏览器的底层,简单来说可以控制浏览器做任何事情</p>
-<h2 id="如何启动cdp">如何启动CDP:<a hidden class="anchor" aria-hidden="true" href="#如何启动cdp">#</a></h2>
-<p>以下以chrome浏览器做演示,但是实际上只要使用了Chromium内核的浏览器都原生支持CDP如 <code>chrome,edge</code>Gecko(firefox) 部分支持,而WebKit(Safari)对CDP却不支持</p>
-<p>注:  因浏览器默认都是<strong>单实例模式</strong>,<strong>指令会传递给已有进程但并不执行</strong>.所以开启远程端口前需要先关闭原有进程,命令:</p>
-<pre tabindex="0"><code>taskkill /F /IM chrome.exe
-</code></pre><h3 id="开启远程调试端口">开启远程调试端口<a hidden class="anchor" aria-hidden="true" href="#开启远程调试端口">#</a></h3>
-<p>关闭chrome后我们执行</p>
-<pre tabindex="0"><code>chrome.exe --remote-debugging-port=9226 --remote-debugging-address=0.0.0.0 --remote-allow-origins=* --user-data-dir=&#34;C:\Users\Public\ChromeDebug&#34; --headless=new
+  <div class="post-content"><h2 id="docker">Docker<a hidden class="anchor" aria-hidden="true" href="#docker">#</a></h2>
+<p>docker是一种轻量级容器技术,可将应用及其依赖打包成标准化单元</p>
+<h2 id="docker的优势">Docker的优势<a hidden class="anchor" aria-hidden="true" href="#docker的优势">#</a></h2>
+<ol>
+<li>启动快速</li>
+<li>跨平台</li>
+<li>高效运维</li>
+<li>环境一致性 (避免只有我的机器能跑)</li>
+</ol>
+<h2 id="k8s的作用和架构">K8s的作用和架构<a hidden class="anchor" aria-hidden="true" href="#k8s的作用和架构">#</a></h2>
+<h3 id="为什么需要k8s">为什么需要k8s?<a hidden class="anchor" aria-hidden="true" href="#为什么需要k8s">#</a></h3>
+<p>假设现在又10个容器让你管理,管理的过来,那随着业务发展增加到1000台呢,这些容器又部署在不同的服务器上,每一个环境都不相同.那有什么办法解决这个问题?  于是k8s应运而生</p>
+<h3 id="k8s的优势">k8s的优势<a hidden class="anchor" aria-hidden="true" href="#k8s的优势">#</a></h3>
+<ol>
+<li>
+<p>资源自动调度</p>
+<pre tabindex="0"><code>k8s会根据容器所需的资源扫描服务器集群,把空闲的机器部署容器,实现资源最大化
+</code></pre></li>
+<li>
+<p>负载均衡</p>
+<pre tabindex="0"><code>k8s提供一个统一的入口,不管后端容器的IP变化,都会转发到对应的容器中
+</code></pre></li>
+<li>
+<p>自动修复</p>
+<pre tabindex="0"><code>k8s会不断检查运行状态,如果容器挂了会自动拉起一个新的,如果机器坏了,会自动迁移到其他机器上
+</code></pre></li>
+</ol>
+<h3 id="k8s核心组件">K8s核心组件<a hidden class="anchor" aria-hidden="true" href="#k8s核心组件">#</a></h3>
+<div class="mermaid">
+  graph TD
+    %% 定义 Master 节点结构
+    subgraph MasterGroup[Master节点]
+        direction TB
+        Master[Master节点] --> API[API Server]
+        Master --> CM[Controller Manager]
+        Master --> Sched[Scheduler]
+    end
 
-参数讲解:
---remote-debugging-port			 指定开启的远程调试端口
---remote-debugging-address		 允许指定IP访问调试,新版禁用了0.0.0.0,可以使用端口转发.(最后提供一个frpc解决方式,见文章末尾)
---remote-allow-origins			 允许任何来源连接调试端口
---headless=new					无头模式(109引入)
-</code></pre><p><code>--user-data-dir</code>: 默认目录为<code>%LOCALAPPDATA%\Google\Chrome\User Data</code> 当指定一个目录的时候浏览器会打开一个新的浏览器页面相当与两个用户数据互不干扰.</p>
-<p>这里在测试时发现本地复制<code>user Data</code>目录启动浏览器依然不可以获取凭证,按理来说不同机器复制才会出现这种情况,希望有大佬解惑.复制命令如下</p>
-<pre tabindex="0"><code>powershell:
-powershell -command &#34;$exclude = @(&#39;Cache&#39;,&#39;Code Cache&#39;,&#39;GPUCache&#39;,&#39;Media Cache&#39;,&#39;Service Worker&#39;); Get-ChildItem -Path $env:LOCALAPPDATA&#39;\Google\Chrome\User Data&#39; -Recurse | Where-Object { $exclude -notcontains $_.Name } | Copy-Item -Destination { Join-Path $env:LOCALAPPDATA&#39;\ChromeDebug&#39; $_.FullName.Substring($env:LOCALAPPDATA.Length + 25) } -Force -ErrorAction SilentlyContinue&#34;
+    %% 定义 Node 节点结构
+    subgraph NodeGroup[Node节点]
+        direction TB
+        Node[Node节点] --> KL[Kubelet]
+        Node --> KP[Kube-Proxy]
+        Node --> P[Pod]
+    end
+</div>
 
-cmd:
-xcopy &#34;%LOCALAPPDATA%\Google\Chrome\User Data&#34; &#34;%LOCALAPPDATA%\ChromeDebug&#34; /E /I /H /C /Y /EXCLUDE:no_copy.txt
-/EXCLUDE:no_copy.txt  指定排除文件
-</code></pre><p>开启远程端口后检查是否成功</p>
-<pre tabindex="0"><code>netstat -ano | findstr :port
-</code></pre><h4 id="frpc配置">frpc配置<a hidden class="anchor" aria-hidden="true" href="#frpc配置">#</a></h4>
-<pre tabindex="0"><code>[[proxies]]
-name = &#34;chrome-debug-tcp&#34;
-type = &#34;tcp&#34;
-local_ip = &#34;127.0.0.1&#34;
-local_port = 9226          # 你的 Chrome 开启的端口
-remote_port = 19226        # 映射到 frps 服务器上的端口
-</code></pre>
+
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({ startOnLoad: true, theme: 'dark' });
+</script>
+<p><strong>Pod</strong></p>
+<ul>
+<li>pod是最小的可部署对象</li>
+<li>它可以封装一个或者多个容器,<strong>POD中的网络和存储,凭据共享</strong></li>
+<li>k8s不直接运行容器而是运行pod,pod中的容器一般同时运行在一台node中</li>
+</ul>
+<p><strong>API Server:</strong> 集群的唯一入口,所有指令优先发送到它
+<strong>node:</strong> 实际运行容器的机器
+**scheduler:**调度器,监视API Server看有没有没有分配node的POD
+<strong>Service:</strong> 服务的固定访问入口
+<strong>Deployment:</strong> 声明式定义应用版本与副本数
+<strong>Horizontal Autoscaler:</strong> 根据CPU/内存自动扩缩容</p>
+<h2 id="k8s-pod生命周期">K8s POD生命周期<a hidden class="anchor" aria-hidden="true" href="#k8s-pod生命周期">#</a></h2>
+<p>pod的生命周期是临时的,一旦出错就会销毁,并新建一个pod代替,所以<strong>不可存储重要数据</strong></p>
+<h3 id="阶段一-用户提交请求">阶段一: 用户提交请求<a hidden class="anchor" aria-hidden="true" href="#阶段一-用户提交请求">#</a></h3>
+<div class="mermaid">
+  sequenceDiagram
+    autonumber
+    participant User as User
+    participant K as kubectl
+    participant AS as API_Server
+
+    User->>K: kubectl apply -f pod.yaml
+    K->>AS: HTTP POST /api/v1/namespaces/default/pods
+    Note right of AS: 接收请求 (JSON/YAML格式)
+</div>
+
+
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({ startOnLoad: true, theme: 'dark' });
+</script>
+<p>用户: 用户通过定义kubectl或直接调用API提交Pod定义文件(YAML/JSON)</p>
+<p>入口组件: API Server 是唯一入口(端口6443)</p>
+<h3 id="阶段二-api-server-鉴权流程">阶段二: API Server 鉴权流程<a hidden class="anchor" aria-hidden="true" href="#阶段二-api-server-鉴权流程">#</a></h3>
+<div class="mermaid">
+  graph TD
+    A[API Server] --> B{认证}
+    B -- Token/证书 --> C[Authentication]
+    C --> D{授权}
+    D -- RBAC检查 --> E[Authorization]
+    E --> F{准入控制}
+    F -- 校验资源规范 --> G[Admission Control]
+</div>
+
+
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({ startOnLoad: true, theme: 'dark' });
+</script>
+<p><strong>RBAC</strong> 的全称是 <strong>Role-Based Access Control</strong>（基于角色的访问控制）可以理解为ACL</p>
+<p>认证步骤:</p>
+<ol>
+<li>
+<p>认证</p>
+<p>TLS双向认证(证书),Bearer Token</p>
+</li>
+<li>
+<p>授权</p>
+<p>检查用户是否有创建pod的权限</p>
+</li>
+<li>
+<p>准入控制</p>
+</li>
+</ol>
+<h3 id="阶段三-调度器选择节点">阶段三: 调度器选择节点<a hidden class="anchor" aria-hidden="true" href="#阶段三-调度器选择节点">#</a></h3>
+<div class="mermaid">
+  sequenceDiagram
+    participant A as API_Server
+    participant S as Scheduler
+    participant N as Nodes
+
+    A->>S: 未调度Pod事件
+    S->>N: 筛选节点 (Filter)
+    S->>N: 评分节点 (Score)
+    S->>A: 绑定到最优节点
+</div>
+
+
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({ startOnLoad: true, theme: 'dark' });
+</script>
+<p>调度策略详解:</p>
+<ol>
+<li>
+<p>预选</p>
+<p>检查节点资源是否满足(CPU/Memory)</p>
+<p>匹配节点标签(如 disk=ssd)</p>
+</li>
+<li>
+<p>优选</p>
+<p>计算节点剩余资源量(BeatEFFort策略)</p>
+<p>检查亲和性和反亲和性规则</p>
+</li>
+<li>
+<p>绑定</p>
+</li>
+</ol>
+<h3 id="阶段四-节点创建pod">阶段四: 节点创建POD<a hidden class="anchor" aria-hidden="true" href="#阶段四-节点创建pod">#</a></h3>
+<div class="mermaid">
+  graph LR
+    A[API Server] -- Watch事件 --> B[kubelet]
+    B --> C[容器运行时]
+    C --> D[创建容器]
+    D --> E[CNI插件]
+    E --> F[分配Pod IP]
+</div>
+
+
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({ startOnLoad: true, theme: 'dark' });
+</script>
+<p>节点操作流程:</p>
+<ol>
+<li>
+<p>kubelet 监听事件</p>
+<p>持续监听API Server 的pod变更事件</p>
+</li>
+<li>
+<p>容器创建
+调用容器运行时拉取镜像</p>
+<p>创建容器命名空间和Cgroups限制</p>
+</li>
+<li>
+<p>网络配置
+CNI插件分配IP</p>
+<p>配置iptables/ipvs规则</p>
+</li>
+<li>
+<p>状态上报</p>
+</li>
+</ol>
+<h3 id="阶段五-服务暴露与访问">阶段五: 服务暴露与访问<a hidden class="anchor" aria-hidden="true" href="#阶段五-服务暴露与访问">#</a></h3>
+<div class="mermaid">
+  graph TD
+    User[用户访问] --> Ingress[Ingress]
+    Ingress --> Service[Service]
+    Service --> Endpoint[Endpoint]
+    Endpoint --> Pod[Pod]
+</div>
+
+
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({ startOnLoad: true, theme: 'dark' });
+</script>
+<p>流量解析流程:</p>
+<ol>
+<li>用户访问
+用户访问域名</li>
+<li>Ingress
+根据域名或者路径将流量分发到不同的Service</li>
+<li>Service
+pod的IP是变动的,但是Service提供了一个固定的虚拟IP,它将请求发给后端的POD</li>
+<li>Endpoint
+记录了后端所有的真实IP地址和端口,Service通过它连接pod.如果pod挂了,就会从名单中删除</li>
+<li>pod
+到达容器内的web应用</li>
+</ol>
+<h3 id="基于k8s上线主节点">基于k8s上线主节点<a hidden class="anchor" aria-hidden="true" href="#基于k8s上线主节点">#</a></h3>
+<p>节点污染机制</p>
+
 
   </div>
 

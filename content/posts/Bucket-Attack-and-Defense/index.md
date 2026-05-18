@@ -151,7 +151,7 @@ https://[bucket-name].storage.googleapis.com （不带 region）
 或者通过 API 路径访问：https://storage.googleapis.com/[bucket-name]/
 ```
 
-#### 存储桶报错信息(<code>)
+#### 存储桶报错信息`<code>`
 
 - AccessDenied：存在存储桶，但无权限访问
 - InvalidBucketName：表示存储桶的名称不符合规范，属于无效的存储桶名称
@@ -222,21 +222,27 @@ HEAD
 ## 总结
 
 ```mermaid
-graph TD
-    A[存储桶攻击面] --> B[信息收集与边界突破]
-    A --> C[数据面攻击 - 桶内对象]
-    A --> D[控制面攻击 - 属性与规则]
+graph LR
+    A[<strong>存储桶攻击面</strong>] --> B(信息收集与边界突破)
+    A --> C(数据面攻击 - 桶内对象)
+    A --> D(控制面攻击 - 属性与规则)
 
-    B --> B1[Bucket 桶名爆破]
-    B --> B2[子域名 CNAME 存储桶接管]
-    B --> B3[本地元数据 IMDS 凭证窃取]
+    subgraph 突破面 [" "]
+        B --> B1[Bucket 桶名爆破]
+        B --> B2[子域名 CNAME 接管]
+        B --> B3[内网 IMDS 凭证窃取]
+    end
 
-    C --> C1[Object 未授权遍历]
-    C --> C2[任意文件上传与覆盖/水坑攻击]
-    C --> C3[Object 爆破与敏感 Key 盲猜]
+    subgraph 数据面 [" "]
+        C --> C1[Object 未授权遍历]
+        C --> C2[任意上传与水坑攻击]
+        C --> C3[敏感 Key 盲猜爆破]
+    end
 
-    D --> D1[修改 Bucket Policy / 权限维持]
-    D --> D2[劫持 ACL 将私有桶变公有]
-    D --> D3[恶意配置生命周期进行数据销毁]
+    subgraph 控制面 [" "]
+        D --> D1[修改 Policy 权限维持]
+        D --> D2[劫持 ACL 私有变公有]
+        D --> D3[恶意生命周期数据销毁]
+    end
 ```
 
