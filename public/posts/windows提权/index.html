@@ -58,7 +58,7 @@ reg add &#34;HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Spooler&#34; /
 重启服务：">
 <meta name="author" content="h4xk0r">
 <link rel="canonical" href="http://localhost:1313/posts/windows%E6%8F%90%E6%9D%83/">
-<link crossorigin="anonymous" href="/assets/css/stylesheet.da54c57d4305d35203753b611a507d3c3386f2dc610c5ecafc9137dfc0197499.css" integrity="sha256-2lTFfUMF01IDdTthGlB9PDOG8txhDF7K/JE338AZdJk=" rel="preload stylesheet" as="style">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.314abab0bce79c9458c3bcc909ca5440767e8fa2822428ed33ce608ca6f66fa0.css" integrity="sha256-MUq6sLznnJRYw7zJCcpUQHZ&#43;j6KCJCjtM85gjKb2b6A=" rel="preload stylesheet" as="style">
 <link rel="icon" href="http://localhost:1313/favicon.ico">
 <link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
@@ -113,11 +113,6 @@ reg add &#34;HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Spooler&#34; /
         </div>
         <ul id="menu">
             <li>
-                <a href="http://localhost:1313/posts/" title="档案">
-                    <span>档案</span>
-                </a>
-            </li>
-            <li>
                 <a href="http://localhost:1313/search/" title="搜索 (Alt &#43; /)" accesskey=/>
                     <span>搜索</span>
                 </a>
@@ -143,7 +138,7 @@ reg add &#34;HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Spooler&#34; /
     <h1 class="post-title entry-hint-parent">
       Windows提权
     </h1>
-    <div class="post-meta"><span title='2026-02-15 00:00:00 +0000 UTC'>February 15, 2026</span>&nbsp;·&nbsp;<span>4 min</span>&nbsp;·&nbsp;<span>h4xk0r</span>
+    <div class="post-meta"><span title='2026-02-15 00:00:00 +0000 UTC'>February 15, 2026</span>&nbsp;·&nbsp;<span>3 min</span>&nbsp;·&nbsp;<span>h4xk0r</span>
 
 </div>
   </header> <div class="toc">
@@ -189,7 +184,7 @@ reg add &#34;HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Spooler&#34; /
                 <li>
                     <a href="#%e5%9b%9b%e6%8f%90%e6%9d%83%e6%88%90%e5%8a%9f%e5%90%8e" aria-label="四、提权成功后">四、提权成功后</a></li>
                 <li>
-                    <a href="#%e4%ba%94%e6%8f%90%e6%9d%83%e5%b0%8f%e6%8a%80%e5%b7%a7" aria-label="五、提权小技巧">五、提权小技巧</a></li>
+                    <a href="#%e4%ba%94%e6%8f%90%e6%9d%83%e6%8a%80%e5%b7%a7" aria-label="五、提权技巧">五、提权技巧</a></li>
                 <li>
                     <a href="#%e9%99%84%e5%bd%95%e6%8f%90%e6%9d%83%e6%96%b9%e5%bc%8f%e5%bf%ab%e9%80%9f%e5%af%b9%e7%85%a7%e8%a1%a8" aria-label="附录：提权方式快速对照表">附录：提权方式快速对照表</a></li></ul>
                 </li>
@@ -218,17 +213,10 @@ reg add &#34;HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Spooler&#34; /
                 <li>
                     <a href="#%e6%a1%88%e4%be%8b3icacls-c-%e6%98%be%e7%a4%ba-everyonef" aria-label="案例3：icacls C:\ 显示 Everyone:(F)">案例3：icacls C:\ 显示 Everyone:(F)</a></li>
                 <li>
-                    <a href="#%e6%a1%88%e4%be%8b4sc-query-%e6%98%be%e7%a4%ba%e6%9c%89%e6%9c%8d%e5%8a%a1%e6%9d%83%e9%99%90%e9%85%8d%e7%bd%ae%e9%94%99%e8%af%af" aria-label="案例4：sc query 显示有服务权限配置错误">案例4：sc query 显示有服务权限配置错误</a></li></ul>
+                    <a href="#%e6%a1%88%e4%be%8b4sc-query-%e6%98%be%e7%a4%ba%e6%9c%89%e6%9c%8d%e5%8a%a1%e6%9d%83%e9%99%90%e9%85%8d%e7%bd%ae%e9%94%99%e8%af%af" aria-label="案例4：sc query 显示有服务权限配置错误">案例4：sc query 显示有服务权限配置错误</a>
                 </li>
-                <li>
-                    <a href="#%e5%9b%9b%e6%8f%90%e6%9d%83%e6%96%b9%e5%bc%8f%e4%bc%98%e5%85%88%e7%ba%a7%e6%8e%92%e5%ba%8f" aria-label="四、提权方式优先级排序">四、提权方式优先级排序</a></li>
-                <li>
-                    <a href="#%e4%ba%94%e6%8f%90%e6%9d%83%e5%89%8d%e5%bf%85%e5%81%9a%e6%a3%80%e6%9f%a5%e6%b8%85%e5%8d%95" aria-label="五、提权前必做检查清单">五、提权前必做检查清单</a></li>
-                <li>
-                    <a href="#%e5%85%ad%e5%ae%9e%e6%88%98%e6%8a%80%e5%b7%a7" aria-label="六、实战技巧">六、实战技巧</a></li>
-                <li>
-                    <a href="#%e6%80%bb%e7%bb%93%e6%8f%90%e6%9d%83%e4%b8%89%e6%ad%a5" aria-label="总结：提权三步">总结：提权三步</a>
-                </li>
+            </ul>
+            </li>
             </ul>
             </li>
             </ul>
@@ -539,7 +527,7 @@ Directory=C:\
 </span></span><span style="display:flex;"><span>mimikatz # token::elevate
 </span></span></code></pre></div></li>
 </ol>
-<h2 id="五提权小技巧">五、提权小技巧<a hidden class="anchor" aria-hidden="true" href="#五提权小技巧">#</a></h2>
+<h2 id="五提权技巧">五、提权技巧<a hidden class="anchor" aria-hidden="true" href="#五提权技巧">#</a></h2>
 <ol>
 <li><strong>先检查</strong>：<code>whoami /priv</code>、<code>sc query</code>、<code>icacls C:\</code></li>
 <li><strong>再利用</strong>：根据检查结果，选择最简单的提权方式</li>
@@ -621,7 +609,7 @@ Directory=C:\
       <tr>
           <td><code>SeImpersonatePrivilege</code></td>
           <td>可以模拟其他用户身份</td>
-          <td><strong>土豆家族提权</strong> (JuicyPotato/RoguePotato)</td>
+          <td><strong>土豆提权</strong> (JuicyPotato/RoguePotato)</td>
       </tr>
       <tr>
           <td><code>SeAssignPrimaryTokenPrivilege</code></td>
@@ -646,7 +634,7 @@ Directory=C:\
   </tbody>
 </table>
 <blockquote>
-<p>✅ <strong>小提示</strong>：如果看到<code>SeImpersonatePrivilege</code>，这是最简单的提权方式之一。</p>
+<p><strong>小提示</strong>：如果看到<code>SeImpersonatePrivilege</code>，这是最简单的提权方式之一。</p>
 </blockquote>
 <hr>
 <h3 id="2-sc-query-结果分析">2. <code>sc query</code> 结果分析<a hidden class="anchor" aria-hidden="true" href="#2-sc-query-结果分析">#</a></h3>
@@ -683,7 +671,7 @@ Directory=C:\
   </tbody>
 </table>
 <blockquote>
-<p>✅ <strong>小提示</strong>：运行<code>sc qc 服务名</code>查看具体路径，如<code>sc qc Spooler</code></p>
+<p><strong>小提示</strong>：运行<code>sc qc 服务名</code>查看具体路径，如<code>sc qc Spooler</code></p>
 </blockquote>
 <hr>
 <h3 id="3-icacls-c-结果分析">3. <code>icacls C:\</code> 结果分析<a hidden class="anchor" aria-hidden="true" href="#3-icacls-c-结果分析">#</a></h3>
@@ -714,7 +702,7 @@ Directory=C:\
   </tbody>
 </table>
 <blockquote>
-<p>✅ <strong>小提示</strong>：如果看到<code>Everyone:(F)</code>，说明C盘权限非常宽松，可以写入。</p>
+<p><strong>小提示</strong>：如果看到<code>Everyone:(F)</code>，说明C盘权限非常宽松，可以写入。</p>
 </blockquote>
 <hr>
 <h2 id="二提权方式选择流程图">二、提权方式选择流程图<a hidden class="anchor" aria-hidden="true" href="#二提权方式选择流程图">#</a></h2>
@@ -799,109 +787,7 @@ BINARY_PATH_NAME: C:\MyService\service.exe
 </ol>
 <p><strong>成功标志</strong>：<code>hacker</code>账户被添加为管理员</p>
 <hr>
-<h2 id="四提权方式优先级排序">四、提权方式优先级排序<a hidden class="anchor" aria-hidden="true" href="#四提权方式优先级排序">#</a></h2>
-<table>
-  <thead>
-      <tr>
-          <th>提权方式</th>
-          <th>操作难度</th>
-          <th>成功率</th>
-          <th>适用场景</th>
-      </tr>
-  </thead>
-  <tbody>
-      <tr>
-          <td><strong>土豆家族提权</strong></td>
-          <td>★☆☆☆☆</td>
-          <td>★★★★★</td>
-          <td>有SeImpersonatePrivilege权限</td>
-      </tr>
-      <tr>
-          <td><strong>系统路径配置问题</strong></td>
-          <td>★★☆☆☆</td>
-          <td>★★★★☆</td>
-          <td>Everyone有C盘完全控制权限</td>
-      </tr>
-      <tr>
-          <td><strong>服务权限配置错误</strong></td>
-          <td>★★☆☆☆</td>
-          <td>★★★★☆</td>
-          <td>服务路径权限可写</td>
-      </tr>
-      <tr>
-          <td><strong>未引用服务路径</strong></td>
-          <td>★★★☆☆</td>
-          <td>★★★☆☆</td>
-          <td>服务路径有空格且无引号</td>
-      </tr>
-      <tr>
-          <td><strong>DLL劫持</strong></td>
-          <td>★★★☆☆</td>
-          <td>★★★☆☆</td>
-          <td>目标程序路径可写</td>
-      </tr>
-  </tbody>
-</table>
-<hr>
-<h2 id="五提权前必做检查清单">五、提权前必做检查清单<a hidden class="anchor" aria-hidden="true" href="#五提权前必做检查清单">#</a></h2>
-<ol>
-<li>
-<p><strong>检查权限</strong>：<code>whoami /priv</code></p>
-<ul>
-<li>有<code>SeImpersonatePrivilege</code> → 优先尝试土豆家族提权</li>
-</ul>
-</li>
-<li>
-<p><strong>检查服务</strong>：<code>sc query</code></p>
-<ul>
-<li>找到运行中的服务 → 检查<code>sc qc 服务名</code></li>
-</ul>
-</li>
-<li>
-<p><strong>检查目录权限</strong>：<code>icacls C:\</code></p>
-<ul>
-<li>Everyone有<code>(F)</code> → 优先尝试系统路径提权</li>
-</ul>
-</li>
-<li>
-<p><strong>检查DLL路径</strong>：<code>where notepad</code></p>
-<ul>
-<li>找到程序路径 → 检查权限</li>
-</ul>
-</li>
-</ol>
-<hr>
-<h2 id="六实战技巧">六、实战技巧<a hidden class="anchor" aria-hidden="true" href="#六实战技巧">#</a></h2>
-<ol>
-<li>
-<p><strong>快速检查</strong>：<code>winpeas.exe quiet notcolor serviceinfo</code></p>
-<ul>
-<li>自动检查所有提权点</li>
-</ul>
-</li>
-<li>
-<p><strong>验证提权</strong>：<code>whoami</code> 和 <code>net localgroup administrators</code></p>
-<ul>
-<li>确认是否获得管理员权限</li>
-</ul>
-</li>
-<li>
-<p><strong>保持权限</strong>：<code>net user hacker P@ssw0rd /add</code> + <code>net localgroup administrators hacker /add</code></p>
-<ul>
-<li>创建持久化管理员账户</li>
-</ul>
-</li>
-</ol>
-<hr>
-<h2 id="总结提权三步">总结：提权三步<a hidden class="anchor" aria-hidden="true" href="#总结提权三步">#</a></h2>
-<ol>
-<li><strong>检查</strong>：<code>whoami /priv</code>、<code>sc query</code>、<code>icacls C:\</code></li>
-<li><strong>判断</strong>：根据结果选择最简单的提权方式</li>
-<li><strong>执行</strong>：按照对应方式执行提权命令</li>
-</ol>
-<blockquote>
-<p>提示**：提权成功后，**务必创建持久化账户（<code>net user hacker P@ssw0rd /add</code> + <code>net localgroup administrators hacker /add</code>），避免因会话结束而失去权限。</p>
-</blockquote>
+<p>“受限于个人水平，文中难免存在疏漏与错误。文笔粗浅、技术简陋，若有不足之处，恳请各位师傅批评指正，不吝赐教。感激不尽！”</p>
 
 
   </div>

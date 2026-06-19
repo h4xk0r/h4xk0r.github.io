@@ -6,8 +6,72 @@
     <description>Recent content in Posts on h4xk0r blog</description>
     <generator>Hugo -- 0.155.1</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Mon, 18 May 2026 19:50:15 +0800</lastBuildDate>
+    <lastBuildDate>Sat, 13 Jun 2026 10:46:13 +0800</lastBuildDate>
     <atom:link href="http://localhost:1313/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>LM,NTMLv1&amp;v2</title>
+      <link>http://localhost:1313/posts/lmntmlv1v2/</link>
+      <pubDate>Sat, 13 Jun 2026 10:46:13 +0800</pubDate>
+      <guid>http://localhost:1313/posts/lmntmlv1v2/</guid>
+      <description>&lt;p&gt;&lt;code&gt;LM, NTLMv1, NTLMv2&lt;/code&gt;是windows的各个版本的&lt;strong&gt;网络认证协议&lt;/strong&gt;,用于在不传递密钥使得服务器验证用户身份&lt;/p&gt;
+&lt;h1 id=&#34;lm&#34;&gt;LM&lt;/h1&gt;
+&lt;p&gt;&lt;strong&gt;LM&lt;/strong&gt;:&lt;/p&gt;
+&lt;p&gt;LM是早期windows的网络认证协议,是&lt;code&gt;Windows 3.x / 95 / 98 / Me&lt;/code&gt;时期的认证协议.在Vista版本前都默认开启&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;LM Hash生成流程&lt;/strong&gt;:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;转大写 这里以&lt;code&gt;h4xk0r&lt;/code&gt;为例&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;h4xk0r ---&amp;gt; H4XK0R
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;转换成16进制 截断/填充到14字节&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; password &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;H4XK0R&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; print(password&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;encode()&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;hex())
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;48&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;34&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;58&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;4&lt;/span&gt;b &lt;span style=&#34;color:#ae81ff&#34;&gt;30&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;52&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;结果不满足14字节,&lt;span style=&#34;color:#ae81ff&#34;&gt;00&lt;/span&gt;补足
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;48&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;34&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;58&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;4&lt;/span&gt;b &lt;span style=&#34;color:#ae81ff&#34;&gt;30&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;52&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;00&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;00&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;00&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;00&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;00&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;00&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;00&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;00&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;拆分成两个7字节&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;组1: 48 34 58 4b 30 52 00
+组2: 00 00 00 00 00 00 00
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;转换成DES密钥&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;将两组16进制转换成2进制
+key1: 
+1001000001101000101100001001011001100000101001000000000
+每七位一组
+组 1：0100100
+组 2：0001101
+组 3：0001011
+组 4：0000100
+组 5：1011001
+组 6：1000001
+组 7：0100100
+组 8：0000000			//不足7位补0
+
+要在每一组的最后补上 1 位，让每一组里 1 的总个数为奇数（即奇校验）
+01001001
+00011010
+00010110
+00001000
+10110011
+10000011
+01001001
+00000001
+
+合并0100100100011010000101100000100010110011100000110100100100000001  --&amp;gt; 转回16进制49 1A 16 08 B3 83 49 01
+
+key2:
+00000000000000000000000000000000000000000000000000000000
+因为是全零,分组就要补1如, 00000001
+最后转换成16进制后就是   --&amp;gt; 01 01 01 01 01 01 01 01
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;字符串(KGS!@#$%)加密&lt;/p&gt;</description>
+    </item>
     <item>
       <title>Bucket Attack and Defense</title>
       <link>http://localhost:1313/posts/bucket-attack-and-defense/</link>
@@ -28,26 +92,34 @@
 &lt;li&gt;自带网络属性: 每一个存储进存储桶的文件只要配置为&lt;strong&gt;公开&lt;/strong&gt;.就会生成一个公网的url&lt;/li&gt;
 &lt;/ol&gt;
 &lt;h2 id=&#34;存储桶的结构&#34;&gt;存储桶的结构&lt;/h2&gt;
-&lt;pre tabindex=&#34;0&#34;&gt;&lt;code class=&#34;language-mermaid&#34; data-lang=&#34;mermaid&#34;&gt;graph TD
+&lt;div class=&#34;mermaid&#34;&gt;
+  graph TD
     %% 样式
     classDef b fill:#f9cb9c,stroke:#b45f06,stroke-width:2px;
     classDef o fill:#7f8c8d,stroke:#34495e,stroke-width:1px,color:#fff;
     classDef det fill:#fff,stroke:#333,stroke-width:1px;
 
     %% 拓扑结构
-    Cloud[云对象存储] --&amp;gt; Bucket1(其他存储桶...)
-    Cloud --&amp;gt; TargetBucket(目标存储桶 bucket)
+    Cloud[云对象存储] --&gt; Bucket1(其他存储桶...)
+    Cloud --&gt; TargetBucket(目标存储桶 bucket)
     
-    TargetBucket --&amp;gt; Obj1(Object 1)
-    TargetBucket --&amp;gt; TargetObj(Object 2)
-    TargetBucket --&amp;gt; Obj3(Object 3)
+    TargetBucket --&gt; Obj1(Object 1)
+    TargetBucket --&gt; TargetObj(Object 2)
+    TargetBucket --&gt; Obj3(Object 3)
     
-    TargetObj --&amp;gt; Key[Key &amp;lt;br&amp;gt; 文件名 / 路径]
-    TargetObj --&amp;gt; Data[Data &amp;lt;br&amp;gt; 文件真实内容]
-    TargetObj --&amp;gt; Meta[Metadata &amp;lt;br&amp;gt; 大小 / 类型 / 权限等元数据]
+    TargetObj --&gt; Key[Key &lt;br&gt; 文件名 / 路径]
+    TargetObj --&gt; Data[Data &lt;br&gt; 文件真实内容]
+    TargetObj --&gt; Meta[Metadata &lt;br&gt; 大小 / 类型 / 权限等元数据]
 
     class TargetObj,Obj1,Obj3 o;
-&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;对象存储中可以有多个桶,然后把对象 (Object) 放在桶中,对象又包含&lt;code&gt;key&lt;/code&gt;,&lt;code&gt;Data&lt;/code&gt;和&lt;code&gt;Metadata&lt;/code&gt;&lt;/p&gt;</description>
+&lt;/div&gt;
+
+
+&lt;script type=&#34;module&#34;&gt;
+  import mermaid from &#39;https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs&#39;;
+  mermaid.initialize({ startOnLoad: true, theme: &#39;dark&#39; });
+&lt;/script&gt;
+&lt;p&gt;对象存储中可以有多个桶,然后把对象 (Object) 放在桶中,对象又包含&lt;code&gt;key&lt;/code&gt;,&lt;code&gt;Data&lt;/code&gt;和&lt;code&gt;Metadata&lt;/code&gt;&lt;/p&gt;</description>
     </item>
     <item>
       <title>蜜罐及反制技术</title>
@@ -178,7 +250,7 @@ xcopy &amp;#34;%LOCALAPPDATA%\Google\Chrome\User Data&amp;#34; &amp;#34;%LOCALAP
 &lt;/code&gt;&lt;/pre&gt;&lt;p&gt;开启远程端口后检查是否成功&lt;/p&gt;</description>
     </item>
     <item>
-      <title>K8s</title>
+      <title>K8s&amp;Docker</title>
       <link>http://localhost:1313/posts/k8s/</link>
       <pubDate>Mon, 30 Mar 2026 21:28:24 +0800</pubDate>
       <guid>http://localhost:1313/posts/k8s/</guid>
@@ -210,34 +282,31 @@ xcopy &amp;#34;%LOCALAPPDATA%\Google\Chrome\User Data&amp;#34; &amp;#34;%LOCALAP
 &lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;h3 id=&#34;k8s核心组件&#34;&gt;K8s核心组件&lt;/h3&gt;
-&lt;pre tabindex=&#34;0&#34;&gt;&lt;code class=&#34;language-mermaid&#34; data-lang=&#34;mermaid&#34;&gt;graph TD
+&lt;div class=&#34;mermaid&#34;&gt;
+  graph TD
     %% 定义 Master 节点结构
     subgraph MasterGroup[Master节点]
         direction TB
-        Master[Master节点] --&amp;gt; API[API Server]
-        Master --&amp;gt; CM[Controller Manager]
-        Master --&amp;gt; Sched[Scheduler]
+        Master[Master节点] --&gt; API[API Server]
+        Master --&gt; CM[Controller Manager]
+        Master --&gt; Sched[Scheduler]
     end
 
     %% 定义 Node 节点结构
     subgraph NodeGroup[Node节点]
         direction TB
-        Node[Node节点] --&amp;gt; KL[Kubelet]
-        Node --&amp;gt; KP[Kube-Proxy]
-        Node --&amp;gt; P[Pod]
+        Node[Node节点] --&gt; KL[Kubelet]
+        Node --&gt; KP[Kube-Proxy]
+        Node --&gt; P[Pod]
     end
-&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;strong&gt;Pod&lt;/strong&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;pod是最小的可部署对象&lt;/li&gt;
-&lt;li&gt;它可以封装一个或者多个容器,&lt;strong&gt;POD中的网络和存储,凭据共享&lt;/strong&gt;&lt;/li&gt;
-&lt;li&gt;k8s不直接运行容器而是运行pod,pod中的容器一般同时运行在一台node中&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;strong&gt;API Server:&lt;/strong&gt; 集群的唯一入口,所有指令优先发送到它
-&lt;strong&gt;node:&lt;/strong&gt; 实际运行容器的机器
-**scheduler:**调度器,监视API Server看有没有没有分配node的POD
-&lt;strong&gt;Service:&lt;/strong&gt; 服务的固定访问入口
-&lt;strong&gt;Deployment:&lt;/strong&gt; 声明式定义应用版本与副本数
-&lt;strong&gt;Horizontal Autoscaler:&lt;/strong&gt; 根据CPU/内存自动扩缩容&lt;/p&gt;</description>
+&lt;/div&gt;
+
+
+&lt;script type=&#34;module&#34;&gt;
+  import mermaid from &#39;https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs&#39;;
+  mermaid.initialize({ startOnLoad: true, theme: &#39;dark&#39; });
+&lt;/script&gt;
+&lt;p&gt;&lt;strong&gt;Pod&lt;/strong&gt;&lt;/p&gt;</description>
     </item>
     <item>
       <title>XSS</title>

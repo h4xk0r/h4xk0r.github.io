@@ -507,3 +507,9 @@ __toString()	对象转换成字符串调用
 ### 实战工具：PHPGGC
 
 **PHPGGC (PHP Generic Gadget Chains)** 是反序列化领域的“瑞士军刀”。它集成了 Laravel, Symfony, ThinkPHP, Yii 等主流框架的现成利用链。
+
+
+
+------
+
+“受限于个人水平，文中难免存在疏漏与错误。文笔粗浅、技术简陋，若有不足之处，恳请各位师傅批评指正，不吝赐教。感激不尽！”

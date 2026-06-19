@@ -1,14 +1,16 @@
 /* ============================================================
-   [新增] 强行锁死导航栏在最上方（Sticky Header）
+   Sticky Header
    ============================================================ */
 .header {
     position: sticky !important;
     top: 0 !important;
     z-index: 999 !important;
-    background: var(--theme) !important; /* 确保滚动时文字不会穿透重叠 */
+    background: var(--theme) !important;
 }
 
-/* [保留] 首页文章悬停滑动 */
+/* ============================================================
+   首页文章悬停动画
+   ============================================================ */
 .post-entry {
     background: transparent !important;
     border: none !important;
@@ -16,121 +18,193 @@
     padding: 30px 0 !important;
     transition: transform 0.3s cubic-bezier(0.1, 0.7, 0.1, 1) !important;
 }
-.post-entry:hover { transform: translateX(10px) !important; }
 
-/* [核心修改] 方案一：大屏幕下正文居中布局 */
-@media screen and (min-width: 1280px) {
-    .main { 
-        /* 取消 18% 的左边距，改为自动外边距实现居中 */
-        margin-left: auto !important; 
-        margin-right: auto !important; 
-        max-width: 800px !important; 
-        float: none !important;
-    }
-
-    /* [保留] 目录容器布局：依然固定在右侧 */
-    .toc {
-        position: fixed !important;
-        /* 这里根据 800px 居中的正文重新微调位置，确保不重叠 */
-        left: calc(50% + 420px) !important; 
-        top: 100px !important;
-        width: 320px !important;
-        max-height: calc(100vh - 160px) !important;
-        overflow-y: auto !important;
-        overflow-x: hidden !important;
-        overscroll-behavior: contain !important;
-        z-index: 100 !important;
-        background: transparent !important;
-        border: none !important;
-    }
-
-    .toc .inner h4, .toc summary { display: none !important; }
-    .toc ul, .toc li { list-style: none !important; padding: 0 !important; margin: 0 !important; }
-
-    /* 子目录：默认隐藏 */
-    .toc ul ul {
-        display: none;
-        margin-left: 15px !important;
-        border-left: none !important;
-    }
-
-    /* [核心] 链接样式 */
-    .toc a {
-        display: block !important;
-        position: relative !important;
-        padding: 6px 10px 6px 50px !important; 
-        text-decoration: none !important;
-        white-space: normal !important;
-        word-break: break-all !important;
-        line-height: 1.6 !important;
-        color: var(--secondary) !important;
-        font-size: 0.9rem !important;
-        opacity: 0.8;
-        transition: all 0.2s ease;
-    }
-
-    /* [核心] 箭头样式 */
-    .toc li:has(ul) > a::before {
-        content: "›"; 
-        position: absolute !important;
-        left: 0 !important;
-        width: 45px !important;
-        height: 100% !important;
-        top: 0 !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        font-size: 24px !important;
-        font-weight: 300 !important;
-        opacity: 0.4;
-        transition: transform 0.2s ease;
-        pointer-events: none;
-    }
-
-    /* 旋转效果 */
-    .toc li.is-expanded > a::before {
-        transform: rotate(90deg) !important;
-        opacity: 1;
-        color: #2980b9;
-    }
-
-    /* 一级标题蓝线 */
-    .toc > .inner > ul > li > a {
-        border-left: 4px solid #2980b9 !important;
-    }
-
-    /* 子标题缩进 */
-    .toc ul ul li a {
-        border-left: none !important;
-        padding-left: 35px !important; 
-    }
-
-    .toc a:hover {
-        background: rgba(128, 128, 128, 0.08) !important;
-        color: var(--primary) !important;
-    }
-
-    .toc::-webkit-scrollbar { width: 4px; }
-    .toc::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+.post-entry:hover {
+    transform: translateX(10px) !important;
 }
 
 /* ============================================================
-    响应式处理：窄屏幕下彻底隐藏目录
+   大屏与中屏布局 (>= 1101px)
+   完美对称布局：正文居中，左留白 = 右目录，目录向右平移 3 个字符
    ============================================================ */
-@media screen and (max-width: 1279px) {
+@media screen and (min-width: 1101px) {
+
+    .main {
+        /* 正文锁死 800px，中屏自动压缩，但两边至少留出 260px 给目录和留白空间 */
+        width: calc(100vw - 520px) !important;
+        max-width: 800px !important;
+        
+        margin-left: auto !important;
+        margin-right: auto !important;
+        float: none !important;
+    }
+
+    .toc {
+        position: fixed !important;
+        display: block !important;
+
+        /* 向右移动 3 个字符大小 */
+        right: -3em !important;
+        left: auto !important;
+        top: 100px !important;
+
+        /* 【核心修复 1】：动态宽度。
+           利用 max() 确保无论屏幕多小，目录的宽度绝对不会低于 260px，彻底解决被挤成面条的问题 */
+        width: max(260px, calc(50vw - 400px + 3em)) !important;
+        min-width: 260px !important;
+
+        /* 增加右侧内边距，使文字和最右侧边缘始终保持舒适间距 */
+        padding-right: calc(15px + 3em) !important;
+        padding-left: 10px !important;
+        box-sizing: border-box !important;
+
+        max-height: calc(100vh - 160px) !important;
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+
+        overscroll-behavior: contain !important;
+        z-index: 100 !important;
+
+        background: transparent !important;
+        border: none !important;
+    }
+}
+
+/* ============================================================
+   TOC内部样式 (重点优化：防挤压重叠)
+   ============================================================ */
+.toc .inner h4,
+.toc summary {
+    display: none !important;
+}
+
+.toc ul,
+.toc li {
+    list-style: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+/* 子目录默认隐藏 */
+.toc ul ul {
+    display: none;
+    margin-left: 12px !important;
+    border-left: none !important;
+}
+
+/* TOC链接 */
+.toc a {
+    display: block !important;
+    position: relative !important;
+    /* 缩短左边距到 35px，把更多宝贵的横向空间留给文字 */
+    padding: 6px 10px 6px 35px !important;
+    text-decoration: none !important;
+    
+    /* 【核心修复 2】：处理中长英文单词换行，防止文字戳出边界或重叠 */
+    white-space: normal !important;
+    word-wrap: break-word !important;
+    word-break: break-all !important; 
+    
+    line-height: 1.5 !important;
+    color: var(--secondary) !important;
+    font-size: 0.88rem !important;
+    opacity: 0.8;
+    transition: all 0.2s ease;
+}
+
+/* 展开箭头 */
+.toc li:has(ul) > a::before {
+    content: "›";
+    position: absolute !important;
+    left: 0 !important;
+    /* 调整箭头容器宽度配合新的 padding */
+    width: 30px !important;
+    height: 100% !important;
+    top: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 22px !important;
+    font-weight: 300 !important;
+    opacity: 0.4;
+    transition: transform 0.2s ease;
+    pointer-events: none;
+}
+
+/* 展开状态 */
+.toc li.is-expanded > a::before {
+    transform: rotate(90deg) !important;
+    opacity: 1;
+    color: #2980b9;
+}
+
+/* 一级标题左侧蓝线 */
+.toc > .inner > ul > li > a {
+    border-left: 3px solid #2980b9 !important;
+}
+
+/* 子标题缩进 */
+.toc ul ul li a {
+    border-left: none !important;
+    padding-left: 25px !important;
+}
+
+/* Hover */
+.toc a:hover {
+    background: rgba(128, 128, 128, 0.08) !important;
+    color: var(--primary) !important;
+}
+
+/* 滚动条 */
+.toc::-webkit-scrollbar {
+    width: 4px;
+}
+
+.toc::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 10px;
+}
+
+/* ============================================================
+   小屏布局 (<= 1100px)
+   隐藏目录，正文居中
+   ============================================================ */
+@media screen and (max-width: 1100px) {
+
     .toc {
         display: none !important;
         visibility: hidden !important;
     }
-    /* 窄屏幕下保持正文合理的宽度 */
+
     .main {
-        margin: 0 auto !important;
-        max-width: 95% !important;
+        width: 95vw !important;
+        max-width: 800px !important;
+        min-width: unset !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+        float: none !important;
     }
 }
 
-@media screen and (min-width: 1280px) {
+/* 确保大屏下一定显示 */
+@media screen and (min-width: 1101px) {
     .toc {
         display: block !important;
     }
+}
+
+/* ============================================================
+   标题跳转偏移
+   ============================================================ */
+html {
+    scroll-padding-top: 0;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    scroll-margin-top: 80px;
 }

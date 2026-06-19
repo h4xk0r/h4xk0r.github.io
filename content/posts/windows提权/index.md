@@ -424,7 +424,7 @@ winpeas.exe quiet notcolor serviceinfo :: 自动检查提权点
    mimikatz # token::elevate
    ```
 
-## 五、提权小技巧
+## 五、提权技巧
 
 1. **先检查**：`whoami /priv`、`sc query`、`icacls C:\`
 2. **再利用**：根据检查结果，选择最简单的提权方式
@@ -455,15 +455,15 @@ winpeas.exe quiet notcolor serviceinfo :: 自动检查提权点
 
 ### 1. `whoami /priv` 结果分析
 
-| 权限名称                        | 说明                 | 对应提权方式                               |
-| ------------------------------- | -------------------- | ------------------------------------------ |
-| `SeImpersonatePrivilege`        | 可以模拟其他用户身份 | **土豆家族提权** (JuicyPotato/RoguePotato) |
-| `SeAssignPrimaryTokenPrivilege` | 可以分配主令牌       | **土豆家族提权**                           |
-| `SeServiceLogonRight`           | 可以作为服务登录     | **服务提权**                               |
-| `SeBackupPrivilege`             | 可以备份文件         | **备份提权**                               |
-| `SeTakeOwnershipPrivilege`      | 可以获取文件所有权   | **文件所有权提权**                         |
+| 权限名称                        | 说明                 | 对应提权方式                           |
+| ------------------------------- | -------------------- | -------------------------------------- |
+| `SeImpersonatePrivilege`        | 可以模拟其他用户身份 | **土豆提权** (JuicyPotato/RoguePotato) |
+| `SeAssignPrimaryTokenPrivilege` | 可以分配主令牌       | **土豆家族提权**                       |
+| `SeServiceLogonRight`           | 可以作为服务登录     | **服务提权**                           |
+| `SeBackupPrivilege`             | 可以备份文件         | **备份提权**                           |
+| `SeTakeOwnershipPrivilege`      | 可以获取文件所有权   | **文件所有权提权**                     |
 
-> ✅ **小提示**：如果看到`SeImpersonatePrivilege`，这是最简单的提权方式之一。
+> **小提示**：如果看到`SeImpersonatePrivilege`，这是最简单的提权方式之一。
 
 ---
 
@@ -478,7 +478,7 @@ winpeas.exe quiet notcolor serviceinfo :: 自动检查提权点
 | `RUNNING` | 以SYSTEM身份运行     | **服务提权**             |
 | `STOPPED` | 有修改权限           | **服务提权**             |
 
-> ✅ **小提示**：运行`sc qc 服务名`查看具体路径，如`sc qc Spooler`
+>  **小提示**：运行`sc qc 服务名`查看具体路径，如`sc qc Spooler`
 
 ---
 
@@ -490,7 +490,7 @@ winpeas.exe quiet notcolor serviceinfo :: 自动检查提权点
 | `BUILTIN\Users:(OI)(CI)(RX)`            | 用户有读取权限         | **DLL劫持**              |
 | `NT AUTHORITY\Authenticated Users:(AD)` | 认证用户有添加权限     | **计划任务提权**         |
 
-> ✅ **小提示**：如果看到`Everyone:(F)`，说明C盘权限非常宽松，可以写入。
+> **小提示**：如果看到`Everyone:(F)`，说明C盘权限非常宽松，可以写入。
 
 ---
 
@@ -615,54 +615,8 @@ BINARY_PATH_NAME: C:\MyService\service.exe
 
 **成功标志**：`hacker`账户被添加为管理员
 
----
 
-## 四、提权方式优先级排序
 
-| 提权方式             | 操作难度 | 成功率 | 适用场景                     |
-| -------------------- | -------- | ------ | ---------------------------- |
-| **土豆家族提权**     | ★☆☆☆☆    | ★★★★★  | 有SeImpersonatePrivilege权限 |
-| **系统路径配置问题** | ★★☆☆☆    | ★★★★☆  | Everyone有C盘完全控制权限    |
-| **服务权限配置错误** | ★★☆☆☆    | ★★★★☆  | 服务路径权限可写             |
-| **未引用服务路径**   | ★★★☆☆    | ★★★☆☆  | 服务路径有空格且无引号       |
-| **DLL劫持**          | ★★★☆☆    | ★★★☆☆  | 目标程序路径可写             |
+------
 
----
-
-## 五、提权前必做检查清单
-
-1. **检查权限**：`whoami /priv`
-   - 有`SeImpersonatePrivilege` → 优先尝试土豆家族提权
-
-2. **检查服务**：`sc query`
-   - 找到运行中的服务 → 检查`sc qc 服务名`
-
-3. **检查目录权限**：`icacls C:\`
-   - Everyone有`(F)` → 优先尝试系统路径提权
-
-4. **检查DLL路径**：`where notepad`
-   - 找到程序路径 → 检查权限
-
----
-
-## 六、实战技巧
-
-1. **快速检查**：`winpeas.exe quiet notcolor serviceinfo`
-   - 自动检查所有提权点
-
-2. **验证提权**：`whoami` 和 `net localgroup administrators`
-   - 确认是否获得管理员权限
-
-3. **保持权限**：`net user hacker P@ssw0rd /add` + `net localgroup administrators hacker /add`
-   - 创建持久化管理员账户
-
----
-
-## 总结：提权三步
-
-1. **检查**：`whoami /priv`、`sc query`、`icacls C:\`
-2. **判断**：根据结果选择最简单的提权方式
-3. **执行**：按照对应方式执行提权命令
-
-> 提示**：提权成功后，**务必创建持久化账户（`net user hacker P@ssw0rd /add` + `net localgroup administrators hacker /add`），避免因会话结束而失去权限。
-
+“受限于个人水平，文中难免存在疏漏与错误。文笔粗浅、技术简陋，若有不足之处，恳请各位师傅批评指正，不吝赐教。感激不尽！”

