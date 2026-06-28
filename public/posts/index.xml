@@ -464,7 +464,7 @@ lnitialization(初始化) 执行静态代码块，静态变量的赋值动作
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;会会先执行赋值，然后是静态代码块。因为初始化执行的顺序是 “静态变量赋值” 和 “静态代码块”&lt;/p&gt;</description>
     </item>
     <item>
-      <title>Linux提权</title>
+      <title>Linux提权方式总结</title>
       <link>http://localhost:1313/posts/linux%E6%8F%90%E6%9D%83/</link>
       <pubDate>Sun, 15 Feb 2026 00:00:00 +0000</pubDate>
       <guid>http://localhost:1313/posts/linux%E6%8F%90%E6%9D%83/</guid>

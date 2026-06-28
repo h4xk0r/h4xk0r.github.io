@@ -1,0 +1,386 @@
+{{ define "main" }}
+
+<article class="post-single">
+
+    <header class="fuzz-header">
+
+        <div>
+            <h1 class="post-title">{{ .Title }}</h1>
+
+            <p class="fuzz-desc">
+                收录本人在渗透测试过程中整理和使用的各类字典，持续更新中...
+            </p>
+        </div>
+
+        <div class="search-box">
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="搜索字典文件...">
+        </div>
+
+    </header>
+
+
+    <div class="dict-table">
+
+        <div class="dict-head">
+            <div>文件名</div>
+            <div>描述</div>
+            <div>更新时间</div>
+            <div>大小</div>
+            <div>下载</div>
+        </div>
+
+
+        <!-- 字典开始 -->
+
+        <div class="dict-item">
+            <div class="filename">dirsearch.txt</div>
+            <div>目录扫描字典</div>
+            <div>2026-06-28</div>
+            <div>150 MB</div>
+
+            <div>
+                <a href="/dictionaries/dirsearch.txt" download>
+                    下载
+                </a>
+            </div>
+        </div>
+
+
+        <div class="dict-item">
+            <div class="filename">403-bypass.txt</div>
+            <div>403 绕过字典</div>
+            <div>2026-06-28</div>
+            <div>1 KB</div>
+
+            <div>
+                <a href="/dictionaries/403_bypass.txt" download>
+                    下载
+                </a>
+            </div>
+        </div>
+
+
+        <div class="dict-item">
+            <div class="filename">bypass_ip.txt</div>
+            <div>IP 绕过字典</div>
+            <div>2026-06-28</div>
+            <div>1 KB</div>
+
+            <div>
+                <a href="/dictionaries/bypass_ip.txt" download>
+                    下载
+                </a>
+            </div>
+        </div>
+
+
+        <div class="dict-item">
+            <div class="filename">username.txt</div>
+            <div>用户名字典</div>
+            <div>2026-06-28</div>
+            <div>2 KB</div>
+
+            <div>
+                <a href="/dictionaries/username.txt" download>
+                    下载
+                </a>
+            </div>
+        </div>
+
+
+        <div class="dict-item">
+            <div class="filename">password.txt</div>
+            <div>密码字典</div>
+            <div>2026-06-28</div>
+            <div>3 MB</div>
+
+            <div>
+                <a href="/dictionaries/password.txt" download>
+                    下载
+                </a>
+            </div>
+        </div>
+
+
+        <div class="dict-item">
+            <div class="filename">params.txt</div>
+            <div>Web参数字典</div>
+            <div>2026-06-28</div>
+            <div>3 KB</div>
+
+            <div>
+                <a href="/dictionaries/params.txt" download>
+                    下载
+                </a>
+            </div>
+        </div>
+
+
+        <div class="dict-item">
+            <div class="filename">upload_all.txt</div>
+            <div>文件上传字典(全)</div>
+            <div>2026-06-28</div>
+            <div>3 KB</div>
+
+            <div>
+                <a href="/dictionaries/upload_all.txt" download>
+                    下载
+                </a>
+            </div>
+        </div>
+
+        <!-- 字典结束 -->
+
+    </div>
+
+</article>
+
+
+<style>
+
+.fuzz-header{
+
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+
+    gap:30px;
+
+    margin-bottom:30px;
+}
+
+.fuzz-desc{
+
+    color:var(--secondary);
+
+    margin-top:8px;
+}
+
+
+.search-box{
+
+    min-width:320px;
+}
+
+.search-box input{
+
+    width:100%;
+
+    padding:14px 18px;
+
+    border-radius:12px;
+
+    border:1px solid var(--border);
+
+    background:var(--entry);
+
+    color:var(--primary);
+
+    font-size:15px;
+}
+
+.search-box input:focus{
+
+    outline:none;
+
+    border-color:#8b5cf6;
+}
+
+
+
+.dict-table{
+
+    border:1px solid var(--border);
+
+    border-radius:16px;
+
+    overflow:hidden;
+
+    background:var(--entry);
+}
+
+
+
+.dict-head,
+.dict-item{
+
+    display:grid;
+
+    grid-template-columns:
+            2fr
+            3fr
+            1.5fr
+            1fr
+            120px;
+
+    gap:20px;
+
+    align-items:center;
+
+    padding:22px 28px;
+}
+
+
+
+.dict-head{
+
+    font-weight:700;
+
+    color:var(--secondary);
+
+    border-bottom:1px solid var(--border);
+
+    background:rgba(255,255,255,.02);
+}
+
+
+
+.dict-item{
+
+    border-bottom:1px solid var(--border);
+
+    transition:.2s;
+}
+
+
+
+.dict-item:last-child{
+
+    border-bottom:none;
+}
+
+
+
+.dict-item:hover{
+
+    background:rgba(139,92,246,.05);
+}
+
+
+
+.filename{
+
+    font-weight:700;
+
+    word-break:break-all;
+}
+
+
+
+.dict-item a{
+
+    display:inline-block;
+
+    text-align:center;
+
+    text-decoration:none;
+
+    padding:10px 16px;
+
+    border-radius:10px;
+
+    border:1px solid #8b5cf6;
+
+    color:#8b5cf6;
+
+    transition:.2s;
+}
+
+
+
+.dict-item a:hover{
+
+    background:#8b5cf6;
+
+    color:#fff;
+}
+
+
+
+@media(max-width:900px){
+
+    .fuzz-header{
+
+        flex-direction:column;
+    }
+
+    .search-box{
+
+        width:100%;
+
+        min-width:unset;
+    }
+
+    .dict-head{
+
+        display:none;
+    }
+
+    .dict-item{
+
+        grid-template-columns:1fr;
+
+        gap:10px;
+    }
+
+    .dict-item div::before{
+
+        display:block;
+
+        font-size:.85rem;
+
+        color:var(--secondary);
+
+        margin-bottom:4px;
+    }
+
+    .dict-item div:nth-child(1)::before{
+        content:"文件名";
+    }
+
+    .dict-item div:nth-child(2)::before{
+        content:"描述";
+    }
+
+    .dict-item div:nth-child(3)::before{
+        content:"更新时间";
+    }
+
+    .dict-item div:nth-child(4)::before{
+        content:"大小";
+    }
+
+}
+
+</style>
+
+
+<script>
+
+document
+.getElementById("searchInput")
+.addEventListener("keyup", function() {
+
+    let value = this.value.toLowerCase();
+
+    document
+    .querySelectorAll(".dict-item")
+    .forEach(function(item){
+
+        let text = item.innerText.toLowerCase();
+
+        item.style.display =
+            text.includes(value)
+                ? "grid"
+                : "none";
+
+    });
+
+});
+
+</script>
+
+{{ end }}
