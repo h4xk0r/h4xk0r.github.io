@@ -2,7 +2,7 @@
 <html lang="en" dir="auto" data-theme="dark">
 
 <head>
-	<meta name="generator" content="Hugo 0.155.1"><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+	<meta name="generator" content="Hugo 0.167.0"><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="robots" content="noindex, nofollow">
@@ -11,7 +11,7 @@
 <meta name="description" content="">
 <meta name="author" content="h4xk0r">
 <link rel="canonical" href="http://localhost:1313/">
-<link crossorigin="anonymous" href="/assets/css/stylesheet.314abab0bce79c9458c3bcc909ca5440767e8fa2822428ed33ce608ca6f66fa0.css" integrity="sha256-MUq6sLznnJRYw7zJCcpUQHZ&#43;j6KCJCjtM85gjKb2b6A=" rel="preload stylesheet" as="style">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.0bb0c3739b082d881c4fb32975de96674772f1bde518011d34b2aa2ac92be7ae.css" integrity="sha256-C7DDc5sILYgcT7Mpdd6WZ0dy8b3lGAEdNLKqKskr564=" rel="preload stylesheet" as="style">
 <link rel="icon" href="http://localhost:1313/favicon.ico">
 <link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
@@ -110,6 +110,50 @@
 
 <article class="post-entry"> 
   <header class="entry-header">
+    <h2 class="entry-hint-parent">反序列化链(URLDNS)
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>该链使用Java内置类. 所有有几个特性:
+不依赖第三方 不限制 JDK 版本 又因为该链只能触发 DNS 请求所以常用来探测是否存在反序列化漏洞.
+分析 漏洞的利用链条在yso中是这样写的
+* Gadget Chain: * HashMap.readObject() * HashMap.putVal() * HashMap.hash() * URL.hashCode() 找到src/main/java/ysoserial/payloads/URLDNS.java
+注意到HashMap 的put方法接收一个域名. 跟进 put 方法,
+调用了putVal. 并对第一个参数调用了 hash 方法,继续跟进hash()
+判断接收的Key是否为 null , 否的话调用key的hashcode方法.
+注意: 如果这里接收的值是 url 的话,就会调用 url 的hashcode方法,写一个demo来看URL中的hashcode方法
+public class Main { public static void main(String[] args) { URL url = null;	} } 进入URL,查看 hashcode()
+判断不等于-1, 因为这里默认值是等于-1的,所以执行handler.hashcode,跟进一下URLStreamHeadler
+继续跟进
+发现是调用的getHostAddress() 获取域名的IP地址.也就是说会进行DNS解析. 也就可以通过是否接收到DNS来验证是否存在反序列化
+总结 HashMap 在反序列化、重新计算 key 的 hash 时，如果 key 是 URL，就会调用 URL.hashCode()；URL 的 hash 计算过程中会获取主机地址，从而可能触发 DNS 查询。
+...</p>
+  </div>
+  <footer class="entry-footer"><span title='2026-10-07 12:54:57 +0800 CST'>October 7, 2026</span>&nbsp;·&nbsp;<span>1 min</span>&nbsp;·&nbsp;<span>h4xk0r</span></footer>
+  <a class="entry-link" aria-label="post link to 反序列化链(URLDNS)" href="http://localhost:1313/posts/%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E9%93%BEurldns/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">浅析dll和com劫持
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>DLL dll: 动态链接库文件,用于给程序调用
+DLL加载的搜索过程:
+程序所在目录 程序加载目录(通过SetCurrentDictory API) 系统目录(system32或system) windows目录 Path环境变量目录 Windows系统 通过&#34;DLL的加载搜索顺序&#34;和&#34;Know DLLs注册表项&#34; 的机制来确定应用调用dll的路径,之后进行加载并执行
+HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\KnownDLLs Know dlls : 是已经被windows操作系统加载后的Dll,不会被程序使用.
+DLLMain 和程序的Main函数一样,dll也有入口函数DllMain 当程序加载dll的时候则会调用dllMain
+// 原型: BOOL WINAPI DllMain( HMODULE hModule, DWORD dwReason, LPVOID lpReserved ); // 完整 BOOL WINAPI DllMain( HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved ) 实现DLL劫持 Dllmain 中的dwReason参数表示调用的原因
+载入状态 值 说明 DLL_PROCESS_ATTACH 1 DLL第一次被加载到进程时 DLL_PROCESS_DETACH 0 DLL从进程卸载 DLL_THREAD_ATTACH 2 进程创建新线程 DLL_THREAD_DETACH 3 线程结束 通常用来判断状态来做一些操作,demo:
+...</p>
+  </div>
+  <footer class="entry-footer"><span title='2026-07-18 19:45:13 +0800 CST'>July 18, 2026</span>&nbsp;·&nbsp;<span>2 min</span>&nbsp;·&nbsp;<span>h4xk0r</span></footer>
+  <a class="entry-link" aria-label="post link to 浅析dll和com劫持" href="http://localhost:1313/posts/%E6%B5%85%E6%9E%90dll%E5%92%8Ccom%E5%8A%AB%E6%8C%81/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
     <h2 class="entry-hint-parent">LM,NTMLv1&amp;v2
     </h2>
   </header>
@@ -123,6 +167,7 @@ h4xk0r ---&gt; H4XK0R 转换成16进制 截断/填充到14字节
 &gt;&gt;&gt; password = &#34;H4XK0R&#34; &gt;&gt;&gt; print(password.encode().hex()) 48 34 58 4b 30 52 结果不满足14字节,00补足 48 34 58 4b 30 52 00 00 00 00 00 00 00 00 拆分成两个7字节
 组1: 48 34 58 4b 30 52 00 组2: 00 00 00 00 00 00 00 转换成DES密钥
 将两组16进制转换成2进制 key1: 1001000001101000101100001001011001100000101001000000000 每七位一组 组 1：0100100 组 2：0001101 组 3：0001011 组 4：0000100 组 5：1011001 组 6：1000001 组 7：0100100 组 8：0000000	//不足7位补0 要在每一组的最后补上 1 位，让每一组里 1 的总个数为奇数（即奇校验） 01001001 00011010 00010110 00001000 10110011 10000011 01001001 00000001 合并0100100100011010000101100000100010110011100000110100100100000001 --&gt; 转回16进制49 1A 16 08 B3 83 49 01 key2: 00000000000000000000000000000000000000000000000000000000 因为是全零,分组就要补1如, 00000001 最后转换成16进制后就是 --&gt; 01 01 01 01 01 01 01 01 字符串(KGS!@#$%)加密
+固定明文 = &#34;KGS!@#$%&#34; --&gt; 16进制 = 4B 47 53 21 40 23 24 25 cipher1 = DES(key1, &#34;KGS!@#$%&#34;) cipher2 = DES(key2, &#34;KGS!@#$%&#34;) cipher1 = B98A94DFC14F1E59 cipher2 = AAD3B435B51404EE 用固定密钥去加密固定明文 结果永远相同,为此值时说明密码值不超过7位 拼接输出到SAM(LM Hash)
 ...</p>
   </div>
   <footer class="entry-footer"><span title='2026-06-13 10:46:13 +0800 CST'>June 13, 2026</span>&nbsp;·&nbsp;<span>3 min</span>&nbsp;·&nbsp;<span>h4xk0r</span></footer>
@@ -171,6 +216,29 @@ Windows 路径： C:/Users/Administrator/AppData/Roaming/Tencent/WeChat/All User
 防守方的管理系统存在N-day或者使用的插件等存在N-day等
 蜜罐特征(转) 3.1 协议的返回特征
 部分开源蜜罐在模拟各个协议时，会在响应中带有一些明显的特征，可以根据这些特征来检测蜜罐。
+拿Dionaea 的Memcached协议举例，在实现Memcached协议时Dionaea把很多参数做了随机化，但是在一些参数如：version、libevent和rusage_user等都是固定的。
+可以通过组合查询其固定参数来确定蜜罐，其他蜜罐在协议上的特征如表3-1所示。
+表3-1 协议响应特征的蜜罐
+3.2 协议实现的缺陷 在部分开源的蜜罐中模拟实现部分协议并不完善，我们可以通过发送一些特定的请求包获得的响应来判断是否为蜜罐。
+3.2.1 SSH协议 SSH协议（Secure Shell）是一种加密的网络传输协议，最常用的是作为远程登录使用。SSH服务端与客户端建立连接时需要经历五个步骤：
+协商版本号阶段。 协商密钥算法阶段。 认证阶段。 会话请求阶段。 交互会话阶段。 SSH蜜罐在模拟该协议时同样要实现这五个步骤。Kippo 是一个已经停止更新的经典的SSH蜜罐，使用了twisted来模拟SSH协议。在kippo的最新版本中使用的是很老的twistd 15.1.0版本。该版本有个明显的特征。在版本号交互阶段需要客户端的SSH版本为形如SSH-主版本-次版本 软件版本号，当版本号为不支持的版本时，如SSH-1.9-OpenSSH_5.9p1就会报错“bad version 1.9”并且断开连接。通过Kippo的配置来看，仅仅支持SSH-2.0-X和SSH-1.99-X两个主版本，其他主版本都会产生报错。
+3.2.2 Mysql协议 部分Mysql蜜罐会通过构造一个恶意的mysql服务器，攻击者通过连接恶意的mysql服务器后发送一个查询请求，恶意的mysql服务器将会读取到攻击者指定的文件。
+最早的如*https://github.com/Gifts/Rogue-MySql-Server*，可以伪造一个恶意的mysql服务器,并使用mysql客户端连接，如下图可见恶意的mysql服务器端已经成功读取到了客户端的/etc/password内容。
+检测此类蜜罐的步骤可分为如下几步：
+伪造客户端连接蜜罐mysql服务 连接成功发送mysql查询请求 接受mysql服务器响应，通过分析伪造的mysql客户端读取文件的数据包得到的报文结构：文件名长度&#43;1 &#43; \x00\x00\x01\xfb &#43; 文件名 那么我们就可以通过socket构造对应的流程即可识别伪造的mysql服务器，并抓取读取的文件名。
+3.2.3 Telnet协议 HFish蜜罐中实现了Telnet协议，默认监听在23端口。模拟的该协议默认无需验证，并且对各个命令的结果都做了响应的模板来做应答。在命令为空或者直接回车换行时，会响应default模板，该模板内容为test。因此可以利用这个特征进行该蜜罐在telnet服务上的检测如图所示。
+3.3 明显的WEB的特征 部分开源蜜罐提供了web服务，这些web服务中常常会带有一些明显的特征，可以根据这些特征来检测蜜罐。如特定的js文件、build_hash或者版本号等。
+还是拿HFish举例。HFish在默认8080端口实现了一个WordPress登录页面，页面中由一个名为x.js的javascript文件用来记录尝试爆破的登录名密码。直接通过判断wordpress登录页是否存在x.js文件就可判断是否为蜜罐。
+还有glastopf蜜罐，其没做任何伪装是最明显的。可以通过页面最下方的blog comments的输入框进行识别。
+其他的常见的开源蜜罐在WEB上的特征如下表所示。
+表3-2 具有明显WEB特征的蜜罐
+3.4 上下文特征 部分开源蜜罐存在命令执行上下文明显的特征，本节以Cowrie和HFish为例。
+2020年6月份研究人员发现Mirai的新变种Aisuru检测可以根据执行命令的上下文检测到Cowrie开源蜜罐。当满足如下三个条件时Aisuru将会判定为蜜罐：
+设备名称为localhost。 设备中所有进程启动于6月22日或6月23日。 存在用户名richard。 查看Cowrie源码在默认配置中执行ps命令，发现进程的启动时间都在6月22或6月23。不过在最新版的Cowrie中richard被phil替换，并且主机名由localhost替换为svr04。
+由Aisuru的启发，是可以根据一些特定的上下文来检测蜜罐的。比如最新版的Cowrie，在默认配置下一些一些命令得到的结果是固定不变的。如：cat /proc/meminfo 这个命令无论执行多少次得到的内容都是不变的，而这真实的系统中是不可能的。
+再说HFish蜜罐，HFish同样也实现了SSH协议，默认监听在22端口。该蜜罐的SSH协议同样可以很容易的通过上下文识别出来。和telnet协议一样SSH协议在直接进行回车换行时会默认执行default输出test。
+3.5 Fuzz testing 特征 Fuzz testing（模糊测试）本是一种安全测试的方法，通过产生随机的数据输入测试系统查看系统响应或者状态，以此发现潜在的安全漏洞。部分蜜罐借用Fuzz testing的思想实现了蜜罐系统，通过360 Netlab的 zom3y3大哥在《通过Anglerfish蜜罐发现未知的恶意软件威胁》中对Fuzz testing蜜罐的介绍，我们得知有以下几点特征：
+响应任意端口的TCP SYN Packet。 根据协议特征，永远返回正确的响应。 返回预定义或者随机的Payload特征库集合。 该蜜罐很容易通过人工判断，其目的为模拟蜜罐fuzzing特征，通过预定义大量的关键字实现对扫描器的干扰。该类蜜罐可以通过跨服务的特征进行判断，如开放了HTTP服务同时响应了upnp协议，或者根据server的长度或者个数来判断。由于未知哪种蜜罐产品提供的这个蜜罐服务，quake将此蜜罐标记为未知蜜罐，可以使用语法app:“未知蜜罐&#34;搜索。
 ...</p>
   </div>
   <footer class="entry-footer"><span title='2026-05-14 19:38:41 +0800 CST'>May 14, 2026</span>&nbsp;·&nbsp;<span>1 min</span>&nbsp;·&nbsp;<span>h4xk0r</span></footer>
@@ -236,6 +304,27 @@ k8s会不断检查运行状态,如果容器挂了会自动拉起一个新的,如
 
 <article class="post-entry"> 
   <header class="entry-header">
+    <h2 class="entry-hint-parent">原型链污染
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>prototype与__proto__ prototype 显式原型 JavaScript中有一个特殊的地方就是函数也是对象,对象可以放属性,而函数一样可以放属性,prototype就是函数的一个属性
+例子:
+function Person(){} console.log(Person.prototype); //当创建一个函数的时候,会自动创建 Person.prototype,就像Person.name等属性一样 prototpye的内容是 { constructor: Person } 结果是{}, 因为默认不可枚举 new 的实际过程 function Person(){} let p = new Person(); 1. 创建对象： let p = {}; 2. 连接原型： p.__proto__ = Person.prototype; 3. 执行函数： Person.call(p); 4. 返回 return p; __proto__ 隐式原型 proto是所有对象的属性(包括函数、数组、普通对象)
+它是对象内部的一个指针，指向创建该对象的构造函数的 prototype例如:
+let obj = {}; javascript自动执行obj.__proto__,里面是Object.prototype 什么是原型链 function Person(name) { this.name = name; } Person.prototype.age = 18; Person.prototype.sayHi = function () { console.log(&#34;你好&#34;); }; let jack = new Person(&#34;Jack&#34;); 当访问对象的属性的时候,JavaScript的查找顺序是:
+先在对象的自身属性里面找 找不到,再去Jack.__proto__(即Person.prototype)中找 再找不到,去Person.prototype.__proto__(即Object.prototype)中去找 一直找到Person.prototype.__proto__也就是Null ,还找不到就返回undefined
+漏洞产生的原因: 因为所有的JavaScript对象都指向Object.prototype,所以只要能修改Object.prototype增加一个属性,那么所有的对象都会拥有这个属性
+一般漏洞出现在对象合并,对象克隆,路径赋值中.例子:
+function merge(target, source) { for (let key in source) { if (key in target &amp;&amp; key in source) { merge(target[key], source[key]); // 递归合并 } else { target[key] = source[key]; } } } 传入:
+...</p>
+  </div>
+  <footer class="entry-footer"><span title='2026-03-30 21:28:24 +0800 CST'>March 30, 2026</span>&nbsp;·&nbsp;<span>1 min</span>&nbsp;·&nbsp;<span>h4xk0r</span></footer>
+  <a class="entry-link" aria-label="post link to 原型链污染" href="http://localhost:1313/posts/%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
     <h2 class="entry-hint-parent">XSS
     </h2>
   </header>
@@ -258,81 +347,14 @@ HTTP头(盲XSS) 在 Referer、User-Agent、X-Forwarded-For 中注入盲打 Paylo
 这里推荐一个网站 https://portswigger.net/web-security/cross-site-scripting/cheat-sheet
 编码绕过:
 浏览器解析 HTML 时有特定的解码顺序（HTML 解码 -&gt; URL 解码 -&gt; JS 解码）
+其他编码方式:
+动态执行编码(利用 JS 内置函数对加密/编码后的内容进行动态解密执行)
+CSS编码: 在 style 属性或 CSS 文件中，可以使用反斜杠后跟十六进制
+JSFuck,AAEncode,JJEncode编码(要求不限制长度,绕waf有效)
 ...</p>
   </div>
   <footer class="entry-footer"><span title='2026-03-19 00:33:54 +0800 CST'>March 19, 2026</span>&nbsp;·&nbsp;<span>1 min</span>&nbsp;·&nbsp;<span>h4xk0r</span></footer>
   <a class="entry-link" aria-label="post link to XSS" href="http://localhost:1313/posts/xss/"></a>
-</article>
-
-<article class="post-entry"> 
-  <header class="entry-header">
-    <h2 class="entry-hint-parent">JS
-    </h2>
-  </header>
-  <div class="entry-content">
-    <p>本人代码能力不是很好，对很多网站框架和文件理解不是很深，所以看js文件的时候难免有些困难，所以有了这篇文章
-JS审计技巧 遇到source.map(.map)可以直接还原源码
-首先是一些用来搜索的正则：
-api/| /v[0-9]|/admin|/internal|/private key:|secret:|token:|password:|apikey|sk_ |pk_ |AKIA（AWS） fetch|axios|XMLHttpRequest|$.post|$.ajax localStorage|sessionStorage|cookie if\s*\(\s*user\.role|isAdmin|level|permission innerHTML|eval|document\.write（XSS sink） 看完上面这些，还要看什么？ 密钥
-如: const KEY = &#34;xxx&#34;、process.env.VITE_xxx（Vite 常见泄露）、client_secret。
-如config.chunk.js 里：
-const stripeConfig = { publishableKey: &#34;pk_live_51Hb...xxxx&#34;, // Stripe 真实密钥 clientSecret: &#34;sk_test_51Hb...xxxx&#34; }; var fallbackSecret = &#34;supersecret2025!@#&#34;; // 备用密钥 API 可以用上面的正则去搜
-逻辑/授权检查 如: if (user.isAdmin)、if (role === &#39;vip&#39;)、if (canEdit)。
-if (user.vipLevel &gt;= 3) { showDownloadButton(); // 前端判断 } else { hideIt(); } 加密/签名 如CryptoJS、encrypt、sign、md5、rsa 函数。
-password: CryptoJS.AES.encrypt(pwd, &#39;hardcoded_key_123&#39;).toString() 逆向出密钥，就能批量撞库或伪造登录
-不用看的JS 第三方库完整代码jquery-3.6.0.min.js、lodash.min.js、react.production.min.js 全文件。 → 只看最上面注释的版本号（查 CVE），其余不看。
-一些框架的打包，如React/Vue/Next.js 的
-_createElementVNode, useState, render() { ... } 还有一些轮番图片等
-...</p>
-  </div>
-  <footer class="entry-footer"><span title='2026-02-28 22:41:23 +0800 CST'>February 28, 2026</span>&nbsp;·&nbsp;<span>1 min</span>&nbsp;·&nbsp;<span>h4xk0r</span></footer>
-  <a class="entry-link" aria-label="post link to JS" href="http://localhost:1313/posts/js%E5%AE%A1%E8%AE%A1%E6%8A%80%E5%B7%A7/"></a>
-</article>
-
-<article class="post-entry"> 
-  <header class="entry-header">
-    <h2 class="entry-hint-parent">Java基础
-    </h2>
-  </header>
-  <div class="entry-content">
-    <p>JAVA 反射 什么是java的反射 java反射就是在程序运行状态中，能够知道任何一个类的所有属性和方法，并且能够调用这些属性和方法的功能
-正向 VS 反向 正向流程： 导入类 –&gt; new对象 –&gt; 调用对象
-User user = new User(); user.login(); 如果类不存在就报错
-**反向流程：**拿到字符串类名 –&gt; 让JVM去找这个类 –&gt; 强行拆解这个类 –&gt; 调用里面的东西
-Class.forName(&#34;com.User&#34;).getMethod(&#34;login&#34;).invoke(obj); 动态加载类，即使编译时类还没有也能运行
-类加载机制 什么是类加载 java代码进行编译后就是.class文件（字节码），类加载就是把这些二进制数据读进内存，解析并生成一个java.lang.Class对象的过程
-类加载的三个阶段 Loading（加载） 读取字节流，不执行代码 Linking（链接） 分为验证，准备，解析。 一般不执行代码 lnitialization(初始化) 执行静态代码块，静态变量的赋值动作 两种攻击方式： 例子： class Evil { // 1. 静态变量赋值 public static int a = runCommand(); // 2. 静态代码块 static { System.out.println(&#34;静态代码块被执行了&#34;); } public static int runCommand() { System.out.println(&#34;静态变量赋值触发了恶意方法！&#34;); return 1; } } 会会先执行赋值，然后是静态代码块。因为初始化执行的顺序是 “静态变量赋值” 和 “静态代码块”
-...</p>
-  </div>
-  <footer class="entry-footer"><span title='2026-02-16 00:00:00 +0000 UTC'>February 16, 2026</span>&nbsp;·&nbsp;<span>5 min</span>&nbsp;·&nbsp;<span>h4xk0r</span></footer>
-  <a class="entry-link" aria-label="post link to Java基础" href="http://localhost:1313/posts/java%E5%9F%BA%E7%A1%80/"></a>
-</article>
-
-<article class="post-entry"> 
-  <header class="entry-header">
-    <h2 class="entry-hint-parent">Linux提权方式总结
-    </h2>
-  </header>
-  <div class="entry-content">
-    <p>常规提权方式 一、sudo滥用提权 sudo -l提示要输入密码的原因:
-默认SUDO行为 : 需要输入当前用户的密码(不是root)密码
-sudoers配置问题: 未配置免密码访问 在/etc/sudoers文件中没有为当前用户配置NOPASSWD选项
-配置覆盖问题: 用户组覆盖了用户配置,可能被添加到了wheel用户组
-检查当前用户所在组 id username 如果发现在wheel组中,检查wheel组的配置
-查看%wheel相关配置,看是否设置了NOPASSWD或要求密码
-sudo visudo 从wheel组中移除用户
-sudo gpasswd -d username wheel 利用步骤： 查看当前用户sudo权限：
-sudo -l 示例输出：(ALL) NOPASSWD: /usr/bin/vim 利用vim提权：
-sudo /usr/bin/vim 在vim中输入 :set shell=/bin/bash 回车 然后输入 :shell 回车 成功获得root shell 利用其他命令提权：
-如果发现可以执行/usr/bin/nano：
-sudo /usr/bin/nano 在nano中按Ctrl&#43;R，输入!bash，回车 即可获得root shell 说明： sudo配置不当，允许用户以root身份执行特定命令，而无需密码验证。
-二、SUID特殊权限提权 利用步骤： 查找SUID文件：
-find / -perm -u=s -type f 2&gt;/dev/null 利用/bin/mount提权：
-mkdir /tmp/mount touch /tmp/mount/malicious_file sudo /bin/mount -o bind /tmp/mount /tmp/mount sudo /bin/mount /tmp/mount /tmp/mount 通过此方式可获取root权限 利用/bin/ping提权：
-...</p>
-  </div>
-  <footer class="entry-footer"><span title='2026-02-15 00:00:00 +0000 UTC'>February 15, 2026</span>&nbsp;·&nbsp;<span>5 min</span>&nbsp;·&nbsp;<span>h4xk0r</span></footer>
-  <a class="entry-link" aria-label="post link to Linux提权方式总结" href="http://localhost:1313/posts/linux%E6%8F%90%E6%9D%83/"></a>
 </article>
 <footer class="page-footer">
   <nav class="pagination">
