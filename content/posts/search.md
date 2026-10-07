@@ -4,6 +4,6 @@ layout: "search"
 url: "/search/"
 summary: "search"
 placeholder: "模糊搜索全站内容..."
-_build:
+build:
   list: never
 ---
